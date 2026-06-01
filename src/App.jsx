@@ -1,113 +1,193 @@
 import { useMemo, useState } from 'react';
 import {
-  ArrowRight,
+  ArrowLeft,
   BarChart3,
   BookOpenCheck,
   BrainCircuit,
   CheckCircle2,
   ClipboardList,
+  Download,
+  ExternalLink,
   GraduationCap,
   LayoutDashboard,
+  LockKeyhole,
+  LogIn,
+  LogOut,
   Menu,
   Search,
-  SlidersHorizontal,
+  Send,
+  ShieldCheck,
   Sparkles,
   Table2,
+  UserPlus,
+  Users,
+  WalletCards,
   X,
 } from 'lucide-react';
 import { automationAreas } from './data/automationAreas.js';
-import { tools } from './data/tools.js';
+import { tools, toolLinks } from './data/tools.js';
 import { useCases } from './data/useCases.js';
 import { generateRecommendation } from './utils/recommendation.js';
+import { clearLeads, createLead, exportLeadsToCsv, getLeads } from './utils/leads.js';
+import { getCurrentUser, loginDemoUser, logoutDemoUser, signUpDemoUser } from './utils/auth.js';
 
-const navItems = [
-  { id: 'home', label: 'Home', icon: LayoutDashboard },
-  { id: 'assessment', label: 'Assessment', icon: ClipboardList },
-  { id: 'comparison', label: 'Tools', icon: Table2 },
-  { id: 'library', label: 'Use Cases', icon: BookOpenCheck },
-  { id: 'methodology', label: 'Methodology', icon: BrainCircuit },
-  { id: 'summary', label: 'Academic Summary', icon: GraduationCap },
+const assessmentStorageKey = 'autobiz_last_assessment';
+
+const baseNavItems = [
+  { id: 'home', label: 'דף הבית', icon: LayoutDashboard },
+  { id: 'assessment', label: 'שאלון התאמה', icon: ClipboardList },
+  { id: 'comparison', label: 'השוואת כלים', icon: Table2 },
+  { id: 'library', label: 'מקרי שימוש', icon: BookOpenCheck },
+  { id: 'plans', label: 'מסלולים', icon: WalletCards },
+  { id: 'consultation', label: 'בקשת ייעוץ', icon: Send },
+  { id: 'admin', label: 'ניהול פניות', icon: Users },
+  { id: 'methodology', label: 'מתודולוגיה', icon: BrainCircuit },
+  { id: 'summary', label: 'סיכום אקדמי', icon: GraduationCap },
 ];
 
 const initialAnswers = {
-  businessType: 'service',
-  employees: '2-10',
+  businessType: '',
+  employees: '',
   painPoints: [],
   currentTools: '',
-  budget: '50-200',
-  skillLevel: 'beginner',
+  budget: '',
+  skillLevel: '',
   channels: [],
-  goal: 'save-time',
+  goal: '',
 };
 
 const painPointOptions = [
-  ['customer-service', 'Customer service'],
-  ['lead-management', 'Lead management'],
-  ['appointment-scheduling', 'Appointment scheduling'],
-  ['email-whatsapp', 'Email / WhatsApp communication'],
-  ['invoice-documents', 'Invoice and documents'],
-  ['social-media-content', 'Social media content'],
-  ['task-management', 'Task management'],
-  ['crm-workflows', 'CRM workflows'],
-  ['internal-processes', 'Internal processes'],
+  ['customer-service', 'שירות לקוחות'],
+  ['lead-management', 'ניהול לידים'],
+  ['appointment-scheduling', 'תיאום פגישות'],
+  ['email-whatsapp', 'מיילים ו-WhatsApp'],
+  ['invoice-documents', 'חשבוניות ומסמכים'],
+  ['social-media-content', 'תוכן לרשתות חברתיות'],
+  ['task-management', 'ניהול משימות'],
+  ['crm-workflows', 'תהליכי CRM'],
+  ['internal-processes', 'תהליכים פנימיים'],
 ];
 
 const channelOptions = [
-  ['email', 'Email'],
+  ['email', 'אימייל'],
   ['whatsapp', 'WhatsApp'],
-  ['website', 'Website'],
+  ['website', 'אתר'],
   ['crm', 'CRM'],
-  ['calendar', 'Calendar'],
-  ['social-media', 'Social media'],
+  ['calendar', 'יומן'],
+  ['social-media', 'רשתות חברתיות'],
 ];
+
+const plans = [
+  {
+    name: 'מסלול חינמי',
+    price: '₪0',
+    features: ['אבחון בסיסי', 'המלצה ראשונית', 'גישה להשוואת כלים'],
+    button: 'שמירת התעניינות במסלול חינמי',
+  },
+  {
+    name: 'מסלול עסקי',
+    price: 'לפי צורך',
+    features: ['מפת דרכים לאוטומציה', 'המלצות מתקדמות', 'תיעדוף תהליכים עסקיים'],
+    button: 'בקשת מסלול עסקי',
+    featured: true,
+  },
+  {
+    name: 'מסלול ייעוץ',
+    price: 'פגישה אישית',
+    features: ['שיחת ייעוץ אישית', 'תכנון אוטומציה לעסק', 'ליווי ביישום'],
+    button: 'בקשת שיחת ייעוץ',
+  },
+];
+
+const eventTypeLabels = {
+  'Sign Up': 'הרשמה',
+  'Assessment Completed': 'שאלון הושלם',
+  'Plan Interest': 'התעניינות במסלול',
+  'Consultation Request': 'בקשת ייעוץ',
+};
 
 function App() {
   const [activePage, setActivePage] = useState('home');
   const [menuOpen, setMenuOpen] = useState(false);
+  const [user, setUser] = useState(() => getCurrentUser());
+  const [selectedPlan, setSelectedPlan] = useState('');
 
-  const goTo = (page) => {
+  const goTo = (page, options = {}) => {
     setActivePage(page);
     setMenuOpen(false);
+    if (options.selectedPlan) setSelectedPlan(options.selectedPlan);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const refreshUser = () => setUser(getCurrentUser());
+  const handleLogout = () => {
+    logoutDemoUser();
+    setUser(null);
+    goTo('home');
+  };
+
   return (
-    <div className="app-shell">
-      <Header activePage={activePage} goTo={goTo} menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
+    <div className="app-shell" dir="rtl">
+      <Header
+        activePage={activePage}
+        goTo={goTo}
+        menuOpen={menuOpen}
+        setMenuOpen={setMenuOpen}
+        user={user}
+        onLogout={handleLogout}
+      />
       <main>
         {activePage === 'home' && <HomePage goTo={goTo} />}
-        {activePage === 'assessment' && <AssessmentPage />}
+        {activePage === 'assessment' && <AssessmentPage user={user} goTo={goTo} />}
         {activePage === 'comparison' && <ToolsComparisonPage />}
         {activePage === 'library' && <UseCaseLibraryPage />}
+        {activePage === 'plans' && <PlansPage user={user} goTo={goTo} />}
+        {activePage === 'consultation' && <ConsultationPage user={user} selectedPlan={selectedPlan} />}
+        {activePage === 'admin' && <AdminLeadsPage />}
         {activePage === 'methodology' && <MethodologyPage />}
         {activePage === 'summary' && <AcademicSummaryPage />}
+        {activePage === 'signup' && <SignUpPage goTo={goTo} onAuth={refreshUser} />}
+        {activePage === 'login' && <LoginPage goTo={goTo} onAuth={refreshUser} />}
+        {activePage === 'forgot' && <ForgotPasswordPage goTo={goTo} />}
+        {activePage === 'dashboard' && <DashboardPage user={user} goTo={goTo} />}
       </main>
     </div>
   );
 }
 
-function Header({ activePage, goTo, menuOpen, setMenuOpen }) {
+function Header({ activePage, goTo, menuOpen, setMenuOpen, user, onLogout }) {
+  const authItems = user
+    ? [
+        { id: 'dashboard', label: 'אזור אישי', icon: ShieldCheck },
+        { id: 'logout', label: 'התנתקות', icon: LogOut },
+      ]
+    : [
+        { id: 'login', label: 'התחברות', icon: LogIn },
+        { id: 'signup', label: 'הרשמה', icon: UserPlus },
+      ];
+
   return (
     <header className="site-header">
       <button className="brand" type="button" onClick={() => goTo('home')}>
         <span className="brand-mark"><BarChart3 size={21} /></span>
         <span>
-          <strong>Automation Advisor</strong>
-          <small>AI Applications in Business</small>
+          <strong>AutoBiz AI Advisor</strong>
+          <small>יועץ אוטומציות AI לעסקים קטנים</small>
         </span>
       </button>
-      <button className="menu-button" type="button" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle navigation">
+      <button className="menu-button" type="button" onClick={() => setMenuOpen(!menuOpen)} aria-label="פתיחת ניווט">
         {menuOpen ? <X size={22} /> : <Menu size={22} />}
       </button>
       <nav className={menuOpen ? 'nav open' : 'nav'}>
-        {navItems.map((item) => {
+        {[...baseNavItems, ...authItems].map((item) => {
           const Icon = item.icon;
+          const isLogout = item.id === 'logout';
           return (
             <button
               className={activePage === item.id ? 'nav-link active' : 'nav-link'}
               key={item.id}
               type="button"
-              onClick={() => goTo(item.id)}
+              onClick={() => (isLogout ? onLogout() : goTo(item.id))}
             >
               <Icon size={16} />
               {item.label}
@@ -124,44 +204,35 @@ function HomePage({ goTo }) {
     <section className="page">
       <div className="hero">
         <div className="hero-copy">
-          <span className="eyebrow">Decision support for small business automation</span>
-          <h1>Choose the right AI automation tools before investing time and money.</h1>
+          <span className="eyebrow">פלטפורמת החלטה לעסקים קטנים</span>
+          <h1>בוחרים אוטומציות AI שמתאימות באמת לעסק.</h1>
           <p>
-            Small businesses know they need automation, but comparing platforms is difficult. This site turns business
-            needs, budget, channels, and technical skill into practical recommendations.
+            AutoBiz AI Advisor עוזר לבעלי עסקים להבין אילו תהליכים כדאי לאוטומט, אילו כלים מתאימים,
+            ומהו הצעד הראשון שכדאי לבצע לפני שמבזבזים זמן ותקציב.
           </p>
           <div className="hero-actions">
             <button className="primary-button" type="button" onClick={() => goTo('assessment')}>
-              Start assessment <ArrowRight size={18} />
+              התחילו שאלון התאמה <ArrowLeft size={18} />
             </button>
             <button className="secondary-button" type="button" onClick={() => goTo('comparison')}>
-              Compare tools
+              השוואת כלים
             </button>
           </div>
         </div>
-        <div className="hero-panel" aria-label="Platform highlights">
+        <div className="hero-panel" aria-label="יכולות מרכזיות">
           <div className="score-card">
-            <span>Recommendation Logic</span>
-            <strong>Rule based + explainable</strong>
+            <span>לוגיקת המלצה</span>
+            <strong>שקופה, עסקית וקלה להסבר בכיתה</strong>
           </div>
-          <div className="mini-metric">
-            <CheckCircle2 size={20} />
-            <span>Business value</span>
-          </div>
-          <div className="mini-metric">
-            <SlidersHorizontal size={20} />
-            <span>Tool fit analysis</span>
-          </div>
-          <div className="mini-metric">
-            <Sparkles size={20} />
-            <span>AI use cases</span>
-          </div>
+          <div className="mini-metric"><CheckCircle2 size={20} /><span>ערך עסקי מדיד</span></div>
+          <div className="mini-metric"><Sparkles size={20} /><span>מקרי שימוש ב-AI</span></div>
+          <div className="mini-metric"><ShieldCheck size={20} /><span>שמירת תוצאות דמו</span></div>
         </div>
       </div>
 
       <SectionIntro
-        title="Where AI Automation Helps"
-        text="The platform focuses on daily operational work where small businesses lose time, miss leads, or struggle to keep data organized."
+        title="מה אפשר לאוטומט בעסק קטן?"
+        text="האתר מתמקד בתהליכים יומיומיים שבהם עסקים מאבדים זמן, מפספסים לידים או מתקשים לשמור מידע מסודר."
       />
       <div className="area-grid">
         {automationAreas.map((area) => {
@@ -179,168 +250,198 @@ function HomePage({ goTo }) {
   );
 }
 
-function AssessmentPage() {
+function AssessmentPage({ user, goTo }) {
   const [answers, setAnswers] = useState(initialAnswers);
+  const [error, setError] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
   const recommendation = useMemo(() => generateRecommendation(answers), [answers]);
 
   const toggleArrayValue = (field, value) => {
     setAnswers((current) => {
       const exists = current[field].includes(value);
-      return {
-        ...current,
-        [field]: exists ? current[field].filter((item) => item !== value) : [...current[field], value],
-      };
+      return { ...current, [field]: exists ? current[field].filter((item) => item !== value) : [...current[field], value] };
     });
   };
 
+  const submitAssessment = () => {
+    const missing = !answers.businessType || !answers.employees || !answers.budget || !answers.skillLevel || !answers.goal
+      || answers.painPoints.length === 0 || answers.channels.length === 0;
+    if (missing) {
+      setError('יש להשלים את השדות המרכזיים לפני קבלת ההמלצה.');
+      return;
+    }
+    const saved = { answers, recommendation, createdAt: new Date().toISOString() };
+    localStorage.setItem(assessmentStorageKey, JSON.stringify(saved));
+    createLead({
+      eventType: 'Assessment Completed',
+      fullName: user?.fullName,
+      email: user?.email,
+      businessName: user?.businessName,
+      assessment: answers,
+      recommendation,
+    });
+    setError('');
+    setModalOpen(true);
+  };
+
   return (
-    <section className="page two-column-page">
-      <div>
-        <SectionIntro
-          title="Business Automation Assessment"
-          text="Answer the questions below. The result updates instantly using transparent rules based on pain points, channels, goals, budget, and technical readiness."
-        />
-        <form className="assessment-form">
-          <FormGroup label="Business type">
+    <section className="page content-page">
+      <SectionIntro
+        title="שאלון התאמה לאוטומציה"
+        text="ענו על השאלות וקבלו המלצה ממוקדת. הלוגיקה מבוססת על כאבים עסקיים, ערוצים, תקציב, רמת ידע ומטרת האוטומציה."
+      />
+      <form className="assessment-form" onSubmit={(event) => event.preventDefault()}>
+        <div className="form-grid">
+          <FormGroup label="מה סוג העסק שלך?">
             <select value={answers.businessType} onChange={(event) => setAnswers({ ...answers, businessType: event.target.value })}>
-              <option value="service">Service business</option>
-              <option value="retail">Retail / store</option>
-              <option value="clinic">Clinic / appointments</option>
-              <option value="agency">Marketing / consulting agency</option>
-              <option value="ecommerce">E-commerce</option>
-              <option value="professional">Professional office</option>
+              <option value="">בחרו סוג עסק</option>
+              <option value="service">עסק שירות</option>
+              <option value="retail">קמעונאות / חנות</option>
+              <option value="clinic">קליניקה / תורים</option>
+              <option value="agency">סוכנות / ייעוץ</option>
+              <option value="ecommerce">מסחר אונליין</option>
+              <option value="professional">משרד מקצועי</option>
             </select>
           </FormGroup>
-
-          <FormGroup label="Number of employees">
+          <FormGroup label="כמה עובדים יש בעסק?">
             <select value={answers.employees} onChange={(event) => setAnswers({ ...answers, employees: event.target.value })}>
+              <option value="">בחרו טווח</option>
               <option value="1">1</option>
               <option value="2-10">2-10</option>
               <option value="11-30">11-30</option>
               <option value="31-plus">31+</option>
             </select>
           </FormGroup>
-
-          <FormGroup label="Main business pain points">
-            <ChipGroup options={painPointOptions} values={answers.painPoints} onToggle={(value) => toggleArrayValue('painPoints', value)} />
-          </FormGroup>
-
-          <FormGroup label="Current tools used">
-            <input
-              value={answers.currentTools}
-              onChange={(event) => setAnswers({ ...answers, currentTools: event.target.value })}
-              placeholder="Example: Gmail, Excel, WhatsApp, calendar, CRM"
-            />
-          </FormGroup>
-
-          <FormGroup label="Monthly budget">
+        </div>
+        <FormGroup label="מהם האתגרים המרכזיים בעסק?">
+          <ChipGroup options={painPointOptions} values={answers.painPoints} onToggle={(value) => toggleArrayValue('painPoints', value)} />
+        </FormGroup>
+        <FormGroup label="באילו כלים העסק משתמש כיום?">
+          <input value={answers.currentTools} onChange={(event) => setAnswers({ ...answers, currentTools: event.target.value })} placeholder="לדוגמה: Gmail, Excel, WhatsApp, יומן, CRM" />
+        </FormGroup>
+        <div className="form-grid">
+          <FormGroup label="מה התקציב החודשי המשוער?">
             <select value={answers.budget} onChange={(event) => setAnswers({ ...answers, budget: event.target.value })}>
-              <option value="under-50">Under $50</option>
+              <option value="">בחרו תקציב</option>
+              <option value="under-50">עד $50</option>
               <option value="50-200">$50-$200</option>
               <option value="200-500">$200-$500</option>
               <option value="500-plus">$500+</option>
             </select>
           </FormGroup>
-
-          <FormGroup label="Technical skill level">
+          <FormGroup label="מה רמת הידע הטכני שלך?">
             <select value={answers.skillLevel} onChange={(event) => setAnswers({ ...answers, skillLevel: event.target.value })}>
-              <option value="beginner">Beginner</option>
-              <option value="intermediate">Intermediate</option>
-              <option value="advanced">Advanced</option>
+              <option value="">בחרו רמה</option>
+              <option value="beginner">מתחיל/ה</option>
+              <option value="intermediate">בינוני/ת</option>
+              <option value="advanced">מתקדם/ת</option>
             </select>
           </FormGroup>
-
-          <FormGroup label="Preferred channels">
-            <ChipGroup options={channelOptions} values={answers.channels} onToggle={(value) => toggleArrayValue('channels', value)} />
-          </FormGroup>
-
-          <FormGroup label="Most important goal">
-            <select value={answers.goal} onChange={(event) => setAnswers({ ...answers, goal: event.target.value })}>
-              <option value="save-time">Save time</option>
-              <option value="reduce-costs">Reduce costs</option>
-              <option value="improve-sales">Improve sales</option>
-              <option value="improve-service">Improve service</option>
-              <option value="organize-data">Organize data</option>
-            </select>
-          </FormGroup>
-        </form>
-      </div>
-      <RecommendationPanel recommendation={recommendation} />
+        </div>
+        <FormGroup label="אילו ערוצים רלוונטיים לעסק?">
+          <ChipGroup options={channelOptions} values={answers.channels} onToggle={(value) => toggleArrayValue('channels', value)} />
+        </FormGroup>
+        <FormGroup label="מה המטרה המרכזית שלך באוטומציה?">
+          <select value={answers.goal} onChange={(event) => setAnswers({ ...answers, goal: event.target.value })}>
+            <option value="">בחרו מטרה</option>
+            <option value="save-time">חיסכון בזמן</option>
+            <option value="reduce-costs">הפחתת עלויות</option>
+            <option value="improve-sales">שיפור מכירות</option>
+            <option value="improve-service">שיפור שירות לקוחות</option>
+            <option value="organize-data">ארגון מידע</option>
+            <option value="improve-processes">שיפור תהליכים פנימיים</option>
+          </select>
+        </FormGroup>
+        {error && <p className="form-error">{error}</p>}
+        <div className="form-actions">
+          <button className="primary-button" type="button" onClick={submitAssessment}>קבלו את ההמלצה</button>
+        </div>
+      </form>
+      {modalOpen && <RecommendationModal recommendation={recommendation} user={user} goTo={goTo} onClose={() => setModalOpen(false)} />}
     </section>
   );
 }
 
-function RecommendationPanel({ recommendation }) {
+function RecommendationModal({ recommendation, user, goTo, onClose }) {
+  const saveAndGoDashboard = () => {
+    onClose();
+    goTo(user ? 'dashboard' : 'signup');
+  };
+
   return (
-    <aside className="recommendation-panel">
-      <span className="eyebrow">Generated recommendation</span>
-      <h2>{recommendation.category}</h2>
-      <div className="badge-row">
-        <Badge label={`Complexity: ${recommendation.complexity}`} />
-        <Badge label={`Impact: ${recommendation.impact}`} />
+    <div className="modal-overlay" role="dialog" aria-modal="true">
+      <div className="recommendation-modal">
+        <button className="modal-close" type="button" onClick={onClose} aria-label="סגירת חלון"><X size={22} /></button>
+        <span className="eyebrow">התוצאה נשמרה בדמו המקומי</span>
+        <h2>ההמלצה שלך מוכנה</h2>
+        <div className="modal-highlight">
+          <strong>קטגוריית האוטומציה המומלצת</strong>
+          <p>{recommendation.category}</p>
+        </div>
+        <div className="badge-row">
+          <Badge label={`רמת מורכבות: ${recommendation.complexity}`} />
+          <Badge label={`השפעה עסקית צפויה: ${recommendation.impact}`} />
+        </div>
+        <h3>כלים מומלצים</h3>
+        <div className="modal-tool-grid">
+          {recommendation.tools.map((tool) => (
+            <div className="modal-tool-card" key={tool}>
+              <strong className="ltr-text">{tool}</strong>
+              <a href={toolLinks[tool]} target="_blank" rel="noopener noreferrer">
+                לאתר הכלי <ExternalLink size={15} />
+              </a>
+            </div>
+          ))}
+        </div>
+        <h3>למה הכלים מתאימים לעסק?</h3>
+        <ul className="clean-list">
+          {recommendation.why.map((reason) => <li key={reason}>{reason}</li>)}
+        </ul>
+        <InfoBlock label="צעד ראשון מומלץ" value={recommendation.firstStep} />
+        {!user && <p className="auth-note">כדי לשמור את ההמלצה להמשך, ניתן ליצור חשבון חינמי.</p>}
+        <div className="modal-actions">
+          <button className="secondary-button" type="button" onClick={saveAndGoDashboard}>שמירת ההמלצה באזור האישי</button>
+          <button className="primary-button" type="button" onClick={() => { onClose(); goTo('consultation'); }}>בקשת ייעוץ</button>
+          <a className="secondary-button" href={toolLinks[recommendation.tools[0]]} target="_blank" rel="noopener noreferrer">פתיחת כלי מומלץ</a>
+          {!user && <button className="secondary-button" type="button" onClick={() => { onClose(); goTo('signup'); }}>יצירת חשבון חינמי</button>}
+        </div>
       </div>
-      <h3>Suggested tools</h3>
-      <div className="tool-pill-list">
-        {recommendation.tools.map((tool) => <span key={tool}>{tool}</span>)}
-      </div>
-      <h3>Why this fits</h3>
-      <ul className="clean-list">
-        {recommendation.why.map((reason) => <li key={reason}>{reason}</li>)}
-      </ul>
-      <h3>First implementation step</h3>
-      <p>{recommendation.firstStep}</p>
-    </aside>
+    </div>
   );
 }
 
 function ToolsComparisonPage() {
   const [query, setQuery] = useState('');
-  const [ease, setEase] = useState('All');
+  const [ease, setEase] = useState('הכל');
   const filteredTools = tools.filter((tool) => {
-    const matchesQuery = `${tool.name} ${tool.mainUseCase} ${tool.bestFor} ${tool.recommendedBusinessType}`
-      .toLowerCase()
-      .includes(query.toLowerCase());
-    const matchesEase = ease === 'All' || tool.easeOfUse === ease;
+    const matchesQuery = `${tool.name} ${tool.mainUseCase} ${tool.bestFor} ${tool.recommendedBusinessType}`.toLowerCase().includes(query.toLowerCase());
+    const matchesEase = ease === 'הכל' || tool.easeOfUse === ease;
     return matchesQuery && matchesEase;
   });
 
   return (
     <section className="page">
-      <SectionIntro
-        title="Tools Comparison"
-        text="Compare common automation platforms by use case, ease of use, integration strength, pricing, and fit for small business types."
-      />
+      <SectionIntro title="השוואת כלי אוטומציה" text="השוואה ממוקדת לעסקים קטנים: שימוש מרכזי, התאמה, קלות שימוש, אינטגרציות, מחיר, יתרונות וחסרונות." />
       <div className="filter-bar">
-        <label className="search-box">
-          <Search size={18} />
-          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search tools, use cases, business types" />
-        </label>
+        <label className="search-box"><Search size={18} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="חיפוש כלי, שימוש או סוג עסק" /></label>
         <select value={ease} onChange={(event) => setEase(event.target.value)}>
-          <option>All</option>
-          <option>High</option>
-          <option>Medium</option>
-          <option>Low</option>
+          <option>הכל</option>
+          <option>גבוהה</option>
+          <option>בינונית</option>
+          <option>נמוכה</option>
         </select>
       </div>
       <div className="table-wrap">
         <table>
           <thead>
             <tr>
-              <th>Tool</th>
-              <th>Main use case</th>
-              <th>Best for</th>
-              <th>Ease</th>
-              <th>Integration</th>
-              <th>Pricing</th>
-              <th>Advantages</th>
-              <th>Disadvantages</th>
-              <th>Recommended business type</th>
+              <th>כלי</th><th>שימוש מרכזי</th><th>מתאים במיוחד ל</th><th>קלות שימוש</th><th>רמת אינטגרציה</th><th>רמת מחיר</th><th>יתרונות</th><th>חסרונות</th><th>סוג עסק מומלץ</th><th>קישור</th>
             </tr>
           </thead>
           <tbody>
             {filteredTools.map((tool) => (
               <tr key={tool.name}>
-                <td><strong>{tool.name}</strong></td>
+                <td><a className="table-link ltr-text" href={tool.url} target="_blank" rel="noopener noreferrer">{tool.name}</a></td>
                 <td>{tool.mainUseCase}</td>
                 <td>{tool.bestFor}</td>
                 <td><Badge label={tool.easeOfUse} compact /></td>
@@ -349,6 +450,7 @@ function ToolsComparisonPage() {
                 <td>{tool.advantages}</td>
                 <td>{tool.disadvantages}</td>
                 <td>{tool.recommendedBusinessType}</td>
+                <td><a className="small-link-button" href={tool.url} target="_blank" rel="noopener noreferrer">לאתר הרשמי</a></td>
               </tr>
             ))}
           </tbody>
@@ -360,47 +462,262 @@ function ToolsComparisonPage() {
 
 function UseCaseLibraryPage() {
   const [query, setQuery] = useState('');
-  const [difficulty, setDifficulty] = useState('All');
+  const [difficulty, setDifficulty] = useState('הכל');
   const filteredUseCases = useCases.filter((useCase) => {
-    const matchesQuery = `${useCase.title} ${useCase.problem} ${useCase.solution} ${useCase.area} ${useCase.tools.join(' ')}`
-      .toLowerCase()
-      .includes(query.toLowerCase());
-    const matchesDifficulty = difficulty === 'All' || useCase.difficulty === difficulty;
+    const matchesQuery = `${useCase.title} ${useCase.problem} ${useCase.solution} ${useCase.area} ${useCase.tools.join(' ')}`.toLowerCase().includes(query.toLowerCase());
+    const matchesDifficulty = difficulty === 'הכל' || useCase.difficulty === difficulty;
     return matchesQuery && matchesDifficulty;
   });
 
   return (
     <section className="page">
-      <SectionIntro
-        title="AI Use Case Library"
-        text="Practical automation ideas that small businesses can understand, evaluate, and implement gradually."
-      />
+      <SectionIntro title="ספריית מקרי שימוש" text="דוגמאות מעשיות לאוטומציות שעסקים קטנים יכולים להבין, לתעדף וליישם בהדרגה." />
       <div className="filter-bar">
-        <label className="search-box">
-          <Search size={18} />
-          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search by problem, tool, or area" />
-        </label>
+        <label className="search-box"><Search size={18} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="חיפוש לפי בעיה, כלי או תחום" /></label>
         <select value={difficulty} onChange={(event) => setDifficulty(event.target.value)}>
-          <option>All</option>
-          <option>Low</option>
-          <option>Medium</option>
-          <option>High</option>
+          <option>הכל</option><option>נמוכה</option><option>בינונית</option><option>גבוהה</option>
         </select>
       </div>
       <div className="usecase-grid">
         {filteredUseCases.map((useCase) => (
           <article className="usecase-card" key={useCase.title}>
-            <div className="card-topline">
-              <Badge label={useCase.area} />
-              <Badge label={useCase.difficulty} />
-            </div>
+            <div className="card-topline"><Badge label={useCase.area} /><Badge label={`רמת קושי: ${useCase.difficulty}`} /></div>
             <h3>{useCase.title}</h3>
-            <InfoBlock label="Business problem" value={useCase.problem} />
-            <InfoBlock label="Automation solution" value={useCase.solution} />
-            <InfoBlock label="Expected benefit" value={useCase.benefit} />
+            <InfoBlock label="הבעיה העסקית" value={useCase.problem} />
+            <InfoBlock label="פתרון האוטומציה" value={useCase.solution} />
+            <InfoBlock label="תועלת צפויה" value={useCase.benefit} />
             <div className="tool-pill-list">
-              {useCase.tools.map((tool) => <span key={tool}>{tool}</span>)}
+              {useCase.tools.map((tool) => toolLinks[tool]
+                ? <a key={tool} className="tool-pill-link ltr-text" href={toolLinks[tool]} target="_blank" rel="noopener noreferrer">{tool}</a>
+                : <span className="ltr-text" key={tool}>{tool}</span>)}
             </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function SignUpPage({ goTo, onAuth }) {
+  const [form, setForm] = useState({ fullName: '', email: '', businessName: '', password: '' });
+  const [message, setMessage] = useState('');
+  const submit = () => {
+    if (!form.fullName || !form.email || !form.businessName || !form.password) {
+      setMessage('יש למלא את כל השדות להרשמה.');
+      return;
+    }
+    signUpDemoUser(form);
+    createLead({ eventType: 'Sign Up', ...form });
+    onAuth();
+    goTo('dashboard');
+  };
+  return <AuthForm title="הרשמה" form={form} setForm={setForm} message={message} submitLabel="יצירת חשבון חינמי" onSubmit={submit} goTo={goTo} showBusiness />;
+}
+
+function LoginPage({ goTo, onAuth }) {
+  const [form, setForm] = useState({ email: '', password: '' });
+  const [message, setMessage] = useState('');
+  const submit = () => {
+    const user = loginDemoUser(form.email, form.password);
+    if (!user) {
+      setMessage('פרטי ההתחברות אינם תואמים לחשבון הדמו השמור.');
+      return;
+    }
+    onAuth();
+    goTo('dashboard');
+  };
+  return <AuthForm title="התחברות" form={form} setForm={setForm} message={message} submitLabel="התחברות" onSubmit={submit} goTo={goTo} />;
+}
+
+function AuthForm({ title, form, setForm, message, submitLabel, onSubmit, goTo, showBusiness = false }) {
+  return (
+    <section className="page auth-page">
+      <div className="auth-card">
+        <span className="eyebrow">דמו אקדמי</span>
+        <h2>{title}</h2>
+        <p>המערכת משתמשת ב-localStorage לצורך הדגמה בלבד. אין להזין סיסמאות אמיתיות.</p>
+        {showBusiness && <input value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} placeholder="שם מלא" />}
+        <input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="אימייל" />
+        {showBusiness && <input value={form.businessName} onChange={(e) => setForm({ ...form, businessName: e.target.value })} placeholder="שם העסק" />}
+        <input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder="סיסמה" />
+        {message && <p className="form-error">{message}</p>}
+        <button className="primary-button" type="button" onClick={onSubmit}>{submitLabel}</button>
+        {!showBusiness && <button className="link-button" type="button" onClick={() => goTo('forgot')}>שכחתי סיסמה</button>}
+      </div>
+    </section>
+  );
+}
+
+function ForgotPasswordPage({ goTo }) {
+  return (
+    <section className="page auth-page">
+      <div className="auth-card">
+        <LockKeyhole size={28} />
+        <h2>שכחתי סיסמה</h2>
+        <p>זהו עמוד דמו לפרויקט אקדמי. בגרסה אמיתית תישלח הודעת איפוס מאובטחת דרך שרת.</p>
+        <button className="secondary-button" type="button" onClick={() => goTo('login')}>חזרה להתחברות</button>
+      </div>
+    </section>
+  );
+}
+
+function DashboardPage({ user, goTo }) {
+  const saved = readSavedAssessment();
+  if (!user) {
+    return (
+      <section className="page auth-page">
+        <div className="auth-card">
+          <h2>האזור האישי דורש התחברות</h2>
+          <p>צרו חשבון דמו או התחברו כדי לראות המלצות שמורות.</p>
+          <button className="primary-button" type="button" onClick={() => goTo('login')}>התחברות</button>
+        </div>
+      </section>
+    );
+  }
+  return (
+    <section className="page content-page">
+      <SectionIntro title={`ברוך הבא, ${user.fullName}`} text={`שם העסק: ${user.businessName}`} />
+      {saved ? (
+        <div className="dashboard-grid">
+          <article className="summary-item">
+            <h3>תוצאת השאלון האחרונה</h3>
+            <p>{saved.recommendation.category}</p>
+            <div className="badge-row"><Badge label={`מורכבות: ${saved.recommendation.complexity}`} /><Badge label={`השפעה: ${saved.recommendation.impact}`} /></div>
+          </article>
+          <article className="summary-item">
+            <h3>כלים מומלצים</h3>
+            <div className="tool-pill-list">{saved.recommendation.tools.map((tool) => <span className="ltr-text" key={tool}>{tool}</span>)}</div>
+          </article>
+          <article className="summary-item wide">
+            <h3>הצעדים הבאים</h3>
+            <p>{saved.recommendation.firstStep}</p>
+            <button className="primary-button" type="button" onClick={() => goTo('consultation')}>בקשת ייעוץ לאוטומציה</button>
+          </article>
+        </div>
+      ) : (
+        <article className="summary-item">
+          <p>עדיין לא שמרת המלצה. מלא את שאלון ההתאמה כדי לקבל המלצה מותאמת.</p>
+          <button className="primary-button" type="button" onClick={() => goTo('assessment')}>מעבר לשאלון</button>
+        </article>
+      )}
+    </section>
+  );
+}
+
+function PlansPage({ user, goTo }) {
+  const handlePlan = (planName) => {
+    createLead({
+      eventType: 'Plan Interest',
+      selectedPlan: planName,
+      fullName: user?.fullName,
+      email: user?.email,
+      businessName: user?.businessName,
+    });
+    if (!user) goTo('consultation', { selectedPlan: planName });
+    else goTo('consultation', { selectedPlan: planName });
+  };
+
+  return (
+    <section className="page">
+      <SectionIntro title="מסלולים" text="מסלולי דמו עסקיים. אין כאן סליקה אמיתית או תשלום בפועל." />
+      <div className="plans-grid">
+        {plans.map((plan) => (
+          <article className={plan.featured ? 'plan-card featured' : 'plan-card'} key={plan.name}>
+            <h3>{plan.name}</h3>
+            <strong className="plan-price">{plan.price}</strong>
+            <ul className="clean-list">{plan.features.map((feature) => <li key={feature}>{feature}</li>)}</ul>
+            <button className="primary-button" type="button" onClick={() => handlePlan(plan.name)}>{plan.button}</button>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function ConsultationPage({ user, selectedPlan }) {
+  const [form, setForm] = useState({
+    fullName: user?.fullName || '',
+    email: user?.email || '',
+    phone: '',
+    businessName: user?.businessName || '',
+    businessType: '',
+    need: '',
+    selectedPlan: selectedPlan || '',
+    message: '',
+  });
+  const [status, setStatus] = useState('');
+
+  const submit = () => {
+    if (!form.fullName || !form.email || !form.phone || !form.businessName || !form.need) {
+      setStatus('יש למלא את שדות החובה לפני שליחת הבקשה.');
+      return;
+    }
+    createLead({ eventType: 'Consultation Request', ...form });
+    setStatus('תודה! הבקשה נשמרה. בגרסה עסקית מלאה הפנייה תישלח לצוות AutoBiz AI Advisor.');
+  };
+
+  return (
+    <section className="page content-page">
+      <SectionIntro title="בקשת ייעוץ" text="השאירו פרטים לצורך הדגמת יצירת פנייה ושמירתה במערכת ניהול הפניות המקומית." />
+      <div className="consultation-form">
+        <input value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} placeholder="שם מלא" />
+        <input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="אימייל" />
+        <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="מספר טלפון" />
+        <input value={form.businessName} onChange={(e) => setForm({ ...form, businessName: e.target.value })} placeholder="שם העסק" />
+        <input value={form.businessType} onChange={(e) => setForm({ ...form, businessType: e.target.value })} placeholder="סוג העסק" />
+        <select value={form.selectedPlan} onChange={(e) => setForm({ ...form, selectedPlan: e.target.value })}>
+          <option value="">מסלול נבחר</option>
+          <option>מסלול חינמי</option><option>מסלול עסקי</option><option>מסלול ייעוץ</option>
+        </select>
+        <textarea value={form.need} onChange={(e) => setForm({ ...form, need: e.target.value })} placeholder="הצורך המרכזי באוטומציה" />
+        <textarea value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder="הודעה חופשית" />
+        {status && <p className={status.startsWith('תודה') ? 'success-message' : 'form-error'}>{status}</p>}
+        <button className="primary-button" type="button" onClick={submit}>שליחת בקשה</button>
+      </div>
+    </section>
+  );
+}
+
+function AdminLeadsPage() {
+  const [leads, setLeads] = useState(() => getLeads());
+  const [filter, setFilter] = useState('הכל');
+  const eventTypes = ['הכל', ...Array.from(new Set(leads.map((lead) => lead.eventType)))];
+  const visible = filter === 'הכל' ? leads : leads.filter((lead) => lead.eventType === filter);
+
+  const downloadCsv = () => {
+    const blob = new Blob([exportLeadsToCsv()], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'autobiz-leads.csv';
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const clearDemo = () => {
+    clearLeads();
+    setLeads([]);
+  };
+
+  return (
+    <section className="page">
+      <SectionIntro title="ניהול פניות" text="עמוד ניהול דמו: הפניות נשמרות מקומית בדפדפן לצורך הפרויקט האקדמי בלבד." />
+      <div className="admin-toolbar">
+        <Badge label={`סה״כ פניות: ${leads.length}`} />
+        <select value={filter} onChange={(e) => setFilter(e.target.value)}>{eventTypes.map((type) => <option value={type} key={type}>{type === 'הכל' ? type : eventTypeLabels[type] || type}</option>)}</select>
+        <button className="secondary-button" type="button" onClick={downloadCsv}><Download size={17} /> ייצוא לקובץ CSV</button>
+        <button className="secondary-button" type="button" onClick={clearDemo}>ניקוי פניות דמו</button>
+      </div>
+      <p className="demo-note">עמוד ניהול דמו: הפניות נשמרות מקומית בדפדפן לצורך הפרויקט האקדמי בלבד.</p>
+      <div className="lead-grid">
+        {visible.map((lead) => (
+          <article className="lead-card" key={lead.id}>
+            <Badge label={eventTypeLabels[lead.eventType] || lead.eventType} />
+            <h3>{lead.fullName || 'ללא שם'}</h3>
+            <p className="ltr-text">{lead.email || 'ללא אימייל'}</p>
+            <p>שם העסק: {lead.businessName || 'לא צוין'}</p>
+            <p>מסלול נבחר: {lead.selectedPlan || 'לא צוין'}</p>
+            <p>תאריך יצירה: {new Date(lead.createdAt).toLocaleString('he-IL')}</p>
           </article>
         ))}
       </div>
@@ -411,57 +728,20 @@ function UseCaseLibraryPage() {
 function MethodologyPage() {
   return (
     <section className="page content-page">
-      <SectionIntro
-        title="AI Tools Methodology"
-        text="This page documents how AI tools were used as part of the academic project, including strengths, limitations, prompt improvement, and quality checks."
-      />
+      <SectionIntro title="מתודולוגיית שימוש ב-AI" text="תיעוד שימוש משמעותי בכלי AI בפרויקט, כולל בדיקות איכות, שיפור פרומפטים ותובנות." />
       <div className="method-grid">
-        <MethodCard
-          title="AI Tool 1: Codex"
-          items={[
-            'Planned the React code structure and component hierarchy.',
-            'Built the frontend, page routing, responsive layout, and UI components.',
-            'Created reusable data files for tools, use cases, and automation areas.',
-            'Improved UI/UX through navigation, filtering, badges, tables, and recommendation panels.',
-            'Debugged and refactored the project to make it easier to present and maintain.',
-          ]}
-        />
-        <MethodCard
-          title="AI Tool 2: ChatGPT / AI Research Tool"
-          items={[
-            'Supported market research on automation categories and common small-business tools.',
-            'Helped define comparison criteria such as ease of use, integration level, and pricing level.',
-            'Generated and refined practical business use cases.',
-            'Improved explanations so non-technical business owners can understand the value.',
-            'Helped validate that the recommendation logic is explainable and realistic.',
-          ]}
-        />
+        <MethodCard title="איך השתמשנו ב-Codex" items={['תכנון מבנה הקוד', 'בניית האתר', 'יצירת קומפוננטות', 'שיפור UI/UX', 'תיקון שגיאות', 'שיפור מבנה הפרויקט']} />
+        <MethodCard title="איך השתמשנו ב-ChatGPT / Gemini" items={['מחקר שוק', 'הגדרת קריטריונים להשוואה', 'יצירת מקרי שימוש עסקיים', 'שיפור לוגיקת ההמלצה', 'ניסוח תוכן', 'הכנה למסמך הסיכום']} />
       </div>
       <div className="insight-band">
-        <InfoBlock label="What worked well" value="AI was strongest when the task had clear structure: pages, fields, comparison criteria, and a target audience. It helped move from idea to working prototype quickly." />
-        <InfoBlock label="What did not work at first" value="Broad prompts produced generic results. The output improved after adding exact pages, academic requirements, tool lists, and evaluation criteria." />
-        <InfoBlock label="How prompts improved" value="Prompts became more specific, included constraints, asked for explainable logic, and separated design, functionality, and academic documentation." />
-        <InfoBlock label="Quality checking" value="The project was checked by running the app, reviewing navigation, testing the questionnaire, validating filters, and making sure content supports a 10-minute presentation." />
+        <InfoBlock label="מה עבד טוב" value="כאשר הדרישות היו ברורות, כלי ה-AI עזרו להפוך רעיון למוצר עובד במהירות." />
+        <InfoBlock label="מה לא עבד בהתחלה" value="פרומפטים כלליים יצרו תוכן גנרי מדי. התוצאה השתפרה אחרי הגדרת קהל יעד, עמודים וקריטריונים." />
+        <InfoBlock label="איך שיפרנו פרומפטים" value="הוספנו דרישות מדויקות, שמות כלים, מגבלות אקדמיות, לוגיקה מוסברת ודרישות בדיקה." />
+        <InfoBlock label="בדיקת איכות" value="בדקנו ניווט, טפסים, מודל המלצה, קישורים רשמיים, שמירת פניות, ויכולת הצגה בכיתה." />
       </div>
       <div className="method-grid">
-        <MethodCard
-          title="Advantages and disadvantages"
-          items={[
-            'Codex advantage: fast implementation and refactoring inside the real project files.',
-            'Codex disadvantage: it still needs human review for business assumptions and academic accuracy.',
-            'ChatGPT advantage: useful for brainstorming market criteria, prompts, and explanations.',
-            'ChatGPT disadvantage: research-style output must be verified and adapted to the project context.',
-          ]}
-        />
-        <MethodCard
-          title="Recommendations for students"
-          items={[
-            'Start with a clear product goal before asking AI to code.',
-            'Ask AI to explain business logic in a way that can be defended in class.',
-            'Test every generated feature instead of assuming it works.',
-            'Keep prompts and changes documented for the final academic summary.',
-          ]}
-        />
+        <MethodCard title="יתרונות וחסרונות של כלי AI" items={['יתרון: האצה משמעותית של תכנון ופיתוח.', 'יתרון: עזרה בניסוח עסקי ובהשוואת חלופות.', 'חיסרון: נדרשת בדיקה אנושית של הנחות עסקיות.', 'חיסרון: אסור להכניס מפתחות API או סיסמאות לקוד frontend.']} />
+        <MethodCard title="המלצות לסטודנט חדש" items={['להגדיר בעיה עסקית לפני שמבקשים קוד.', 'לבקש לוגיקה שקל להסביר.', 'לבדוק כל פיצ׳ר שנוצר.', 'לתעד פרומפטים ותובנות לתוצר הסופי.']} />
       </div>
     </section>
   );
@@ -469,69 +749,35 @@ function MethodologyPage() {
 
 function AcademicSummaryPage() {
   const sections = [
-    ['How we came up with the idea', 'Small businesses often hear about AI automation but struggle to choose tools. The idea was to build a decision-support website that connects business needs to practical automation options.'],
-    ['AI tools tested', 'Codex was used for frontend planning and implementation. ChatGPT or another AI research tool was used for market framing, comparison criteria, and use-case drafting.'],
-    ['Tools finally used and why', 'Codex was selected for coding because it can work directly with project files. ChatGPT-style research support was used because it is effective for brainstorming and explanation refinement.'],
-    ['Important prompts used', 'Prompts asked for a React + Vite app, an explainable questionnaire, real automation tool comparison, AI use cases, methodology documentation, and a README presentation plan.'],
-    ['Feedback received from users', 'Suggested feedback areas include whether the questionnaire is understandable, whether recommendations feel realistic, and whether the comparison table supports decision making.'],
-    ['Improvements made based on feedback', 'The project can be improved by adding more industries, scoring weights, local pricing, Hebrew language support, and exportable reports.'],
-    ['What was good in the process', 'The structured requirements helped AI produce a complete product with clear academic relevance and class-demo readiness.'],
-    ['What could be improved', 'Future work could include real market data, user accounts, saved assessments, and verified pricing from vendor websites.'],
-    ['Personal and group lessons learned', 'AI tools are powerful for prototyping, but students still need to define the business problem, check outputs, and explain decisions critically.'],
+    ['איך הגענו לרעיון?', 'זיהינו שעסקים קטנים רוצים להשתמש באוטומציות AI אך מתקשים לבחור כלים בגלל עומס אפשרויות, מחירים ורמות מורכבות.'],
+    ['אילו כלים בחנו?', 'בחננו כלי אוטומציה, CRM, כלי AI לכתיבה וסיכום, וכלים משרדיים כמו Google Workspace ו-Microsoft Power Automate.'],
+    ['באילו כלים השתמשנו בסוף ולמה?', 'Codex שימש לבנייה ושיפור הקוד. ChatGPT / Gemini שימשו למחקר, ניסוח, מקרי שימוש וחשיבה על קריטריונים.'],
+    ['פרומפטים משמעותיים', 'פרומפטים שביקשו אתר React + Vite, RTL בעברית, שאלון התאמה, המלצה במודל Popout, מערכת פניות ודמו אקדמי.'],
+    ['פידבק שקיבלנו ממשתמשים', 'מומלץ לבדוק האם השאלון ברור, האם ההמלצה מרגישה מעשית, והאם טבלת הכלים עוזרת לקבל החלטה.'],
+    ['שיפורים בעקבות פידבק', 'ניתן להוסיף ענפים עסקיים, משקולות ניקוד, מחירים עדכניים, דוח PDF ושפה נוספת.'],
+    ['מה היה טוב בתהליך?', 'הדרישות המפורטות עזרו להפוך רעיון מופשט למוצר שניתן להציג בכיתה.'],
+    ['מה ניתן היה לשפר?', 'בגרסה הבאה כדאי לשלב נתוני שוק אמיתיים, שרת, אימיילים, ושמירת משתמשים מאובטחת.'],
+    ['לקחים אישיים וקבוצתיים', 'AI מקצר תהליכים אך אינו מחליף חשיבה ביקורתית, בדיקות איכות והבנת הערך העסקי.'],
+    ['שימוש בכלי AI בכתיבת המסמך', 'ניתן להשתמש בתוכן העמודים כבסיס למסמך DOCX, אך יש לערוך, לאמת ולהוסיף רפלקציה אישית.'],
   ];
-
   return (
     <section className="page content-page">
-      <SectionIntro
-        title="Project Summary"
-        text="Structured material the team can later adapt into the final DOCX summary for the course."
-      />
-      <div className="summary-list">
-        {sections.map(([title, text]) => (
-          <article className="summary-item" key={title}>
-            <h3>{title}</h3>
-            <p>{text}</p>
-          </article>
-        ))}
-      </div>
+      <SectionIntro title="סיכום אקדמי" text="תוכן מובנה שיכול לשמש בסיס לכתיבת מסמך הסיכום הסופי של הפרויקט." />
+      <div className="summary-list">{sections.map(([title, text]) => <article className="summary-item" key={title}><h3>{title}</h3><p>{text}</p></article>)}</div>
     </section>
   );
 }
 
 function SectionIntro({ title, text }) {
-  return (
-    <div className="section-intro">
-      <span className="eyebrow">AI Business Automation Advisor</span>
-      <h2>{title}</h2>
-      <p>{text}</p>
-    </div>
-  );
+  return <div className="section-intro"><span className="eyebrow">AutoBiz AI Advisor</span><h2>{title}</h2><p>{text}</p></div>;
 }
 
 function FormGroup({ label, children }) {
-  return (
-    <label className="form-group">
-      <span>{label}</span>
-      {children}
-    </label>
-  );
+  return <label className="form-group"><span>{label}</span>{children}</label>;
 }
 
 function ChipGroup({ options, values, onToggle }) {
-  return (
-    <div className="chip-group">
-      {options.map(([value, label]) => (
-        <button
-          className={values.includes(value) ? 'chip selected' : 'chip'}
-          key={value}
-          type="button"
-          onClick={() => onToggle(value)}
-        >
-          {label}
-        </button>
-      ))}
-    </div>
-  );
+  return <div className="chip-group">{options.map(([value, label]) => <button className={values.includes(value) ? 'chip selected' : 'chip'} key={value} type="button" onClick={() => onToggle(value)}>{label}</button>)}</div>;
 }
 
 function Badge({ label, compact = false }) {
@@ -539,23 +785,19 @@ function Badge({ label, compact = false }) {
 }
 
 function InfoBlock({ label, value }) {
-  return (
-    <div className="info-block">
-      <strong>{label}</strong>
-      <p>{value}</p>
-    </div>
-  );
+  return <div className="info-block"><strong>{label}</strong><p>{value}</p></div>;
 }
 
 function MethodCard({ title, items }) {
-  return (
-    <article className="method-card">
-      <h3>{title}</h3>
-      <ul className="clean-list">
-        {items.map((item) => <li key={item}>{item}</li>)}
-      </ul>
-    </article>
-  );
+  return <article className="method-card"><h3>{title}</h3><ul className="clean-list">{items.map((item) => <li key={item}>{item}</li>)}</ul></article>;
+}
+
+function readSavedAssessment() {
+  try {
+    return JSON.parse(localStorage.getItem(assessmentStorageKey));
+  } catch {
+    return null;
+  }
 }
 
 export default App;

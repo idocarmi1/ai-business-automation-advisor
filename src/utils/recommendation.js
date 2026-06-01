@@ -1,42 +1,49 @@
 const categoryRules = {
-  'Customer Service Automation': ['customer-service', 'improve-service', 'website', 'whatsapp'],
-  'CRM & Lead Management Automation': ['lead-management', 'crm-workflows', 'improve-sales', 'crm'],
-  'Scheduling & Communication Automation': ['appointment-scheduling', 'email-whatsapp', 'whatsapp', 'calendar', 'save-time'],
-  'Document & Invoice Automation': ['invoice-documents', 'organize-data', 'email'],
-  'Marketing Content Automation': ['social-media-content', 'social-media', 'improve-sales'],
-  'Internal Workflow Automation': ['task-management', 'internal-processes', 'reduce-costs', 'organize-data'],
+  'אוטומציית שירות לקוחות': ['customer-service', 'improve-service', 'website', 'whatsapp'],
+  'אוטומציית CRM וניהול לידים': ['lead-management', 'crm-workflows', 'improve-sales', 'crm'],
+  'אוטומציית תיאום ותקשורת': ['appointment-scheduling', 'email-whatsapp', 'whatsapp', 'calendar', 'save-time'],
+  'אוטומציית מסמכים וחשבוניות': ['invoice-documents', 'organize-data', 'email'],
+  'אוטומציית שיווק ותוכן': ['social-media-content', 'social-media', 'improve-sales'],
+  'אוטומציית תהליכים פנימיים': ['task-management', 'internal-processes', 'reduce-costs', 'organize-data'],
 };
 
 const categoryToolMap = {
-  'Customer Service Automation': ['HubSpot', 'ChatGPT / OpenAI API', 'Make'],
-  'CRM & Lead Management Automation': ['HubSpot', 'Zapier', 'Monday.com'],
-  'Scheduling & Communication Automation': ['Make', 'Zapier', 'Google Workspace automation'],
-  'Document & Invoice Automation': ['Microsoft Power Automate', 'Google Workspace automation', 'Make'],
-  'Marketing Content Automation': ['ChatGPT / OpenAI API', 'Zapier', 'Google Workspace automation'],
-  'Internal Workflow Automation': ['Monday.com', 'Make', 'n8n'],
+  'אוטומציית שירות לקוחות': ['HubSpot', 'ChatGPT / OpenAI API', 'Make'],
+  'אוטומציית CRM וניהול לידים': ['HubSpot', 'Zapier', 'Monday.com'],
+  'אוטומציית תיאום ותקשורת': ['Make', 'Zapier', 'Google Workspace Automation'],
+  'אוטומציית מסמכים וחשבוניות': ['Microsoft Power Automate', 'Google Workspace Automation', 'Make'],
+  'אוטומציית שיווק ותוכן': ['ChatGPT / OpenAI API', 'Zapier', 'Google Workspace Automation'],
+  'אוטומציית תהליכים פנימיים': ['Monday.com', 'Make', 'n8n'],
 };
 
 const labels = {
-  'customer-service': 'customer service',
-  'lead-management': 'lead management',
-  'appointment-scheduling': 'appointment scheduling',
-  'email-whatsapp': 'email and WhatsApp communication',
-  'invoice-documents': 'invoice and document handling',
-  'social-media-content': 'social media content',
-  'task-management': 'task management',
-  'crm-workflows': 'CRM workflows',
-  'internal-processes': 'internal business processes',
-  email: 'email',
+  service: 'עסק שירות',
+  retail: 'קמעונאות / חנות',
+  clinic: 'קליניקה / תורים',
+  agency: 'סוכנות / ייעוץ',
+  ecommerce: 'מסחר אונליין',
+  professional: 'משרד מקצועי',
+  'customer-service': 'שירות לקוחות',
+  'lead-management': 'ניהול לידים',
+  'appointment-scheduling': 'תיאום פגישות',
+  'email-whatsapp': 'מיילים ו-WhatsApp',
+  'invoice-documents': 'חשבוניות ומסמכים',
+  'social-media-content': 'תוכן לרשתות חברתיות',
+  'task-management': 'ניהול משימות',
+  'crm-workflows': 'תהליכי CRM',
+  'internal-processes': 'תהליכים פנימיים',
+  email: 'אימייל',
   whatsapp: 'WhatsApp',
-  website: 'website',
+  website: 'אתר',
   crm: 'CRM',
-  calendar: 'calendar',
-  'social-media': 'social media',
-  'save-time': 'saving time',
-  'reduce-costs': 'reducing costs',
-  'improve-sales': 'improving sales',
-  'improve-service': 'improving service',
-  'organize-data': 'organizing data',
+  calendar: 'יומן',
+  'social-media': 'רשתות חברתיות',
+  'save-time': 'חיסכון בזמן',
+  'reduce-costs': 'הפחתת עלויות',
+  'improve-sales': 'שיפור מכירות',
+  'improve-service': 'שיפור שירות לקוחות',
+  'organize-data': 'ארגון מידע',
+  'improve-processes': 'שיפור תהליכים פנימיים',
 };
 
 export function generateRecommendation(answers) {
@@ -51,33 +58,33 @@ export function generateRecommendation(answers) {
     score: rules.reduce((total, rule) => total + (signals.includes(rule) ? 1 : 0), 0),
   }));
 
-  const best = scored.sort((a, b) => b.score - a.score)[0]?.category || 'Internal Workflow Automation';
+  const best = scored.sort((a, b) => b.score - a.score)[0]?.category || 'אוטומציית תהליכים פנימיים';
   const selectedPainPoints = answers.painPoints.map((item) => labels[item]).filter(Boolean);
   const selectedChannels = answers.channels.map((item) => labels[item]).filter(Boolean);
   const isTechnical = answers.skillLevel === 'advanced' || answers.skillLevel === 'intermediate';
   const lowBudget = answers.budget === 'under-50';
-  const highComplexitySignals = answers.painPoints.length >= 4 || answers.channels.length >= 5 || best.includes('Document');
+  const highComplexitySignals = answers.painPoints.length >= 4 || answers.channels.length >= 5 || best.includes('מסמכים');
 
-  let complexity = 'Low';
-  if (highComplexitySignals || answers.skillLevel === 'beginner') complexity = 'Medium';
-  if (answers.skillLevel === 'advanced' && answers.painPoints.length >= 5) complexity = 'High';
+  let complexity = 'נמוכה';
+  if (highComplexitySignals || answers.skillLevel === 'beginner') complexity = 'בינונית';
+  if (answers.skillLevel === 'advanced' && answers.painPoints.length >= 5) complexity = 'גבוהה';
 
-  let impact = 'Medium';
-  if (answers.employees === '11-30' || answers.employees === '31-plus' || answers.goal === 'improve-sales') impact = 'High';
-  if (answers.employees === '1' && answers.painPoints.length <= 1) impact = 'Low';
+  let impact = 'בינונית';
+  if (answers.employees === '11-30' || answers.employees === '31-plus' || answers.goal === 'improve-sales') impact = 'גבוהה';
+  if (answers.employees === '1' && answers.painPoints.length <= 1) impact = 'נמוכה';
 
   let suggestedTools = categoryToolMap[best] || ['Make', 'Zapier', 'ChatGPT / OpenAI API'];
   if (isTechnical && !suggestedTools.includes('n8n')) suggestedTools = [...suggestedTools.slice(0, 2), 'n8n'];
   if (lowBudget) {
     suggestedTools = suggestedTools
-      .map((tool) => (tool === 'HubSpot' ? 'Google Workspace automation' : tool))
+      .map((tool) => (tool === 'HubSpot' ? 'Google Workspace Automation' : tool))
       .filter((tool, index, list) => list.indexOf(tool) === index);
   }
 
   const why = [
-    `The business selected ${selectedPainPoints.join(', ') || 'general operational work'} as main pain points.`,
-    `The preferred channels are ${selectedChannels.join(', ') || 'standard digital channels'}, so the recommendation favors tools with practical integrations.`,
-    `The goal of ${labels[answers.goal] || 'business improvement'} points to workflows that create measurable value quickly.`,
+    `העסק סימן את ${selectedPainPoints.join(', ') || 'התהליכים התפעוליים'} כאתגרים מרכזיים.`,
+    `הערוצים הרלוונטיים הם ${selectedChannels.join(', ') || 'ערוצים דיגיטליים בסיסיים'}, ולכן ההמלצה מתמקדת בכלים עם אינטגרציות שימושיות.`,
+    `המטרה המרכזית היא ${labels[answers.goal] || 'שיפור עסקי'}, ולכן נבחרו תהליכים שאפשר למדוד בהם ערך במהירות.`,
   ];
 
   return {
@@ -91,23 +98,23 @@ export function generateRecommendation(answers) {
 }
 
 function buildFirstStep(category, answers) {
-  const channel = labels[answers.channels[0]] || 'the most active customer channel';
-  const painPoint = labels[answers.painPoints[0]] || 'the highest-volume manual task';
+  const channel = labels[answers.channels[0]] || 'הערוץ הפעיל ביותר מול לקוחות';
+  const painPoint = labels[answers.painPoints[0]] || 'המשימה הידנית המרכזית';
 
   if (category.includes('CRM')) {
-    return `Map the current lead process from ${channel} to first customer response, then automate one lead capture flow into a CRM.`;
+    return `למפות את תהליך הליד הנוכחי מ-${channel} ועד תגובה ראשונה, ואז לחבר זרימת ליד אחת ל-CRM.`;
   }
-  if (category.includes('Scheduling')) {
-    return `Start with one reminder workflow for ${channel}, measure no-shows for two weeks, and expand only after the message is reliable.`;
+  if (category.includes('תיאום')) {
+    return `להתחיל בתזכורת אחת דרך ${channel}, למדוד ירידה באי-הופעות במשך שבועיים, ואז להרחיב.`;
   }
-  if (category.includes('Document')) {
-    return `Choose one document process, such as invoice reminders, and define the data fields needed before connecting automation tools.`;
+  if (category.includes('מסמכים')) {
+    return 'לבחור תהליך מסמכים אחד, למשל תזכורות לחשבוניות, ולהגדיר מראש אילו שדות נתונים נדרשים.';
   }
-  if (category.includes('Marketing')) {
-    return `Create a weekly content template and use AI to draft posts from approved business updates before publishing manually.`;
+  if (category.includes('שיווק')) {
+    return 'להכין תבנית תוכן שבועית ולהשתמש ב-AI ליצירת טיוטות מפוסטים ועדכונים מאושרים.';
   }
-  if (category.includes('Customer')) {
-    return `Collect common ${painPoint} messages, create categories, and test AI summaries with human review before automating responses.`;
+  if (category.includes('שירות')) {
+    return `לאסוף דוגמאות של פניות בנושא ${painPoint}, להגדיר קטגוריות, ולבדוק סיכומי AI לפני אוטומציה מלאה.`;
   }
-  return `Document the manual steps for ${painPoint}, then automate the first repetitive handoff with clear ownership and a success metric.`;
+  return `לתעד את שלבי העבודה סביב ${painPoint}, ואז לאוטומט את ההעברה הידנית הראשונה עם מדד הצלחה ברור.`;
 }

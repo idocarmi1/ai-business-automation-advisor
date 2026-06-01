@@ -1,135 +1,146 @@
-# AI Business Automation Advisor
+# AutoBiz AI Advisor
 
-AI Business Automation Advisor is a modern frontend web application for the course **AI Applications in Business - Information Systems Program**. The project helps small businesses evaluate, compare, and choose AI automation systems and business automation tools.
+AutoBiz AI Advisor הוא פרויקט גמר אקדמי לקורס **יישומי AI בעולם העסקי - תוכנית מערכות מידע**. האתר בנוי כאפליקציית React + Vite בעברית מלאה ובכיוון RTL, ומטרתו לעזור לעסקים קטנים לבחור כלי אוטומציה ו-AI שמתאימים לצרכים שלהם.
 
-## Project Purpose
+## מטרת הפרויקט
 
-Small business owners often know that automation can save time and improve service, but they struggle to decide which tools fit their real needs, budget, channels, and technical skill level. This website acts as a decision-support platform that turns business context into a practical automation recommendation.
+עסקים קטנים רוצים לחסוך זמן, לשפר שירות, לארגן מידע ולהגדיל מכירות, אך מתקשים לבחור בין כלים כמו Zapier, Make, HubSpot, OpenAI וכלי Google או Microsoft. האתר משמש כפלטפורמת Decision Support ראשונית: הוא אוסף מידע על העסק, מפעיל לוגיקת המלצה מוסברת, מציג כלי אוטומציה רלוונטיים ושומר פניות דמו לצורך הצגה בכיתה.
 
-## Main Features
+## קהל היעד
 
-- Professional landing page for the business problem and automation value.
-- Interactive business automation assessment with React state.
-- Rule-based recommendation engine with explainable results.
-- Suggested automation category, tools, complexity, impact, and first implementation step.
-- Comparison table for Zapier, Make, n8n, Monday.com, HubSpot, ChatGPT / OpenAI API, Google Workspace automation, and Microsoft Power Automate.
-- Search and filtering for tools and AI use cases.
-- AI use case library with business problem, solution, tools, benefit, and difficulty.
-- AI methodology page explaining meaningful use of Codex and ChatGPT-style research tools.
-- Academic project summary page for later DOCX writing.
-- Fully responsive layout for desktop and mobile.
+- בעלי עסקים קטנים
+- עצמאים ופרילנסרים
+- צוותים קטנים
+- עסקים שרוצים להתחיל עם אוטומציות AI אך לא יודעים מאיפה להתחיל
 
-## AI Tools Used
+## תכונות מרכזיות
+
+- דף בית מקצועי בעברית ו-RTL.
+- שאלון התאמה עם ולידציה והמלצה במודל Popout מרכזי.
+- לוגיקת המלצה Rule-Based שקל להסביר בכיתה.
+- קישורים רשמיים לכלים: Zapier, Make, n8n, Monday.com, HubSpot, OpenAI, Google Workspace, Microsoft Power Automate.
+- טבלת השוואת כלים בעברית עם חיפוש וסינון.
+- ספריית מקרי שימוש עסקיים עם כלי יישום אפשריים.
+- הרשמה והתחברות בדמו באמצעות localStorage בלבד.
+- אזור אישי מוגן המציג המלצה שמורה.
+- עמוד מסלולים שיוצר Lead מסוג Plan Interest.
+- טופס בקשת ייעוץ שיוצר Lead מסוג Consultation Request.
+- עמוד ניהול פניות דמו עם סינון, ניקוי וייצוא CSV.
+- עמוד מתודולוגיה המסביר שימוש משמעותי בכלי AI.
+- עמוד סיכום אקדמי להכנת מסמך DOCX בהמשך.
+
+## כלי AI שבהם השתמשנו
 
 ### Codex
 
-Codex was used to:
+Codex שימש לתכנון מבנה הקוד, בניית האתר, יצירת קומפוננטות, שיפור UI/UX, תיקון שגיאות ושיפור מבנה הפרויקט.
 
-- Plan the React + Vite code structure.
-- Build the frontend pages and reusable components.
-- Create the questionnaire and recommendation logic.
-- Improve the UI/UX, responsive design, and navigation.
-- Debug, refactor, and verify the local build.
+### ChatGPT / Gemini
 
-### ChatGPT or Another AI Research Tool
+כלי מחקר וניסוח מבוססי AI שימשו למחקר שוק, הגדרת קריטריונים להשוואה, יצירת מקרי שימוש עסקיים, שיפור לוגיקת ההמלצה, ניסוח תוכן והכנה למסמך הסיכום.
 
-A ChatGPT-style AI research tool was used conceptually to:
-
-- Support market research about automation categories and platforms.
-- Define comparison criteria for small businesses.
-- Create practical automation use cases.
-- Improve explanations for business owners.
-- Validate that the recommendation logic is understandable and realistic.
-
-## How to Run Locally
-
-Install dependencies:
+## איך להריץ מקומית
 
 ```bash
 npm install
-```
-
-Start the development server:
-
-```bash
 npm run dev
 ```
 
-Build for production:
+לבניית גרסת Production:
 
 ```bash
 npm run build
 ```
 
-Preview the production build:
+לתצוגה מקדימה אחרי בנייה:
 
 ```bash
 npm run preview
 ```
 
-## How This Project Answers the Academic Requirements
+## איך לפרוס ב-Vercel
 
-The project demonstrates meaningful AI use by combining product design, information systems thinking, and business value:
+1. מעלים את הפרויקט ל-GitHub.
+2. יוצרים פרויקט חדש ב-Vercel.
+3. בוחרים Framework: Vite.
+4. מוודאים שהפקודות הן:
+   - Install Command: `npm install`
+   - Build Command: `npm run build`
+   - Output Directory: `dist`
+5. לוחצים Deploy.
 
-- **AI applications in business:** The app focuses on real automation use cases such as customer service, lead management, scheduling, invoice reminders, CRM workflows, and AI message summaries.
-- **Decision support:** The assessment collects business context and generates a recommendation based on transparent rule-based logic.
-- **Critical thinking:** The tools comparison includes advantages, disadvantages, pricing level, integration strength, ease of use, and recommended business type.
-- **Business value:** Recommendations include estimated impact, complexity, and a first implementation step.
-- **Information systems thinking:** The site considers workflows, data flow, integrations, channels, user skill level, and process improvement.
-- **AI methodology:** The methodology page documents what worked, what did not work, prompt improvement, quality checking, and recommendations for future students.
+## איך הפרויקט עונה על דרישות הקורס
 
-## Recommendation Logic
+- **שימוש ב-AI בעולם העסקי:** האתר מתמקד באוטומציות לשירות לקוחות, לידים, פגישות, מסמכים, CRM, דוחות ותוכן.
+- **חשיבה של מערכות מידע:** יש התייחסות לזרימת נתונים, ערוצים, אינטגרציות, משתמשים, פניות ושמירת תוצאות.
+- **ערך עסקי:** ההמלצה כוללת קטגוריה, כלים, מורכבות, השפעה עסקית וצעד ראשון.
+- **חשיבה ביקורתית:** טבלת הכלים מציגה יתרונות, חסרונות, רמת מחיר, רמת אינטגרציה וסוג עסק מתאים.
+- **שימוש משמעותי בכלי AI:** עמוד המתודולוגיה מסביר מה עבד, מה לא עבד, איך שופרו פרומפטים ואיך נבדקה איכות.
 
-The recommendation engine is located in `src/utils/recommendation.js`. It scores automation categories based on:
+## תוכנית הצגה ל-10 דקות
 
-- Selected business pain points.
-- Preferred communication and work channels.
-- Most important business goal.
-- Employee count.
-- Monthly budget.
-- Technical skill level.
+1. **הצגת הבעיה וקהל היעד**  
+   להסביר שעסקים קטנים רוצים אוטומציות AI אך מתקשים לבחור כלים בגלל עומס אפשרויות, מחירים ומורכבות טכנית.
 
-The result is intentionally explainable for a class presentation. It does not claim to be a machine-learning model; it is a practical rule-based decision-support model.
+2. **הדגמת האתר**  
+   להציג את דף הבית ואת אזורי האוטומציה האפשריים.
 
-## Suggested Presentation Flow
+3. **מילוי שאלון וקבלת המלצה במודל Popout**  
+   לבחור עסק לדוגמה, למלא כאבים עסקיים וערוצים, ללחוץ “קבלו את ההמלצה” ולהציג את המודל.
 
-Start with the home page to explain the problem. Then open the assessment, enter a sample business scenario, and show how the recommendation changes. Continue to the tools comparison page to explain trade-offs between platforms. Then show the use case library and methodology page to connect the product to the academic requirements.
+4. **מעבר לעמוד השוואת כלים וקישורים לאתרים הרשמיים**  
+   להראות חיפוש, סינון וקישור “לאתר הרשמי”.
 
-## 10-Minute Presentation Plan
+5. **הצגת מערכת ההרשמה והאזור האישי**  
+   ליצור חשבון דמו, לעבור לאזור האישי ולהציג את ההמלצה השמורה.
 
-1. **Problem and target audience**  
-   Explain that small businesses want automation but do not know which tools fit their needs, budget, and technical ability.
+6. **הצגת ניהול פניות דמו**  
+   לשלוח בקשת ייעוץ, להיכנס לעמוד ניהול פניות, לסנן ולייצא CSV.
 
-2. **Website demo**  
-   Show the home page, run through the assessment, present the generated recommendation, and explain the suggested category, tools, complexity, impact, and first step.
+7. **הסבר על כלי AI שבהם השתמשנו**  
+   להציג את עמוד המתודולוגיה ולהסביר את תפקיד Codex ו-ChatGPT / Gemini.
 
-3. **AI tools used**  
-   Explain how Codex helped build the frontend and how ChatGPT or another AI research tool helped define criteria, use cases, and explanations.
+8. **לקחים ושיפורים עתידיים**  
+   להסביר מה נלמד, מה ניתן לשפר, ואיך הפרויקט יכול להפוך למוצר אמיתי.
 
-4. **What did not work and how we improved**  
-   Explain that broad prompts produced generic results at first. The team improved prompts by adding exact pages, tool lists, academic requirements, and quality expectations.
+## ניהול פניות ואינטגרציית מייל עתידית
 
-5. **Quality checking**  
-   Show that navigation works, the questionnaire updates dynamically, filters work, the comparison table is complete, and the build runs locally.
+בגרסה הנוכחית הפניות נשמרות מקומית ב-localStorage לצורך דמו אקדמי בלבד. בגרסת Production מומלץ לשלוח התראות לכתובת:
 
-6. **Lessons learned**  
-   Explain that AI tools speed up ideation and development, but students still need to define the business problem, verify outputs, check assumptions, and make final product decisions.
+`autobiz.advisor.ai@gmail.com`
 
-## Project Structure
+הגישה המומלצת:
+
+- Vercel Serverless Function
+- Resend לשליחת מיילים
+- שמירת סודות ב-Vercel Environment Variables בלבד
+
+משתני סביבה מומלצים:
+
+```bash
+RESEND_API_KEY=...
+LEAD_NOTIFICATION_EMAIL=autobiz.advisor.ai@gmail.com
+```
+
+אין לחשוף סיסמאות SMTP, מפתחות API או פרטי גישה בקוד React Frontend.
+
+## הערת אבטחה
+
+מערכת ההרשמה וההתחברות בפרויקט היא Mock Authentication בלבד. היא משתמשת ב-localStorage לצורך הדגמה בכיתה ואינה מאובטחת לשימוש אמיתי. אין להזין סיסמאות אמיתיות.
+
+## מבנה פרויקט
 
 ```text
 src/
-  components/
   data/
     automationAreas.js
     tools.js
     useCases.js
-  pages/
   utils/
+    auth.js
+    leads.js
     recommendation.js
   App.jsx
   main.jsx
   styles.css
 ```
-
-The current implementation keeps the reusable UI components inside `App.jsx` because the project is compact. The data and recommendation rules are already separated so they can be expanded easily.

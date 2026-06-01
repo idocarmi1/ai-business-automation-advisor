@@ -1,5 +1,5 @@
 import {
-  Bot,
+  BarChart3,
   CalendarClock,
   FileText,
   Megaphone,
@@ -11,43 +11,43 @@ import {
 
 export const automationAreas = [
   {
-    title: 'Customer Service',
-    description: 'Classify requests, suggest replies, and route urgent issues faster.',
+    title: 'שירות לקוחות',
+    description: 'סיווג פניות, סיכום הודעות, ניסוח תגובות והעברה לאדם הנכון.',
     icon: MessageSquare,
   },
   {
-    title: 'Lead Management',
-    description: 'Capture leads from forms, ads, email, and WhatsApp into one CRM flow.',
+    title: 'ניהול לידים',
+    description: 'שמירת לידים מטפסים, פרסומות, מיילים ו-WhatsApp במקום אחד.',
     icon: Target,
   },
   {
-    title: 'Scheduling',
-    description: 'Reduce manual coordination with reminders, calendars, and booking rules.',
+    title: 'תיאום פגישות',
+    description: 'תזכורות, יומנים, אישורי הגעה וצמצום עבודה ידנית.',
     icon: CalendarClock,
   },
   {
-    title: 'Documents & Invoices',
-    description: 'Extract information, create reminders, and organize business files.',
-    icon: FileText,
-  },
-  {
-    title: 'Social Media',
-    description: 'Turn weekly business updates into draft posts and content calendars.',
-    icon: Megaphone,
-  },
-  {
-    title: 'CRM Workflows',
-    description: 'Move deals, update records, and notify staff when customer status changes.',
-    icon: Users,
-  },
-  {
-    title: 'Internal Processes',
-    description: 'Connect operations across task management, email, sheets, and approvals.',
+    title: 'מיילים ו-WhatsApp',
+    description: 'תגובות אוטומטיות, תיוג הודעות ותזכורות ללקוחות.',
     icon: Network,
   },
   {
-    title: 'AI Assistants',
-    description: 'Summarize messages, generate drafts, and support employee decision making.',
-    icon: Bot,
+    title: 'חשבוניות ומסמכים',
+    description: 'מעקב אחרי מסמכים, חילוץ מידע ותזכורות תשלום.',
+    icon: FileText,
+  },
+  {
+    title: 'רשתות חברתיות',
+    description: 'טיוטות פוסטים, לוחות תוכן ואוטומציה של עדכונים שיווקיים.',
+    icon: Megaphone,
+  },
+  {
+    title: 'CRM',
+    description: 'עדכון סטטוסים, שיוך משימות, מעקב לקוחות ודוחות מכירה.',
+    icon: Users,
+  },
+  {
+    title: 'דוחות עסקיים',
+    description: 'איסוף נתונים, סיכומים שבועיים ותובנות לשיפור החלטות.',
+    icon: BarChart3,
   },
 ];
