@@ -279,7 +279,7 @@ function HomePage({ goTo }) {
         <div className="hero-panel" aria-label="יכולות מרכזיות">
           <div className="score-card">
             <span>לוגיקת המלצה</span>
-            <strong>שקופה, עסקית וקלה להסבר בכיתה</strong>
+            <strong>פתרון חכם וברור לבחירת אוטומציות AI לעסקים קטנים</strong>
           </div>
           <div className="mini-metric"><CheckCircle2 size={20} /><span>ערך עסקי מדיד</span></div>
           <div className="mini-metric"><Sparkles size={20} /><span>מקרי שימוש ב-AI</span></div>
