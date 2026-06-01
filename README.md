@@ -166,6 +166,7 @@ src/
 ```bash
 RESEND_API_KEY=...
 LEAD_NOTIFICATION_EMAIL=autobiz.advisor.ai@gmail.com
+APP_BASE_URL=https://ai-business-automation-advisor.vercel.app
 ```
 
 שלבי הגדרה:
@@ -174,6 +175,11 @@ LEAD_NOTIFICATION_EMAIL=autobiz.advisor.ai@gmail.com
 2. ליצור API Key חדש.
 3. להוסיף את `RESEND_API_KEY` ל-Vercel Environment Variables.
 4. להוסיף את `LEAD_NOTIFICATION_EMAIL=autobiz.advisor.ai@gmail.com` ל-Vercel Environment Variables.
-5. לבצע Redeploy לפרויקט ב-Vercel.
+5. להוסיף את `APP_BASE_URL=https://ai-business-automation-advisor.vercel.app` ל-Vercel Environment Variables.
+6. לבצע Redeploy לפרויקט ב-Vercel.
+
+`APP_BASE_URL` שולט בקישורים שמופיעים בתוך התראות המייל. כפתור "פתיחה לניהול פניות" מפנה ל:
+
+`https://ai-business-automation-advisor.vercel.app/#admin-leads`
 
 אם `RESEND_API_KEY` חסר, פונקציית השרת תחזיר שגיאה ברורה. ההרשמה באתר עדיין תצליח, המשתמש עדיין יישמר ב-localStorage לצורך דמו, והפנייה עדיין תישמר במערכת ניהול הפניות המקומית.

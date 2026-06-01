@@ -34,6 +34,38 @@ import { sendSignupNotification } from './utils/notifications.js';
 
 const assessmentStorageKey = 'autobiz_last_assessment';
 
+const hashPageMap = {
+  '#home': 'home',
+  '#assessment': 'assessment',
+  '#tools': 'comparison',
+  '#comparison': 'comparison',
+  '#use-cases': 'library',
+  '#plans': 'plans',
+  '#consultation': 'consultation',
+  '#admin-leads': 'admin',
+  '#admin': 'admin',
+  '#methodology': 'methodology',
+  '#summary': 'summary',
+  '#signup': 'signup',
+  '#login': 'login',
+  '#dashboard': 'dashboard',
+};
+
+const pageHashMap = {
+  home: 'home',
+  assessment: 'assessment',
+  comparison: 'tools',
+  library: 'use-cases',
+  plans: 'plans',
+  consultation: 'consultation',
+  admin: 'admin-leads',
+  methodology: 'methodology',
+  summary: 'summary',
+  signup: 'signup',
+  login: 'login',
+  dashboard: 'dashboard',
+};
+
 const baseNavItems = [
   { id: 'home', label: 'דף הבית', icon: LayoutDashboard },
   { id: 'assessment', label: 'שאלון התאמה', icon: ClipboardList },
@@ -108,7 +140,7 @@ const eventTypeLabels = {
 };
 
 function App() {
-  const [activePage, setActivePage] = useState('home');
+  const [activePage, setActivePage] = useState(() => getPageFromHash());
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState(() => getCurrentUser());
   const [selectedPlan, setSelectedPlan] = useState('');
@@ -117,6 +149,8 @@ function App() {
     setActivePage(page);
     setMenuOpen(false);
     if (options.selectedPlan) setSelectedPlan(options.selectedPlan);
+    const hash = pageHashMap[page];
+    if (hash) window.history.replaceState(null, '', `#${hash}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -811,6 +845,11 @@ function readSavedAssessment() {
   } catch {
     return null;
   }
+}
+
+function getPageFromHash() {
+  if (typeof window === 'undefined') return 'home';
+  return hashPageMap[window.location.hash] || 'home';
 }
 
 export default App;

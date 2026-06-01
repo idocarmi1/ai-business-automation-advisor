@@ -27,7 +27,7 @@ module.exports = async function handler(req, res) {
   try {
     const { Resend } = await import('resend');
     const resend = new Resend(apiKey);
-    const dashboardUrl = buildDashboardUrl(req);
+    const adminLeadsUrl = buildAdminLeadsUrl();
 
     const result = await resend.emails.send({
       from: 'AutoBiz AI Advisor <onboarding@resend.dev>',
@@ -38,7 +38,7 @@ module.exports = async function handler(req, res) {
         email,
         businessName,
         createdAt,
-        dashboardUrl,
+        adminLeadsUrl,
       }),
     });
 
@@ -63,14 +63,12 @@ function safeJsonParse(value) {
   }
 }
 
-function buildDashboardUrl(req) {
-  if (process.env.ADMIN_DASHBOARD_URL) return process.env.ADMIN_DASHBOARD_URL;
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-  const host = req.headers.host;
-  return host ? `https://${host}` : '#';
+function buildAdminLeadsUrl() {
+  const baseUrl = (process.env.APP_BASE_URL || 'https://ai-business-automation-advisor.vercel.app').replace(/\/$/, '');
+  return `${baseUrl}/#admin-leads`;
 }
 
-function buildSignupEmailHtml({ fullName, email, businessName, createdAt, dashboardUrl }) {
+function buildSignupEmailHtml({ fullName, email, businessName, createdAt, adminLeadsUrl }) {
   const createdDate = new Date(createdAt).toLocaleString('he-IL', {
     dateStyle: 'medium',
     timeStyle: 'short',
@@ -120,8 +118,8 @@ function buildSignupEmailHtml({ fullName, email, businessName, createdAt, dashbo
                   הודעה זו נשלחה דרך Vercel Serverless Function ו-Resend. פרטי API אינם חשופים בקוד ה-Frontend.
                 </div>
                 <div style="margin-top:28px;">
-                  <a href="${escapeHtml(dashboardUrl)}" style="display:inline-block;background:#16736b;color:#ffffff;text-decoration:none;font-weight:800;padding:13px 20px;border-radius:10px;">
-                    פתיחת דשבורד ניהול
+                  <a href="${escapeHtml(adminLeadsUrl)}" style="display:inline-block;background:#16736b;color:#ffffff;text-decoration:none;font-weight:800;padding:13px 20px;border-radius:10px;">
+                    פתיחה לניהול פניות
                   </a>
                 </div>
               </td>
