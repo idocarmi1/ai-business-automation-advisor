@@ -144,3 +144,36 @@ src/
   main.jsx
   styles.css
 ```
+
+## התראות מייל בהרשמת משתמש
+
+כאשר משתמש חדש נרשם ל-AutoBiz AI Advisor, האפליקציה יכולה לשלוח התראת מייל לכתובת:
+
+`autobiz.advisor.ai@gmail.com`
+
+שליחת המייל מתבצעת בצד שרת בלבד דרך Vercel Serverless Function:
+
+`api/send-signup-notification.js`
+
+ה-Frontend קורא לפונקציה דרך:
+
+`/api/send-signup-notification`
+
+הספק המומלץ לשליחת המיילים הוא Resend. אין לשלוח מיילים ישירות מתוך React עם סיסמאות, SMTP credentials או API keys.
+
+משתני סביבה נדרשים ב-Vercel:
+
+```bash
+RESEND_API_KEY=...
+LEAD_NOTIFICATION_EMAIL=autobiz.advisor.ai@gmail.com
+```
+
+שלבי הגדרה:
+
+1. ליצור חשבון ב-Resend.
+2. ליצור API Key חדש.
+3. להוסיף את `RESEND_API_KEY` ל-Vercel Environment Variables.
+4. להוסיף את `LEAD_NOTIFICATION_EMAIL=autobiz.advisor.ai@gmail.com` ל-Vercel Environment Variables.
+5. לבצע Redeploy לפרויקט ב-Vercel.
+
+אם `RESEND_API_KEY` חסר, פונקציית השרת תחזיר שגיאה ברורה. ההרשמה באתר עדיין תצליח, המשתמש עדיין יישמר ב-localStorage לצורך דמו, והפנייה עדיין תישמר במערכת ניהול הפניות המקומית.

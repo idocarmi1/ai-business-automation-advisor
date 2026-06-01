@@ -30,6 +30,7 @@ import { useCases } from './data/useCases.js';
 import { generateRecommendation } from './utils/recommendation.js';
 import { clearLeads, createLead, exportLeadsToCsv, getLeads } from './utils/leads.js';
 import { getCurrentUser, loginDemoUser, logoutDemoUser, signUpDemoUser } from './utils/auth.js';
+import { sendSignupNotification } from './utils/notifications.js';
 
 const assessmentStorageKey = 'autobiz_last_assessment';
 
@@ -501,13 +502,25 @@ function UseCaseLibraryPage() {
 function SignUpPage({ goTo, onAuth }) {
   const [form, setForm] = useState({ fullName: '', email: '', businessName: '', password: '' });
   const [message, setMessage] = useState('');
-  const submit = () => {
+  const submit = async () => {
     if (!form.fullName || !form.email || !form.businessName || !form.password) {
       setMessage('יש למלא את כל השדות להרשמה.');
       return;
     }
+    const createdAt = new Date().toISOString();
     signUpDemoUser(form);
     createLead({ eventType: 'Sign Up', ...form });
+    try {
+      await sendSignupNotification({
+        fullName: form.fullName,
+        email: form.email,
+        businessName: form.businessName,
+        createdAt,
+        eventType: 'Sign Up',
+      });
+    } catch (error) {
+      console.warn('User signed up, but email notification failed.', error);
+    }
     onAuth();
     goTo('dashboard');
   };
