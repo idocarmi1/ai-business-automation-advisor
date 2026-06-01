@@ -1,4 +1,5 @@
 const USER_KEY = 'autobiz_demo_user';
+export const ADMIN_EMAIL = 'autobiz.advisor.ai@gmail.com';
 
 export function getCurrentUser() {
   try {
@@ -15,11 +16,26 @@ export function signUpDemoUser(user) {
 }
 
 export function loginDemoUser(email, password) {
+  if (email?.toLowerCase() === ADMIN_EMAIL && password) {
+    const adminUser = {
+      fullName: 'מנהל המערכת',
+      email: ADMIN_EMAIL,
+      businessName: 'AutoBiz AI Advisor',
+      password,
+    };
+    localStorage.setItem(USER_KEY, JSON.stringify(adminUser));
+    return adminUser;
+  }
+
   const user = getCurrentUser();
   if (!user || user.email !== email || user.password !== password) {
     return null;
   }
   return user;
+}
+
+export function isAdminUser(user) {
+  return user?.email?.toLowerCase() === ADMIN_EMAIL;
 }
 
 export function logoutDemoUser() {

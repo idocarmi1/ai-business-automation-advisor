@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   ArrowLeft,
   BarChart3,
@@ -29,7 +29,7 @@ import { tools, toolLinks } from './data/tools.js';
 import { useCases } from './data/useCases.js';
 import { generateRecommendation } from './utils/recommendation.js';
 import { clearLeads, createLead, exportLeadsToCsv, getLeads } from './utils/leads.js';
-import { getCurrentUser, loginDemoUser, logoutDemoUser, signUpDemoUser } from './utils/auth.js';
+import { getCurrentUser, isAdminUser, loginDemoUser, logoutDemoUser, signUpDemoUser } from './utils/auth.js';
 import { sendSignupNotification } from './utils/notifications.js';
 
 const assessmentStorageKey = 'autobiz_last_assessment';
@@ -144,8 +144,25 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState(() => getCurrentUser());
   const [selectedPlan, setSelectedPlan] = useState('');
+  const [accessMessage, setAccessMessage] = useState('');
+  const isAdmin = isAdminUser(user);
+
+  useEffect(() => {
+    if (activePage === 'admin' && !isAdmin) {
+      setAccessMessage('אין לך הרשאה לצפות בעמוד ניהול הפניות.');
+      const fallbackPage = user ? 'home' : 'login';
+      setActivePage(fallbackPage);
+      window.history.replaceState(null, '', `#${pageHashMap[fallbackPage]}`);
+    }
+  }, [activePage, isAdmin, user]);
 
   const goTo = (page, options = {}) => {
+    if (page === 'admin' && !isAdmin) {
+      setAccessMessage('אין לך הרשאה לצפות בעמוד ניהול הפניות.');
+      page = user ? 'home' : 'login';
+    } else {
+      setAccessMessage('');
+    }
     setActivePage(page);
     setMenuOpen(false);
     if (options.selectedPlan) setSelectedPlan(options.selectedPlan);
@@ -169,8 +186,10 @@ function App() {
         menuOpen={menuOpen}
         setMenuOpen={setMenuOpen}
         user={user}
+        isAdmin={isAdmin}
         onLogout={handleLogout}
       />
+      {accessMessage && <div className="access-message">{accessMessage}</div>}
       <main>
         {activePage === 'home' && <HomePage goTo={goTo} />}
         {activePage === 'assessment' && <AssessmentPage user={user} goTo={goTo} />}
@@ -178,11 +197,11 @@ function App() {
         {activePage === 'library' && <UseCaseLibraryPage />}
         {activePage === 'plans' && <PlansPage user={user} goTo={goTo} />}
         {activePage === 'consultation' && <ConsultationPage user={user} selectedPlan={selectedPlan} />}
-        {activePage === 'admin' && <AdminLeadsPage />}
+        {activePage === 'admin' && isAdmin && <AdminLeadsPage />}
         {activePage === 'methodology' && <MethodologyPage />}
         {activePage === 'summary' && <AcademicSummaryPage />}
         {activePage === 'signup' && <SignUpPage goTo={goTo} onAuth={refreshUser} />}
-        {activePage === 'login' && <LoginPage goTo={goTo} onAuth={refreshUser} />}
+        {activePage === 'login' && <LoginPage goTo={goTo} onAuth={refreshUser} initialMessage={accessMessage} />}
         {activePage === 'forgot' && <ForgotPasswordPage goTo={goTo} />}
         {activePage === 'dashboard' && <DashboardPage user={user} goTo={goTo} />}
       </main>
@@ -190,7 +209,7 @@ function App() {
   );
 }
 
-function Header({ activePage, goTo, menuOpen, setMenuOpen, user, onLogout }) {
+function Header({ activePage, goTo, menuOpen, setMenuOpen, user, isAdmin, onLogout }) {
   const authItems = user
     ? [
         { id: 'dashboard', label: 'אזור אישי', icon: ShieldCheck },
@@ -200,6 +219,9 @@ function Header({ activePage, goTo, menuOpen, setMenuOpen, user, onLogout }) {
         { id: 'login', label: 'התחברות', icon: LogIn },
         { id: 'signup', label: 'הרשמה', icon: UserPlus },
       ];
+
+  const adminOnlyNavItems = ['admin', 'methodology', 'summary'];
+  const visibleNavItems = baseNavItems.filter((item) => isAdmin || !adminOnlyNavItems.includes(item.id));
 
   return (
     <header className="site-header">
@@ -214,7 +236,7 @@ function Header({ activePage, goTo, menuOpen, setMenuOpen, user, onLogout }) {
         {menuOpen ? <X size={22} /> : <Menu size={22} />}
       </button>
       <nav className={menuOpen ? 'nav open' : 'nav'}>
-        {[...baseNavItems, ...authItems].map((item) => {
+        {[...visibleNavItems, ...authItems].map((item) => {
           const Icon = item.icon;
           const isLogout = item.id === 'logout';
           return (
@@ -561,9 +583,9 @@ function SignUpPage({ goTo, onAuth }) {
   return <AuthForm title="הרשמה" form={form} setForm={setForm} message={message} submitLabel="יצירת חשבון חינמי" onSubmit={submit} goTo={goTo} showBusiness />;
 }
 
-function LoginPage({ goTo, onAuth }) {
+function LoginPage({ goTo, onAuth, initialMessage = '' }) {
   const [form, setForm] = useState({ email: '', password: '' });
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState(initialMessage);
   const submit = () => {
     const user = loginDemoUser(form.email, form.password);
     if (!user) {
