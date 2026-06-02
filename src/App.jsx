@@ -230,7 +230,9 @@ function Header({ activePage, goTo, menuOpen, setMenuOpen, user, isAdmin, onLogo
   return (
     <header className="site-header">
       <button className="brand" type="button" onClick={() => goTo('home')}>
-        <span className="brand-mark"><BarChart3 size={21} /></span>
+        <span className="brand-mark">
+          <img src="/images/autobiz-ai-advisor-logo.png" alt="AutoBiz AI Advisor" />
+        </span>
         <span>
           <strong>יועץ אוטומציה עסקית</strong>
           <small>אבחון תהליכים ואוטומציה</small>
