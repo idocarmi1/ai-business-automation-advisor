@@ -4,16 +4,20 @@ import {
   BarChart3,
   BookOpenCheck,
   BrainCircuit,
+  BriefcaseBusiness,
   CheckCircle2,
   ClipboardList,
   Download,
   ExternalLink,
+  FileSearch,
   GraduationCap,
   LayoutDashboard,
   LockKeyhole,
   LogIn,
   LogOut,
   Menu,
+  Network,
+  Route,
   Search,
   Send,
   ShieldCheck,
@@ -24,7 +28,6 @@ import {
   WalletCards,
   X,
 } from 'lucide-react';
-import { automationAreas } from './data/automationAreas.js';
 import { tools, toolLinks } from './data/tools.js';
 import { useCases } from './data/useCases.js';
 import { generateRecommendation } from './utils/recommendation.js';
@@ -205,6 +208,7 @@ function App() {
         {activePage === 'forgot' && <ForgotPasswordPage goTo={goTo} />}
         {activePage === 'dashboard' && <DashboardPage user={user} goTo={goTo} />}
       </main>
+      <Footer />
     </div>
   );
 }
@@ -228,8 +232,8 @@ function Header({ activePage, goTo, menuOpen, setMenuOpen, user, isAdmin, onLogo
       <button className="brand" type="button" onClick={() => goTo('home')}>
         <span className="brand-mark"><BarChart3 size={21} /></span>
         <span>
-          <strong>AutoBiz AI Advisor</strong>
-          <small>יועץ אוטומציות AI לעסקים קטנים</small>
+          <strong>יועץ אוטומציה עסקית</strong>
+          <small>אבחון תהליכים ואוטומציה</small>
         </span>
       </button>
       <button className="menu-button" type="button" onClick={() => setMenuOpen(!menuOpen)} aria-label="פתיחת ניווט">
@@ -257,52 +261,143 @@ function Header({ activePage, goTo, menuOpen, setMenuOpen, user, isAdmin, onLogo
 }
 
 function HomePage({ goTo }) {
+  const githubUrl = 'https://github.com/idocarmi1/ai-business-automation-advisor';
+  const features = [
+    ['ניתוח תהליכי עבודה', 'פירוק תהליך עסקי לשלבים ברורים, נקודות החלטה, בעלי אחריות ותלות בין כלים.', FileSearch],
+    ['זיהוי הזדמנויות אוטומציה', 'איתור משימות חוזרות, כפילויות, צווארי בקבוק ונקודות שבהן אוטומציה יכולה לחסוך זמן.', Sparkles],
+    ['מיפוי תהליכים עסקיים', 'הצגת זרימת העבודה בצורה מסודרת כדי להבין איפה הנתונים עוברים ואיפה הם נתקעים.', Route],
+    ['המלצות מבוססות AI', 'הצעת כיווני פעולה וכלים רלוונטיים בהתאם לסוג העסק, הערוצים והיעדים התפעוליים.', BrainCircuit],
+    ['שיפור יעילות תפעולית', 'מיקוד בתהליכים שמפחיתים עומס ידני, טעויות, מעקבים חוזרים ועבודה אדמיניסטרטיבית.', BarChart3],
+    ['הפקת תובנות מעשיות', 'תרגום האבחון לצעד ראשון ברור, מדיד וניתן ליישום בעסק אמיתי.', CheckCircle2],
+  ];
+  const steps = [
+    ['01', 'מתארים את התהליך העסקי', 'מזינים את סוג העסק, הערוצים, האתגרים והיעד המרכזי לשיפור.'],
+    ['02', 'המערכת מזהה משימות חוזרות וצווארי בקבוק', 'הלוגיקה מנתחת כאבים תפעוליים, כפילויות ומקומות שבהם העבודה נשארת ידנית מדי.'],
+    ['03', 'מקבלים המלצות אוטומציה פרקטיות', 'הפלט כולל קטגוריית אוטומציה, כלים מומלצים וצעד ראשון ליישום.'],
+  ];
+  const examples = [
+    'מעקב אחר לקוחות ופניות',
+    'ניהול לידים',
+    'דוחות ובקרה',
+    'אוטומציה של מיילים ומשימות',
+    'תהליכי תפעול פנימיים',
+    'שיפור תהליכי שירות',
+  ];
+  const portfolioItems = ['React', 'Vite', 'חשיבה מוצרית', 'ניתוח עסקי בעזרת AI', 'אוטומציית תהליכי עבודה', 'עיצוב Frontend', 'אסטרטגיית אוטומציה מעשית'];
+
   return (
     <section className="page">
       <div className="hero">
         <div className="hero-copy">
-          <span className="eyebrow">פלטפורמת החלטה לעסקים קטנים</span>
-          <h1>בוחרים אוטומציות AI שמתאימות באמת לעסק.</h1>
+          <span className="eyebrow">אבחון תהליכים ואוטומציה עסקית</span>
+          <h1>יועץ אוטומציה עסקית מבוסס AI</h1>
           <p>
-            AutoBiz AI Advisor עוזר לבעלי עסקים להבין אילו תהליכים כדאי לאוטומט, אילו כלים מתאימים,
-            ומהו הצעד הראשון שכדאי לבצע לפני שמבזבזים זמן ותקציב.
+            ניתוח תהליכים עסקיים, זיהוי צווארי בקבוק והצעת הזדמנויות אוטומציה מעשיות בעזרת חשיבה מבוססת AI.
           </p>
           <div className="hero-actions">
             <button className="primary-button" type="button" onClick={() => goTo('assessment')}>
-              התחילו שאלון התאמה <ArrowLeft size={18} />
+              התחל ניתוח <ArrowLeft size={18} />
             </button>
-            <button className="secondary-button" type="button" onClick={() => goTo('comparison')}>
-              השוואת כלים
-            </button>
+            <a className="secondary-button" href={githubUrl} target="_blank" rel="noopener noreferrer">
+              צפה ב-GitHub <ExternalLink size={17} />
+            </a>
           </div>
         </div>
-        <div className="hero-panel" aria-label="יכולות מרכזיות">
-          <div className="score-card">
-            <span>לוגיקת המלצה</span>
-            <strong>פתרון חכם וברור לבחירת אוטומציות AI לעסקים קטנים</strong>
+        <div className="hero-panel" aria-label="תצוגת ניתוח תהליך אוטומציה">
+          <div className="workflow-card">
+            <div className="workflow-header">
+              <span>תוצאת ניתוח לדוגמה</span>
+              <Badge label="השפעה גבוהה" compact />
+            </div>
+            <strong>תהליך לידים ופניות לקוחות</strong>
+            <div className="workflow-line">
+              <span>פנייה נכנסת</span>
+              <span>סיווג AI</span>
+              <span>שיוך ל-CRM</span>
+              <span>מעקב אוטומטי</span>
+            </div>
           </div>
-          <div className="mini-metric"><CheckCircle2 size={20} /><span>ערך עסקי מדיד</span></div>
-          <div className="mini-metric"><Sparkles size={20} /><span>מקרי שימוש ב-AI</span></div>
-          <div className="mini-metric"><ShieldCheck size={20} /><span>שמירת תוצאות דמו</span></div>
+          <div className="insight-stack">
+            <div className="mini-metric"><CheckCircle2 size={20} /><span>צוואר בקבוק: מענה ראשוני ידני</span></div>
+            <div className="mini-metric"><Network size={20} /><span>ערוצים: אתר, אימייל ו-WhatsApp</span></div>
+            <div className="mini-metric"><ShieldCheck size={20} /><span>צעד מומלץ: חיבור טופס ל-CRM</span></div>
+          </div>
         </div>
       </div>
 
-      <SectionIntro
-        title="מה אפשר לאוטומט בעסק קטן?"
-        text="האתר מתמקד בתהליכים יומיומיים שבהם עסקים מאבדים זמן, מפספסים לידים או מתקשים לשמור מידע מסודר."
-      />
-      <div className="area-grid">
-        {automationAreas.map((area) => {
-          const Icon = area.icon;
-          return (
-            <article className="area-card" key={area.title}>
-              <Icon size={24} />
-              <h3>{area.title}</h3>
-              <p>{area.description}</p>
-            </article>
-          );
-        })}
+      <div className="split-section">
+        <article className="statement-card">
+          <span className="eyebrow">הבעיה</span>
+          <h2>הבעיה בעסקים רבים</h2>
+          <p>
+            עסקים רבים מבזבזים זמן יקר על משימות ידניות שחוזרות על עצמן, תהליכים לא ברורים, מעקבים ידניים וחוסר סדר בין כלים שונים.
+            התוצאה היא עומס תפעולי, טעויות, ועיכוב בקבלת החלטות.
+          </p>
+        </article>
+        <article className="statement-card accent">
+          <span className="eyebrow">הפתרון</span>
+          <h2>הפתרון</h2>
+          <p>
+            המערכת מאפשרת לתאר תהליך עסקי קיים, לנתח אותו בצורה מובנית, לזהות נקודות לשיפור ולהציע המלצות אוטומציה פרקטיות שניתן ליישם בעסק.
+          </p>
+        </article>
       </div>
+
+      <SectionIntro
+        title="יכולות מרכזיות"
+        text="המערכת מתמקדת בהבנת העבודה בפועל: איפה הזמן נאבד, אילו פעולות חוזרות על עצמן, ומה ניתן לשפר בלי להעמיס על העסק."
+      />
+      <div className="area-grid feature-grid">
+        {features.map(([title, description, Icon]) => (
+          <article className="area-card" key={title}>
+            <Icon size={24} />
+            <h3>{title}</h3>
+            <p>{description}</p>
+          </article>
+        ))}
+      </div>
+
+      <section className="process-section">
+        <SectionIntro
+          title="איך זה עובד"
+          text="תהליך קצר שמתרגם תיאור עסקי להמלצה מסודרת, עם דגש על יישום מדורג ותועלת תפעולית."
+        />
+        <div className="step-grid">
+          {steps.map(([number, title, text]) => (
+            <article className="step-card" key={title}>
+              <span>{number}</span>
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <SectionIntro
+        title="דוגמאות לשימוש"
+        text="מקרי שימוש נפוצים שבהם עסקים יכולים להתחיל באוטומציה ממוקדת, למדוד שיפור ולהרחיב בהדרגה."
+      />
+      <div className="usecase-strip">
+        {examples.map((example) => (
+          <div className="usecase-pill" key={example}>
+            <BriefcaseBusiness size={18} />
+            <span>{example}</span>
+          </div>
+        ))}
+      </div>
+
+      <section className="portfolio-section">
+        <div>
+          <span className="eyebrow">תיק עבודות</span>
+          <h2>על הפרויקט</h2>
+          <p>
+            הפרויקט נבנה כתיק עבודות המציג חשיבה מוצרית, עיצוב Frontend, ניתוח תהליכים עסקיים ושימוש ב-AI לצורך זיהוי הזדמנויות אוטומציה.
+          </p>
+        </div>
+        <div className="portfolio-list">
+          {portfolioItems.map((item) => <span key={item}>{item}</span>)}
+        </div>
+      </section>
     </section>
   );
 }
@@ -722,7 +817,7 @@ function ConsultationPage({ user, selectedPlan }) {
       return;
     }
     createLead({ eventType: 'Consultation Request', ...form });
-    setStatus('תודה! הבקשה נשמרה. בגרסה עסקית מלאה הפנייה תישלח לצוות AutoBiz AI Advisor.');
+    setStatus('תודה! הבקשה נשמרה. בגרסה עסקית מלאה הפנייה תישלח לצוות הפרויקט.');
   };
 
   return (
@@ -837,8 +932,22 @@ function AcademicSummaryPage() {
   );
 }
 
+function Footer() {
+  return (
+    <footer className="site-footer">
+      <div>
+        <strong>יועץ אוטומציה עסקית מבוסס AI</strong>
+        <p>פרויקט תיק עבודות לניתוח תהליכים עסקיים, זיהוי הזדמנויות אוטומציה והצגת המלצות מעשיות.</p>
+      </div>
+      <a href="https://github.com/idocarmi1/ai-business-automation-advisor" target="_blank" rel="noopener noreferrer">
+        מאגר הפרויקט ב-GitHub <ExternalLink size={16} />
+      </a>
+    </footer>
+  );
+}
+
 function SectionIntro({ title, text }) {
-  return <div className="section-intro"><span className="eyebrow">AutoBiz AI Advisor</span><h2>{title}</h2><p>{text}</p></div>;
+  return <div className="section-intro"><span className="eyebrow">אוטומציה עסקית מבוססת AI</span><h2>{title}</h2><p>{text}</p></div>;
 }
 
 function FormGroup({ label, children }) {
