@@ -359,6 +359,9 @@ function AIDemoPage() {
     businessGoal: 'חיסכון בזמן',
     runs: 1,
   });
+  const [loading, setLoading] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
   const researchFlow = ['חקר שוק', 'זיהוי כאבים עסקיים', 'מיפוי תהליכים ידניים', 'איתור אוטומציות', 'בניית תוכנית פעולה'];
   const marketInsights = [
     'לקוחות מצפים למענה מהיר יותר',
@@ -379,9 +382,17 @@ function AIDemoPage() {
     ['Chatbot שאלות נפוצות', 'גבוהה', 'בינונית', '81/100'],
   ];
   const selectedBusinessField = aiDemo.businessField.trim() || 'התחום העסקי שנבחר';
+  const modalBusinessField = aiDemo.businessField.trim() || 'קליניקה';
 
   const runAiDemo = () => {
-    setAiDemo((current) => ({ ...current, runs: current.runs + 1 }));
+    if (loading) return;
+    setCopied(false);
+    setLoading(true);
+    window.setTimeout(() => {
+      setAiDemo((current) => ({ ...current, runs: current.runs + 1 }));
+      setLoading(false);
+      setModalOpen(true);
+    }, 1000);
   };
 
   return (
@@ -430,7 +441,9 @@ function AIDemoPage() {
                 </select>
               </label>
             </div>
-            <button className="primary-button" type="button" onClick={runAiDemo}>הרץ ניתוח AI</button>
+            <button className="primary-button" type="button" onClick={runAiDemo} disabled={loading}>
+              {loading ? 'מנתח בעזרת AI...' : 'הרץ ניתוח AI'}
+            </button>
           </div>
 
           <div className="ai-output-panel">
@@ -530,6 +543,16 @@ function AIDemoPage() {
           בדמו הנוכחי מדובר בסימולציה שמציגה את לוגיקת המוצר. בגרסה עתידית ניתן לחבר API של Perplexity או מודל AI אחר בצד שרת, כדי לייצר חקר שוק והמלצות בזמן אמת.
         </p>
       </section>
+      {modalOpen && (
+        <AIDemoRecommendationModal
+          businessField={modalBusinessField}
+          businessSize={aiDemo.businessSize}
+          businessGoal={aiDemo.businessGoal}
+          copied={copied}
+          setCopied={setCopied}
+          onClose={() => setModalOpen(false)}
+        />
+      )}
     </section>
   );
 }
@@ -688,6 +711,96 @@ function RecommendationModal({ recommendation, user, goTo, onClose }) {
           <button className="primary-button" type="button" onClick={() => { onClose(); goTo('consultation'); }}>בקשת ייעוץ</button>
           <a className="secondary-button" href={toolLinks[recommendation.tools[0]]} target="_blank" rel="noopener noreferrer">פתיחת כלי מומלץ</a>
           {!user && <button className="secondary-button" type="button" onClick={() => { onClose(); goTo('signup'); }}>יצירת חשבון חינמי</button>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AIDemoRecommendationModal({ businessField, businessSize, businessGoal, copied, setCopied, onClose }) {
+  const recommendationMap = {
+    'חיסכון בזמן': 'אוטומציה של מעקב אחרי לקוחות ותזכורות',
+    'שיפור שירות לקוחות': 'מענה אוטומטי לשאלות נפוצות ותיעוד פניות',
+    'הגדלת מכירות': 'סיווג לידים ושליחת הודעת המשך אוטומטית',
+    'שיפור תפעול': 'Dashboard תפעולי ודוחות אוטומטיים',
+  };
+  const recommendation = recommendationMap[businessGoal] || 'אוטומציה של טיפול בלידים ומעקב לקוחות';
+  const tools = ['Make', 'Zapier', 'Google Sheets', 'CRM', 'WhatsApp / Email Automation'];
+  const nextSteps = [
+    'למפות את התהליך הידני הקיים',
+    'לבחור כלי אוטומציה מתאים',
+    'לבנות תהליך ניסיון קטן ולמדוד תוצאה',
+  ];
+  const summary = `המלצת AI עבור ${businessField}: ${recommendation}. מטרה מרכזית: ${businessGoal}. ציון כדאיות: 92/100.`;
+
+  const copyRecommendation = async () => {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(summary);
+      }
+      setCopied(true);
+    } catch {
+      setCopied(true);
+    }
+  };
+
+  return (
+    <div className="modal-overlay" role="dialog" aria-modal="true">
+      <div className="recommendation-modal ai-result-modal">
+        <button className="modal-close" type="button" onClick={onClose} aria-label="סגירת חלון"><X size={22} /></button>
+        <span className="eyebrow">תוצאת דמו</span>
+        <h2>המלצת AI לעסק שלך</h2>
+        <p className="modal-subtitle">
+          בהתבסס על התחום העסקי, גודל העסק והמטרה שבחרת, AutoBiz מציע נקודת התחלה לאוטומציה.
+        </p>
+
+        <div className="business-summary-grid">
+          <InfoBlock label="תחום עסקי" value={businessField} />
+          <InfoBlock label="גודל העסק" value={businessSize} />
+          <InfoBlock label="מטרה מרכזית" value={businessGoal} />
+        </div>
+
+        <div className="modal-highlight ai-main-recommendation">
+          <strong>האוטומציה המומלצת להתחלה</strong>
+          <p>{recommendation}</p>
+        </div>
+
+        <InfoBlock
+          label="למה זה מתאים?"
+          value="המלצה זו מתאימה כי היא משלבת השפעה עסקית גבוהה עם מורכבות יישום יחסית נמוכה, ולכן מאפשרת להתחיל באוטומציה בצורה הדרגתית וברורה."
+        />
+
+        <div className="ai-score-card">
+          <div>
+            <span>ציון כדאיות</span>
+            <strong>92/100</strong>
+          </div>
+          <div className="badge-row">
+            <Badge label="השפעה: גבוהה" />
+            <Badge label="מורכבות: נמוכה-בינונית" />
+            <Badge label="זמן יישום משוער: קצר" />
+          </div>
+        </div>
+
+        <h3>כלים מומלצים</h3>
+        <div className="tool-pill-list">
+          {tools.map((tool) => <span className="ltr-text" key={tool}>{tool}</span>)}
+        </div>
+
+        <h3>צעדים הבאים</h3>
+        <ol className="next-step-list">
+          {nextSteps.map((step) => <li key={step}>{step}</li>)}
+        </ol>
+
+        <p className="auth-note">
+          הדמו מציג סימולציה של תהליך AI. בגרסה עתידית ניתן לחבר Perplexity API בצד שרת לצורך חקר שוק דינמי בזמן אמת.
+        </p>
+
+        {copied && <p className="success-message">ההמלצה הועתקה</p>}
+        <div className="modal-actions">
+          <button className="secondary-button" type="button" onClick={onClose}>סגור</button>
+          <button className="primary-button" type="button" onClick={copyRecommendation}>העתק המלצה</button>
+          <a className="secondary-button" href="#ai-demo">ראה טבלת אוטומציות</a>
         </div>
       </div>
     </div>
