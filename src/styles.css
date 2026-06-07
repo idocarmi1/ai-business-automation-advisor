@@ -177,6 +177,11 @@ a { color: inherit; text-decoration: none; }
   padding: clamp(24px, 5vw, 58px) 0;
 }
 
+.compact-hero {
+  min-height: 520px;
+  padding-bottom: 24px;
+}
+
 .eyebrow {
   display: inline-flex;
   width: fit-content;
@@ -641,6 +646,18 @@ p {
 }
 
 .presentation-card p {
+  margin-bottom: 0;
+}
+
+.home-overview-grid {
+  margin: 18px 0 46px;
+}
+
+.home-overview-grid .presentation-card {
+  min-height: 210px;
+}
+
+.home-preview-section {
   margin-bottom: 0;
 }
 
