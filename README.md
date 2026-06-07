@@ -1,136 +1,89 @@
 # AutoBiz AI Advisor
 
-Live demo:
+AutoBiz AI Advisor is a Hebrew RTL demo website for an AI-powered business automation advisor.
 
-https://ai-business-automation-advisor.vercel.app/
+The project demonstrates how AI-assisted market research, inspired by tools like Perplexity, can help identify business pain points and turn them into practical automation recommendations.
 
-AutoBiz AI Advisor is a Hebrew AI business automation advisor demo that shows how AI-assisted market research can identify business pain points and recommend practical automation workflows.
+Live Demo: https://ai-business-automation-advisor.vercel.app/
 
-The project is built as a dark, premium, RTL business SaaS-style website for a classroom presentation and portfolio use case. It demonstrates how a business owner could move from market research and pain-point discovery to concrete automation recommendations, relevant tools, complexity level, business impact, automation score, and next steps.
+## Main Idea
+
+- The user enters a business field, business size, and main goal.
+- The system simulates an AI analysis flow.
+- The result includes a recommended automation, automation score, suggested tools, and next steps.
+- The project is designed for a classroom presentation showing product, tools, and lessons learned.
 
 ## Problem
 
-Small businesses waste time on manual processes, lead follow-ups, customer tracking, reporting, messages, and repetitive operations.
+Small businesses often waste time on manual processes such as:
 
-These workflows often happen across disconnected tools such as WhatsApp, email, spreadsheets, calendars, CRM systems, and task boards. The result is slow response time, missed leads, operational overload, inconsistent follow-up, and limited visibility into business performance.
+- lead follow-ups
+- customer tracking
+- reporting
+- repetitive operations
+- manual communication
+- disconnected tools
 
 ## Solution
 
-AutoBiz demonstrates how AI can turn market research and business context into practical automation recommendations.
+AutoBiz demonstrates how AI can turn market research and business context into:
 
-The demo shows a Perplexity-style research flow that identifies business pain points, maps manual processes, suggests automation opportunities, recommends tools, estimates complexity and impact, and presents a clear next step for implementation.
+- business pain points
+- automation opportunities
+- suggested tools
+- impact level
+- complexity level
+- practical next steps
 
-## Main Features
+## Features
 
 - Hebrew RTL interface
-- AI analysis demo
-- Perplexity-style research simulation
+- Premium dark SaaS-style design
+- AI capabilities demo
+- Perplexity-style market research simulation
 - Business pain-point discovery
 - Automation opportunities table
 - Automation score
 - AI recommendation modal after clicking `הרץ ניתוח AI`
-- Recommended tools and implementation steps
-- Tools and lessons presentation section
-- Responsive dark premium SaaS design
+- Suggested automation tools
+- Tools and lessons section for classroom presentation
+- Responsive design for desktop and mobile
 
-## AI Capabilities Demo
-
-The AI demo page shows how the product could work in a real business context:
-
-1. The user enters a business field.
-2. The user selects business size and main goal.
-3. The user clicks `הרץ ניתוח AI`.
-4. The website shows a short analyzing state.
-5. A result modal presents a simulated AI recommendation.
-6. The user can jump to the automation recommendations table.
-
-The result includes:
-
-- Business field
-- Business size
-- Main goal
-- Recommended automation
-- Automation score
-- Suggested tools
-- Practical next steps
-- Demo note explaining that this is a frontend mock
-
-## Automation Recommendations
-
-The automation table presents examples such as:
-
-- Lead classification and automatic follow-up
-- Customer tracking reminders
-- Automatic dashboards and reporting
-- FAQ bots and customer service routing
-- Internal workflow automation
-- Meeting and appointment automation
-- Task management automation
-- Meeting transcription and summaries
-
-Each row includes:
-
-- Business process or pain point
-- Current manual workflow
-- Recommended automation
-- Relevant tools
-- Impact
-- Complexity
-- Why the automation is useful
-
-## Tools Used
+## Tools & Technologies
 
 - React
 - Vite
+- JavaScript
+- CSS
 - GitHub
 - Vercel
 - Codex
 - ChatGPT / Gemini
 - Perplexity-style research
 - Make / Zapier / n8n / CRM examples
-- Google Sheets, Airtable, Looker Studio, HubSpot, Microsoft Power Automate examples
 
-## Important Note
+## How AI is represented in this project
 
-This is currently a frontend demo/mock.
+This project does not currently call a real AI API from the frontend. Instead, it demonstrates the product logic and user experience of an AI-assisted advisor.
 
-No real API keys are exposed. The Perplexity-style research flow and AI recommendation logic are simulated on the frontend for demonstration purposes.
+The AI flow is represented through:
 
-Future versions can connect to Perplexity API or another AI model through a secure server-side route. Real API integration should be implemented only through environment variables and backend/serverless routes, never directly in frontend code.
+- market research simulation
+- business context analysis
+- automation recommendation logic
+- automation scoring
+- tool suggestions
+- next-step planning
 
-## How to Run Locally
+Future versions could connect to Perplexity API or another AI model through a secure server-side route.
 
-Install dependencies:
-
-```bash
-npm install
-```
-
-Start local development server:
-
-```bash
-npm run dev
-```
-
-Build production version:
-
-```bash
-npm run build
-```
-
-Optional preview after build:
-
-```bash
-npm run preview
-```
-
-## Classroom Presentation
+## Classroom Presentation Focus
 
 The project demonstrates:
 
-```text
-תוצר + כלים + לקחים
-```
+- Product: a business automation advisor demo
+- Tools: React, Vite, GitHub, Vercel, Codex, AI research tools
+- Lessons: AI is most useful when connected to a clear business problem and presented through practical recommendations
 
 Presentation flow:
 
@@ -138,43 +91,20 @@ Presentation flow:
 Problem → AI research → automation recommendation → tools → lessons learned
 ```
 
-Suggested explanation:
+## Run Locally
 
-1. Present the business problem: small businesses lose time on repetitive manual operations.
-2. Show how AI-assisted market research can identify recurring pain points.
-3. Demonstrate the `הרץ ניתוח AI` flow.
-4. Explain the automation recommendation modal.
-5. Show the automation opportunities table.
-6. Explain the tools that could implement each automation.
-7. Summarize the lessons learned from building the demo.
-
-## Project Structure
-
-```text
-src/
-  data/
-    automationAreas.js
-    tools.js
-    useCases.js
-  utils/
-    auth.js
-    leads.js
-    notifications.js
-    recommendation.js
-  App.jsx
-  main.jsx
-  styles.css
-
-api/
-  send-signup-notification.js
-
-public/
-  images/
-    autobiz-ai-advisor-logo.png
+```bash
+npm install
+npm run dev
+npm run build
 ```
 
-## Current Status
+## Security Notes
 
-AutoBiz AI Advisor is suitable for a classroom presentation and portfolio demonstration.
+- No real API keys are stored in the frontend.
+- Secrets should only be stored in environment variables.
+- Real AI API integration should be implemented only through a backend/serverless route.
 
-It does not claim to perform live Perplexity or AI API research yet. The current version demonstrates the product concept, UI flow, research logic, recommendation structure, and business automation strategy through a polished frontend demo.
+## Hebrew UI Note
+
+The user interface is in Hebrew and RTL because the project was built for a classroom presentation in Israel.
