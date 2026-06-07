@@ -1,89 +1,154 @@
 # AutoBiz AI Advisor
 
-AutoBiz AI Advisor הוא פרויקט גמר אקדמי המדגים אפליקציית Web בעברית ובכיוון RTL, שמטרתה לעזור לעסקים קטנים לבחור כלי אוטומציה ו-AI המתאימים לצרכים העסקיים שלהם.
+Live demo:
 
-המערכת בנויה כיישום React + Vite, כוללת שאלון התאמה אינטראקטיבי, מנוע המלצה Rule-Based, השוואת כלי אוטומציה, ספריית מקרי שימוש, שמירת פניות דמו, התראות מייל דרך Serverless Function, ואזור ניהול מוגן ברמת דמו.
+https://ai-business-automation-advisor.vercel.app/
 
-> זהו פרויקט אקדמי / דמו. אין להזין אליו מידע אישי אמיתי, סיסמאות אמיתיות או נתוני לקוחות אמיתיים.
+AutoBiz AI Advisor is a Hebrew AI business automation advisor demo that shows how AI-assisted market research can identify business pain points and recommend practical automation workflows.
 
-## מטרת הפרויקט
+The project is built as a dark, premium, RTL business SaaS-style website for a classroom presentation and portfolio use case. It demonstrates how a business owner could move from market research and pain-point discovery to concrete automation recommendations, relevant tools, complexity level, business impact, automation score, and next steps.
 
-עסקים קטנים רבים רוצים להשתמש באוטומציות AI כדי לחסוך זמן, לשפר שירות, לארגן מידע ולהגדיל מכירות, אך מתקשים לבחור בין כלים רבים בעלי מחירים, רמות מורכבות ואפשרויות אינטגרציה שונות.
+## Problem
 
-AutoBiz AI Advisor משמש כפלטפורמת Decision Support ראשונית:
+Small businesses waste time on manual processes, lead follow-ups, customer tracking, reporting, messages, and repetitive operations.
 
-- איסוף מידע על העסק דרך שאלון התאמה.
-- ניתוח צרכים באמצעות לוגיקת המלצה מוסברת.
-- הצגת קטגוריית אוטומציה מומלצת וכלים רלוונטיים.
-- יצירת פניות דמו לצורך הצגה וניהול בסיסי.
-- תיעוד שימוש בכלי AI במסגרת הפרויקט האקדמי.
+These workflows often happen across disconnected tools such as WhatsApp, email, spreadsheets, calendars, CRM systems, and task boards. The result is slow response time, missed leads, operational overload, inconsistent follow-up, and limited visibility into business performance.
 
-## קהל יעד
+## Solution
 
-- בעלי עסקים קטנים
-- עצמאים ופרילנסרים
-- צוותים קטנים
-- עסקים שרוצים להתחיל להשתמש באוטומציות AI ולא יודעים מאיפה להתחיל
+AutoBiz demonstrates how AI can turn market research and business context into practical automation recommendations.
 
-## תכונות מרכזיות
+The demo shows a Perplexity-style research flow that identifies business pain points, maps manual processes, suggests automation opportunities, recommends tools, estimates complexity and impact, and presents a clear next step for implementation.
 
-- ממשק עברי מלא עם תמיכה ב-RTL.
-- דף בית מקצועי בסגנון SaaS עסקי.
-- שאלון התאמה עם ולידציה והצגת המלצה במודל Popout.
-- מנוע המלצה Rule-Based שקל להסביר ולהציג.
-- טבלת השוואת כלים עם חיפוש, סינון וקישורים לאתרים רשמיים.
-- ספריית מקרי שימוש עסקיים לאוטומציות AI.
-- Mock Authentication באמצעות localStorage.
-- אזור אישי המציג המלצה שמורה.
-- עמוד מסלולים וטופס בקשת ייעוץ.
-- ניהול פניות דמו עם סינון, ניקוי וייצוא CSV.
-- התראת מייל בהרשמת משתמש דרך Vercel Serverless Function ו-Resend.
-- הגנת דמו על עמוד Admin לפי כתובת אימייל של מנהל.
-- עמוד מתודולוגיה וסיכום אקדמי.
+## Main Features
 
-## ארכיטקטורת המערכת
+- Hebrew RTL interface
+- AI analysis demo
+- Perplexity-style research simulation
+- Business pain-point discovery
+- Automation opportunities table
+- Automation score
+- AI recommendation modal after clicking `הרץ ניתוח AI`
+- Recommended tools and implementation steps
+- Tools and lessons presentation section
+- Responsive dark premium SaaS design
 
-המערכת בנויה כארכיטקטורת Frontend-first המותאמת לפרויקט דמו אקדמי:
+## AI Capabilities Demo
 
-- **Frontend:** React + Vite.
-- **Hosting:** Vercel.
-- **Demo Data Storage:** שימוש ב-localStorage לשמירת משתמש דמו, המלצה אחרונה ופניות.
-- **Lead Management:** פניות דמו נשמרות מקומית בדפדפן דרך `src/utils/leads.js`.
-- **Email Notifications:** שליחת התראת מייל בהרשמה דרך `api/send-signup-notification.js`, Vercel Serverless Function ו-Resend.
-- **Authentication:** Mock Authentication בלבד, ללא Backend אמיתי.
-- **Admin Access:** בדיקת תפקיד דמו לפי כתובת אימייל של מנהל.
-- **External Links:** קישורים רשמיים לכלי אוטומציה כגון Zapier, Make, n8n, HubSpot, OpenAI, Google Workspace ו-Microsoft Power Automate.
+The AI demo page shows how the product could work in a real business context:
 
-## זרימת המערכת
+1. The user enters a business field.
+2. The user selects business size and main goal.
+3. The user clicks `הרץ ניתוח AI`.
+4. The website shows a short analyzing state.
+5. A result modal presents a simulated AI recommendation.
+6. The user can jump to the automation recommendations table.
 
-1. משתמש נכנס לאתר.
-2. המשתמש ממלא שאלון התאמה.
-3. המערכת מפעילה לוגיקת המלצה Rule-Based.
-4. התוצאה מוצגת במודל Popout.
-5. המשתמש יכול להירשם ולשמור המלצה.
-6. נוצר Lead דמו ב-localStorage.
-7. בהרשמה, פונקציית Serverless יכולה לשלוח התראת מייל דרך Resend.
-8. Admin יכול להיכנס לעמוד ניהול פניות ולראות פניות דמו.
+The result includes:
 
-## תרשים ארכיטקטורה
+- Business field
+- Business size
+- Main goal
+- Recommended automation
+- Automation score
+- Suggested tools
+- Practical next steps
+- Demo note explaining that this is a frontend mock
 
-```text
-משתמש
-  ↓
-React + Vite Frontend
-  ↓
-שאלון התאמה + Rule-Based Recommendation
-  ↓
-localStorage Demo Data
-  ↓
-Vercel Serverless Function
-  ↓
-Resend Email Notification
-  ↓
-Business Email Inbox
+## Automation Recommendations
+
+The automation table presents examples such as:
+
+- Lead classification and automatic follow-up
+- Customer tracking reminders
+- Automatic dashboards and reporting
+- FAQ bots and customer service routing
+- Internal workflow automation
+- Meeting and appointment automation
+- Task management automation
+- Meeting transcription and summaries
+
+Each row includes:
+
+- Business process or pain point
+- Current manual workflow
+- Recommended automation
+- Relevant tools
+- Impact
+- Complexity
+- Why the automation is useful
+
+## Tools Used
+
+- React
+- Vite
+- GitHub
+- Vercel
+- Codex
+- ChatGPT / Gemini
+- Perplexity-style research
+- Make / Zapier / n8n / CRM examples
+- Google Sheets, Airtable, Looker Studio, HubSpot, Microsoft Power Automate examples
+
+## Important Note
+
+This is currently a frontend demo/mock.
+
+No real API keys are exposed. The Perplexity-style research flow and AI recommendation logic are simulated on the frontend for demonstration purposes.
+
+Future versions can connect to Perplexity API or another AI model through a secure server-side route. Real API integration should be implemented only through environment variables and backend/serverless routes, never directly in frontend code.
+
+## How to Run Locally
+
+Install dependencies:
+
+```bash
+npm install
 ```
 
-## מבנה הפרויקט
+Start local development server:
+
+```bash
+npm run dev
+```
+
+Build production version:
+
+```bash
+npm run build
+```
+
+Optional preview after build:
+
+```bash
+npm run preview
+```
+
+## Classroom Presentation
+
+The project demonstrates:
+
+```text
+תוצר + כלים + לקחים
+```
+
+Presentation flow:
+
+```text
+Problem → AI research → automation recommendation → tools → lessons learned
+```
+
+Suggested explanation:
+
+1. Present the business problem: small businesses lose time on repetitive manual operations.
+2. Show how AI-assisted market research can identify recurring pain points.
+3. Demonstrate the `הרץ ניתוח AI` flow.
+4. Explain the automation recommendation modal.
+5. Show the automation opportunities table.
+6. Explain the tools that could implement each automation.
+7. Summarize the lessons learned from building the demo.
+
+## Project Structure
 
 ```text
 src/
@@ -102,167 +167,14 @@ src/
 
 api/
   send-signup-notification.js
+
+public/
+  images/
+    autobiz-ai-advisor-logo.png
 ```
 
-### הסבר מבנה
+## Current Status
 
-- `src/data` - נתונים סטטיים עסקיים: אזורי אוטומציה, כלי אוטומציה ומקרי שימוש.
-- `src/utils/auth.js` - לוגיקת Mock Authentication ובדיקת Admin דמו.
-- `src/utils/leads.js` - יצירה, קריאה, ניקוי וייצוא של פניות דמו.
-- `src/utils/notifications.js` - קריאה מה-Frontend ל-Serverless Function של התראות מייל.
-- `src/utils/recommendation.js` - מנוע המלצה Rule-Based.
-- `src/App.jsx` - ניהול state, ניווט פנימי, עמודים ורכיבי UI מרכזיים.
-- `src/styles.css` - עיצוב RTL, רספונסיביות, מודלים, טבלאות וכרטיסים.
-- `api/send-signup-notification.js` - Endpoint בצד שרת לשליחת התראת מייל בהרשמה.
+AutoBiz AI Advisor is suitable for a classroom presentation and portfolio demonstration.
 
-## כלי AI שבהם השתמשנו
-
-### Codex
-
-Codex שימש לתכנון מבנה הקוד, בניית ממשק React, יצירת רכיבים, שיפור חוויית משתמש, תיקון בעיות, ארגון קבצים וכתיבת לוגיקה.
-
-### ChatGPT / Gemini
-
-כלי AI נוספים שימשו למחקר שוק, הגדרת קריטריונים להשוואת כלים, ניסוח מקרי שימוש עסקיים, שיפור לוגיקת ההמלצה והכנת תוכן אקדמי.
-
-## איך להריץ מקומית
-
-```bash
-npm install
-npm run dev
-```
-
-בניית גרסת Production:
-
-```bash
-npm run build
-```
-
-תצוגה מקדימה אחרי build:
-
-```bash
-npm run preview
-```
-
-## פריסה ב-Vercel
-
-1. מעלים את הפרויקט ל-GitHub.
-2. יוצרים פרויקט חדש ב-Vercel.
-3. בוחרים Framework: Vite.
-4. מגדירים:
-   - Install Command: `npm install`
-   - Build Command: `npm run build`
-   - Output Directory: `dist`
-5. מוסיפים Environment Variables לפי הצורך.
-6. מבצעים Deploy.
-
-## משתני סביבה
-
-אין לשמור מפתחות API או סודות בקוד או ב-GitHub. יש להגדיר אותם ב-Vercel Environment Variables בלבד.
-
-```bash
-RESEND_API_KEY=your_resend_api_key_here
-LEAD_NOTIFICATION_EMAIL=autobiz.advisor.ai@gmail.com
-APP_BASE_URL=https://ai-business-automation-advisor.vercel.app
-```
-
-`APP_BASE_URL` משמש ליצירת קישורים בתוך התראות מייל, לדוגמה קישור לעמוד ניהול הפניות:
-
-```text
-https://ai-business-automation-advisor.vercel.app/#admin-leads
-```
-
-## התראות מייל בהרשמת משתמש
-
-כאשר משתמש חדש נרשם, האפליקציה שומרת את המשתמש ב-localStorage לצורך דמו, יוצרת Lead מקומי, ומנסה לשלוח התראת מייל עסקית דרך Serverless Function.
-
-השליחה מתבצעת רק בצד שרת:
-
-```text
-POST /api/send-signup-notification
-```
-
-ספק המיילים: Resend.
-
-כתובת ההתראה הרשמית של הפרויקט:
-
-```text
-autobiz.advisor.ai@gmail.com
-```
-
-אם `RESEND_API_KEY` חסר או שהשליחה נכשלת, ההרשמה לא נחסמת. המשתמש ממשיך לאזור האישי, והכשל נרשם ב-console.
-
-## הגנת דמו על עמוד Admin
-
-עמוד `ניהול פניות` מוגן בפרויקט הדמו באמצעות בדיקת אימייל מנהל:
-
-```text
-autobiz.advisor.ai@gmail.com
-```
-
-רק משתמש שמחובר עם כתובת זו יראה את פריט הניווט `ניהול פניות` ויוכל לפתוח:
-
-```text
-https://ai-business-automation-advisor.vercel.app/#admin-leads
-```
-
-זוהי הגנת דמו בלבד. בגרסת Production יש להחליף זאת באימות משתמשים אמיתי וב-Role-Based Access Control.
-
-## אבטחה ופרטיות
-
-- אין לשמור API keys, tokens, סיסמאות או SMTP credentials ב-GitHub.
-- סודות צריכים להישמר ב-Vercel Environment Variables בלבד.
-- מערכת ההתחברות היא Mock Authentication בלבד.
-- localStorage משמש רק לצורך הדגמה אקדמית.
-- אין להזין נתוני לקוחות אמיתיים או סיסמאות אמיתיות.
-- גרסת Production צריכה לכלול Backend מאובטח, בסיס נתונים, Sessions, הרשאות תפקידים, ולידציה בצד שרת וניהול סודות מוצפן.
-
-## איך הפרויקט עונה על דרישות הקורס
-
-- **יישומי AI בעולם העסקי:** האתר מציג שימושים עסקיים מעשיים ב-AI ואוטומציה.
-- **חשיבה של מערכות מידע:** קיימת התייחסות לזרימת נתונים, משתמשים, הרשאות, פניות, אינטגרציות ותהליכים עסקיים.
-- **ערך עסקי:** ההמלצה כוללת קטגוריה, כלים, מורכבות, השפעה עסקית וצעד ראשון.
-- **חשיבה ביקורתית:** טבלת הכלים מציגה יתרונות, חסרונות, רמות מחיר, רמות אינטגרציה וסוגי עסקים מתאימים.
-- **שימוש משמעותי בכלי AI:** הפרויקט מתעד שימוש ב-Codex וב-ChatGPT / Gemini לתכנון, מחקר, ניסוח, פיתוח ושיפור.
-
-## תוכנית הצגה ל-10 דקות
-
-1. **הצגת הבעיה וקהל היעד**  
-   להסביר מדוע עסקים קטנים מתקשים לבחור כלי AI ואוטומציה.
-
-2. **הדגמת דף הבית**  
-   להראות את מטרת המוצר ואת אזורי האוטומציה המרכזיים.
-
-3. **מילוי שאלון התאמה**  
-   למלא דוגמה עסקית ולהציג את ההמלצה במודל Popout.
-
-4. **השוואת כלים**  
-   להציג חיפוש, סינון וקישורים לאתרים רשמיים.
-
-5. **הרשמה ואזור אישי**  
-   להדגים יצירת משתמש דמו ושמירת המלצה.
-
-6. **ניהול פניות דמו**  
-   להתחבר כ-Admin ולהציג פניות, סינון וייצוא CSV.
-
-7. **שימוש בכלי AI**  
-   להסביר כיצד Codex ו-ChatGPT / Gemini שימשו בפרויקט.
-
-8. **לקחים ושיפורים עתידיים**  
-   להציג מגבלות דמו ומה נדרש לגרסת Production.
-
-## שדרוגים נדרשים לגרסת Production
-
-- החלפת Mock Authentication ב-Supabase, Firebase, Clerk או פתרון Auth מאובטח אחר.
-- שמירת משתמשים ופניות בבסיס נתונים אמיתי.
-- הרשאות Admin אמיתיות ו-Role-Based Access Control.
-- ולידציה בצד שרת לכל טופס ופעולה.
-- Audit logs לפעולות ניהוליות.
-- דומיין מייל מאומת ומאובטח לשליחת התראות.
-- מערכת תשלומים אם מסלולים יהפכו למסלולים בתשלום.
-- מדיניות פרטיות ותנאי שימוש.
-- ניטור שגיאות, גיבויים ואבטחת מידע.
-
-## סטטוס הפרויקט
-
-הפרויקט מתאים להצגה אקדמית ולתיק עבודות כיישום Frontend מתקדם עם Serverless Function בסיסית. הוא אינו מיועד לשימוש Production ללא שדרוגי אבטחה, אימות, בסיס נתונים וניהול הרשאות.
+It does not claim to perform live Perplexity or AI API research yet. The current version demonstrates the product concept, UI flow, research logic, recommendation structure, and business automation strategy through a polished frontend demo.
