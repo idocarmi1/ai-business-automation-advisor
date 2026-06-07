@@ -301,6 +301,17 @@ p {
 .workflow-card,
 .mini-metric,
 .statement-card,
+.ai-demo-section,
+.ai-input-panel,
+.ai-output-panel,
+.market-insight-card,
+.ai-explanation-card,
+.classroom-section,
+.presentation-card,
+.research-example-panel,
+.research-answer-card,
+.classroom-step-card,
+.core-idea-section,
 .step-card,
 .usecase-pill,
 .portfolio-section,
@@ -409,6 +420,351 @@ p {
 .statement-card p {
   margin-bottom: 0;
   font-size: 17px;
+}
+
+.ai-demo-section {
+  display: grid;
+  gap: 24px;
+  margin: 58px 0 64px;
+  padding: clamp(22px, 4vw, 38px);
+  border-color: rgba(216, 181, 109, 0.24);
+  background:
+    radial-gradient(circle at 8% 0%, rgba(216, 181, 109, 0.12), transparent 34%),
+    linear-gradient(145deg, rgba(138, 161, 184, 0.08), rgba(58, 183, 149, 0.035)),
+    rgba(10, 21, 36, 0.9);
+}
+
+.ai-demo-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.ai-demo-heading p {
+  max-width: 780px;
+  margin-bottom: 0;
+  font-size: 17px;
+}
+
+.research-badge {
+  display: inline-flex;
+  align-items: center;
+  min-width: max-content;
+  padding: 8px 11px;
+  border: 1px solid rgba(216, 181, 109, 0.28);
+  border-radius: 8px;
+  color: #f3dfb0;
+  background: rgba(216, 181, 109, 0.08);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.ai-dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(340px, 1.08fr);
+  gap: 16px;
+}
+
+.ai-input-panel,
+.ai-output-panel {
+  display: grid;
+  gap: 14px;
+  padding: 20px;
+  background: rgba(13, 25, 42, 0.78);
+}
+
+.compact-form-group {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.ai-input-panel .primary-button {
+  width: fit-content;
+}
+
+.ai-output-panel {
+  border-color: rgba(216, 181, 109, 0.22);
+  background:
+    linear-gradient(145deg, rgba(216, 181, 109, 0.1), rgba(58, 183, 149, 0.05)),
+    rgba(12, 26, 45, 0.92);
+}
+
+.ai-output-panel h3 {
+  margin-bottom: 0;
+  font-size: clamp(22px, 3vw, 30px);
+}
+
+.ai-output-panel p {
+  margin-bottom: 0;
+}
+
+.ai-output-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ai-output-meta span {
+  padding: 7px 10px;
+  border: 1px solid rgba(180, 195, 214, 0.16);
+  border-radius: 8px;
+  color: #dce7f4;
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.research-flow {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.research-step {
+  position: relative;
+  display: grid;
+  gap: 8px;
+  min-height: 112px;
+  padding: 16px;
+  border: 1px solid rgba(216, 181, 109, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.research-step span {
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.research-step strong {
+  color: #f0f5fb;
+  line-height: 1.35;
+}
+
+.market-insight-grid,
+.ai-explanation-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.market-insight-card,
+.ai-explanation-card {
+  min-height: 142px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.market-insight-card svg,
+.ai-explanation-card svg {
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+
+.market-insight-card h3 {
+  margin-bottom: 0;
+  font-size: 18px;
+}
+
+.ai-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(8, 17, 31, 0.68);
+}
+
+.ai-opportunities-table {
+  min-width: 960px;
+}
+
+.ai-opportunities-table th {
+  color: #f3dfb0;
+  background: rgba(216, 181, 109, 0.09);
+}
+
+.ai-opportunities-table td {
+  color: #d8e2ee;
+}
+
+.ai-explanation-section {
+  display: grid;
+  gap: 18px;
+}
+
+.ai-explanation-card {
+  min-height: 156px;
+}
+
+.ai-explanation-card p {
+  margin-bottom: 0;
+  color: #d6e0eb;
+  font-weight: 800;
+}
+
+.future-note {
+  margin: 0;
+  padding: 14px 16px;
+  border: 1px solid rgba(216, 181, 109, 0.2);
+  border-radius: 8px;
+  color: #f3dfb0;
+  background: rgba(216, 181, 109, 0.08);
+  font-weight: 800;
+}
+
+.classroom-section {
+  display: grid;
+  gap: 18px;
+  margin: 58px 0;
+  padding: clamp(22px, 4vw, 34px);
+  background:
+    linear-gradient(145deg, rgba(138, 161, 184, 0.075), rgba(216, 181, 109, 0.045)),
+    rgba(10, 21, 36, 0.72);
+}
+
+.presentation-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.presentation-card {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  min-height: 230px;
+  padding: 22px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.presentation-card p {
+  margin-bottom: 0;
+}
+
+.before-after-table,
+.automation-score-table {
+  min-width: 760px;
+}
+
+.before-after-table td,
+.automation-score-table td {
+  color: #d8e2ee;
+  font-weight: 750;
+}
+
+.before-after-table td:nth-child(2) {
+  color: #f3dfb0;
+}
+
+.research-example-panel {
+  display: grid;
+  gap: 16px;
+  padding: clamp(20px, 3vw, 26px);
+  border-color: rgba(216, 181, 109, 0.22);
+  background:
+    linear-gradient(145deg, rgba(216, 181, 109, 0.1), rgba(138, 161, 184, 0.04)),
+    rgba(8, 17, 31, 0.72);
+}
+
+.research-query-box {
+  padding: 16px;
+  border: 1px solid rgba(216, 181, 109, 0.24);
+  border-radius: 8px;
+  color: #ecf3fb;
+  background: rgba(5, 11, 20, 0.62);
+  font-size: 18px;
+  font-weight: 850;
+  line-height: 1.55;
+}
+
+.research-answer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.research-answer-card {
+  min-height: 132px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.research-answer-card svg {
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+
+.research-answer-card h3 {
+  margin-bottom: 0;
+  font-size: 18px;
+}
+
+.score-section {
+  display: grid;
+  gap: 16px;
+}
+
+.score-section p {
+  max-width: 760px;
+  margin-bottom: 0;
+}
+
+.score-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 82px;
+  padding: 7px 10px;
+  border: 1px solid rgba(58, 183, 149, 0.28);
+  border-radius: 8px;
+  color: #bcf5df;
+  background: rgba(58, 183, 149, 0.1);
+  font-weight: 950;
+}
+
+.classroom-step-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.classroom-step-card {
+  min-height: 156px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.classroom-step-card span {
+  display: inline-flex;
+  margin-bottom: 14px;
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.classroom-step-card h3 {
+  margin-bottom: 0;
+  font-size: 18px;
+}
+
+.core-idea-section {
+  margin: 60px 0 22px;
+  padding: clamp(24px, 4vw, 38px);
+  border-color: rgba(216, 181, 109, 0.28);
+  background:
+    radial-gradient(circle at 14% 0%, rgba(216, 181, 109, 0.13), transparent 34%),
+    linear-gradient(145deg, rgba(216, 181, 109, 0.12), rgba(58, 183, 149, 0.05)),
+    rgba(12, 24, 40, 0.92);
+}
+
+.core-idea-section p {
+  max-width: 900px;
+  margin-bottom: 0;
+  color: #d7e2ef;
+  font-size: 19px;
 }
 
 .section-intro {
@@ -961,6 +1317,8 @@ tbody tr:hover { background: rgba(255, 255, 255, 0.035); }
 
   .hero,
   .split-section,
+  .ai-demo-heading,
+  .ai-dashboard-grid,
   .method-grid,
   .insight-band,
   .dashboard-grid,
@@ -970,6 +1328,14 @@ tbody tr:hover { background: rgba(255, 255, 255, 0.035); }
 
   .hero { min-height: auto; }
   .area-grid, .lead-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .research-flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .market-insight-grid,
+  .ai-explanation-grid,
+  .research-answer-grid,
+  .classroom-step-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .presentation-card-grid { grid-template-columns: 1fr; }
   .plans-grid, .modal-tool-grid, .step-grid { grid-template-columns: 1fr; }
   .summary-item.wide { grid-column: auto; }
 }
@@ -994,6 +1360,11 @@ tbody tr:hover { background: rgba(255, 255, 255, 0.035); }
 
   .nav,
   .area-grid,
+  .research-flow,
+  .market-insight-grid,
+  .ai-explanation-grid,
+  .research-answer-grid,
+  .classroom-step-grid,
   .usecase-grid,
   .usecase-strip,
   .filter-bar,
@@ -1012,12 +1383,17 @@ tbody tr:hover { background: rgba(255, 255, 255, 0.035); }
 
   .hero-panel,
   .consultation-form,
-  .process-section {
+  .process-section,
+  .ai-demo-section,
+  .classroom-section,
+  .core-idea-section,
+  .research-example-panel {
     padding: 18px;
   }
 
   .primary-button,
-  .secondary-button {
+  .secondary-button,
+  .ai-input-panel .primary-button {
     width: 100%;
   }
 
@@ -1030,6 +1406,13 @@ tbody tr:hover { background: rgba(255, 255, 255, 0.035); }
   .auth-card,
   .area-card,
   .statement-card,
+  .ai-input-panel,
+  .ai-output-panel,
+  .market-insight-card,
+  .ai-explanation-card,
+  .presentation-card,
+  .research-answer-card,
+  .classroom-step-card,
   .step-card {
     padding: 16px;
   }

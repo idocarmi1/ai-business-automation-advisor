@@ -264,6 +264,12 @@ function Header({ activePage, goTo, menuOpen, setMenuOpen, user, isAdmin, onLogo
 
 function HomePage({ goTo }) {
   const githubUrl = 'https://github.com/idocarmi1/ai-business-automation-advisor';
+  const [aiDemo, setAiDemo] = useState({
+    businessField: '',
+    businessSize: 'עסק קטן',
+    businessGoal: 'חיסכון בזמן',
+    runs: 1,
+  });
   const features = [
     ['ניתוח תהליכי עבודה', 'פירוק תהליך עסקי לשלבים ברורים, נקודות החלטה, בעלי אחריות ותלות בין כלים.', FileSearch],
     ['זיהוי הזדמנויות אוטומציה', 'איתור משימות חוזרות, כפילויות, צווארי בקבוק ונקודות שבהן אוטומציה יכולה לחסוך זמן.', Sparkles],
@@ -286,6 +292,65 @@ function HomePage({ goTo }) {
     'שיפור תהליכי שירות',
   ];
   const portfolioItems = ['React', 'Vite', 'חשיבה מוצרית', 'ניתוח עסקי בעזרת AI', 'אוטומציית תהליכי עבודה', 'עיצוב Frontend', 'אסטרטגיית אוטומציה מעשית'];
+  const researchFlow = ['חקר שוק', 'זיהוי כאבים עסקיים', 'מיפוי תהליכים ידניים', 'איתור אוטומציות', 'תוכנית פעולה'];
+  const marketInsights = [
+    'לקוחות מצפים למענה מהיר יותר',
+    'עסקים רבים עדיין מנהלים מעקבים ידניים',
+    'יש פער בין איסוף לידים לבין טיפול בפועל',
+    'דוחות ובקרה מתבצעים לעיתים בצורה ידנית ולא רציפה',
+  ];
+  const automationOpportunities = [
+    ['טיפול איטי בלידים', 'מעבר ידני על טפסים והודעות', 'שליחת WhatsApp/Email אוטומטית וסיווג ליד', 'Make / Zapier / CRM', 'גבוהה', 'בינונית'],
+    ['חוסר מעקב אחרי לקוחות', 'תזכורות ידניות ביומן או באקסל', 'תזכורות אוטומטיות לפי סטטוס לקוח', 'Google Sheets + Automation', 'גבוהה', 'נמוכה'],
+    ['דוחות לא מסודרים', 'איסוף נתונים ידני בסוף חודש', 'Dashboard אוטומטי עם מדדי פעילות', 'Looker Studio / Sheets / API', 'בינונית', 'בינונית'],
+    ['עומס בשירות לקוחות', 'מענה חוזר על שאלות דומות', 'FAQ Bot / Chatbot לשאלות נפוצות', 'AI Chatbot', 'גבוהה', 'בינונית'],
+  ];
+  const presentationCards = [
+    ['הבעיה', 'עסקים קטנים ובינוניים מבזבזים זמן על משימות ידניות, מעקב אחרי לקוחות, דוחות, הודעות ותהליכים שחוזרים על עצמם.'],
+    ['הפתרון', 'AutoBiz מדמה שימוש ב-AI לצורך חקר שוק, זיהוי כאבים עסקיים והצעת אוטומציות פרקטיות.'],
+    ['התוצאה', 'טבלת המלצות ברורה שמראה מה כדאי לאוטומט, באיזה כלי להשתמש, מה רמת ההשפעה ומה מורכבות היישום.'],
+  ];
+  const beforeAfterRows = [
+    ['מעבר ידני על פניות מלקוחות', 'סיווג אוטומטי של לידים'],
+    ['שליחת הודעות ידנית', 'הודעת WhatsApp/Email אוטומטית'],
+    ['תזכורות ביומן או באקסל', 'תזכורות אוטומטיות לפי סטטוס לקוח'],
+    ['דוחות ידניים בסוף חודש', 'Dashboard שמתעדכן אוטומטית'],
+  ];
+  const researchAnswerCards = [
+    'עומס בתיאום תורים',
+    'מעקב ידני אחרי לקוחות',
+    'חוסר טיפול בלידים חוזרים',
+    'דוחות פעילות ידניים',
+  ];
+  const automationScores = [
+    ['הודעה אוטומטית לליד חדש', 'גבוהה', 'נמוכה', '92/100'],
+    ['תזכורות ללקוחות', 'גבוהה', 'נמוכה', '88/100'],
+    ['Dashboard חודשי', 'בינונית', 'בינונית', '74/100'],
+    ['Chatbot שאלות נפוצות', 'גבוהה', 'בינונית', '81/100'],
+  ];
+  const classroomSteps = [
+    'מציגים בעיה עסקית אמיתית',
+    'מראים איך AI מבצע חקר שוק ראשוני',
+    'מציגים טבלת אוטומציות',
+    'מסבירים באילו כלים ניתן ליישם',
+    'מציגים לקחים מהפרויקט',
+  ];
+  const toolsLessons = [
+    ['תוצר', 'אתר דמו שמציג מערכת לניתוח עסקי ואיתור אוטומציות בעזרת AI.'],
+    ['כלים', 'React, Vite, GitHub, Vercel, Perplexity-style research, Make, Zapier, CRM, Google Sheets ופתרונות אוטומציה עסקית.'],
+    ['לקחים', 'AI נותן ערך כאשר מחברים אותו לבעיה עסקית ברורה, מציגים תובנות בצורה פשוטה, ומתרגמים אותן לפעולות מעשיות.'],
+  ];
+  const aiExplanation = [
+    'AI מסייע באיסוף והבנת מידע עסקי מתוך חקר שוק.',
+    'AI מזהה בעיות שחוזרות על עצמן בתהליכים עסקיים.',
+    'AI מציע אוטומציות לפי השפעה, מורכבות וערך עסקי.',
+    'המערכת הופכת רעיון כללי לתוכנית פעולה ברורה.',
+  ];
+  const selectedBusinessField = aiDemo.businessField.trim() || 'התחום העסקי שנבחר';
+
+  const runAiDemo = () => {
+    setAiDemo((current) => ({ ...current, runs: current.runs + 1 }));
+  };
 
   return (
     <section className="page">
@@ -345,6 +410,242 @@ function HomePage({ goTo }) {
         </article>
       </div>
 
+      <section className="classroom-section">
+        <SectionIntro
+          title="מה הבעיה שהמערכת פותרת?"
+          text="מסגרת קצרה שמסבירה את הפרויקט דרך בעיה עסקית, פתרון מבוסס AI ותוצאה שניתן להציג בכיתה."
+        />
+        <div className="presentation-card-grid">
+          {presentationCards.map(([title, text]) => (
+            <article className="presentation-card" key={title}>
+              <Badge label={title} compact />
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="classroom-section">
+        <SectionIntro
+          title="לפני ואחרי אוטומציה"
+          text="הטבלה ממחישה לבעל עסק ולמרצה איך תהליך ידני הופך לתהליך אוטומטי, מדיד וברור."
+        />
+        <div className="ai-table-wrap">
+          <table className="before-after-table">
+            <thead>
+              <tr>
+                <th>לפני</th>
+                <th>אחרי</th>
+              </tr>
+            </thead>
+            <tbody>
+              {beforeAfterRows.map(([before, after]) => (
+                <tr key={before}>
+                  <td>{before}</td>
+                  <td>{after}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section className="ai-demo-section">
+        <div className="ai-demo-heading">
+          <div>
+            <span className="eyebrow">הדגמת יכולת AI</span>
+            <h2>חקר שוק ואיתור אוטומציות בעזרת AI</h2>
+            <p>
+              הדגמה שמראה כיצד ניתן להשתמש בכלי AI כמו Perplexity כדי לחקור תחום עסקי, לזהות בעיות חוזרות ולהציע אוטומציות מעשיות.
+            </p>
+          </div>
+          <span className="research-badge">Perplexity-style research demo</span>
+        </div>
+
+        <div className="research-example-panel">
+          <div>
+            <span className="eyebrow">דוגמת חקר שוק</span>
+            <h2>דוגמה לחקר שוק בסגנון Perplexity</h2>
+          </div>
+          <div className="research-query-box">
+            מהן הבעיות הנפוצות בעסקי קליניקות קטנות, ואילו תהליכים ניתן לאוטומט?
+          </div>
+          <div className="research-answer-grid">
+            {researchAnswerCards.map((answer) => (
+              <article className="research-answer-card" key={answer}>
+                <Search size={19} />
+                <h3>{answer}</h3>
+              </article>
+            ))}
+          </div>
+          <p className="future-note">
+            בדמו הנוכחי מדובר בסימולציה. בגרסה עתידית ניתן לחבר API של Perplexity בצד שרת לקבלת תובנות בזמן אמת.
+          </p>
+        </div>
+
+        <div className="ai-dashboard-grid">
+          <div className="ai-input-panel">
+            <label className="form-group compact-form-group">
+              <span>תחום עסקי</span>
+              <input
+                value={aiDemo.businessField}
+                onChange={(event) => setAiDemo({ ...aiDemo, businessField: event.target.value })}
+                placeholder="לדוגמה: מספרה, קליניקה, מסעדה, חנות אונליין"
+              />
+            </label>
+            <div className="form-grid">
+              <label className="form-group compact-form-group">
+                <span>גודל העסק</span>
+                <select value={aiDemo.businessSize} onChange={(event) => setAiDemo({ ...aiDemo, businessSize: event.target.value })}>
+                  <option>עסק קטן</option>
+                  <option>עסק בינוני</option>
+                  <option>סטארטאפ</option>
+                </select>
+              </label>
+              <label className="form-group compact-form-group">
+                <span>מטרה מרכזית</span>
+                <select value={aiDemo.businessGoal} onChange={(event) => setAiDemo({ ...aiDemo, businessGoal: event.target.value })}>
+                  <option>חיסכון בזמן</option>
+                  <option>שיפור שירות לקוחות</option>
+                  <option>הגדלת מכירות</option>
+                  <option>שיפור תפעול</option>
+                </select>
+              </label>
+            </div>
+            <button className="primary-button" type="button" onClick={runAiDemo}>הרץ ניתוח AI</button>
+          </div>
+
+          <div className="ai-output-panel">
+            <div className="workflow-header">
+              <span>תוצר לדוגמה מה-AI</span>
+              <Badge label={`ניתוח דמו ${aiDemo.runs}`} compact />
+            </div>
+            <h3>{selectedBusinessField}: הזדמנויות אוטומציה לפי {aiDemo.businessGoal}</h3>
+            <p>
+              בהתבסס על חקר שוק ראשוני, עסקים בתחום זה יכולים להרוויח מאוטומציה של טיפול בלידים, מעקב אחרי לקוחות, הפקת דוחות ושיפור זמני תגובה.
+              ההמלצה היא להתחיל באוטומציה פשוטה בעלת השפעה גבוהה ומורכבות נמוכה.
+            </p>
+            <div className="ai-output-meta">
+              <span>{aiDemo.businessSize}</span>
+              <span>{aiDemo.businessGoal}</span>
+              <span>Frontend demo בלבד</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="research-flow">
+          {researchFlow.map((step, index) => (
+            <div className="research-step" key={step}>
+              <span>{index + 1}</span>
+              <strong>{step}</strong>
+            </div>
+          ))}
+        </div>
+
+        <div className="market-insight-grid">
+          {marketInsights.map((insight) => (
+            <article className="market-insight-card" key={insight}>
+              <Sparkles size={20} />
+              <h3>{insight}</h3>
+            </article>
+          ))}
+        </div>
+
+        <div className="ai-table-wrap">
+          <table className="ai-opportunities-table">
+            <thead>
+              <tr>
+                <th>בעיה עסקית</th>
+                <th>תהליך ידני כיום</th>
+                <th>אוטומציה מוצעת</th>
+                <th>כלי / פתרון אפשרי</th>
+                <th>השפעה</th>
+                <th>מורכבות</th>
+              </tr>
+            </thead>
+            <tbody>
+              {automationOpportunities.map(([problem, manualProcess, automation, tool, impact, complexity]) => (
+                <tr key={problem}>
+                  <td>{problem}</td>
+                  <td>{manualProcess}</td>
+                  <td>{automation}</td>
+                  <td>{tool}</td>
+                  <td><Badge label={impact} compact /></td>
+                  <td><Badge label={complexity} compact /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="score-section">
+          <div>
+            <span className="eyebrow">תיעדוף יישום</span>
+            <h2>ציון כדאיות לאוטומציה</h2>
+            <p>
+              הציון עוזר להבין באיזו אוטומציה כדאי להתחיל לפי שילוב של ערך עסקי, השפעה ומורכבות יישום.
+            </p>
+          </div>
+          <div className="ai-table-wrap">
+            <table className="automation-score-table">
+              <thead>
+                <tr>
+                  <th>אוטומציה</th>
+                  <th>השפעה</th>
+                  <th>מורכבות</th>
+                  <th>ציון</th>
+                </tr>
+              </thead>
+              <tbody>
+                {automationScores.map(([automation, impact, complexity, score]) => (
+                  <tr key={automation}>
+                    <td>{automation}</td>
+                    <td><Badge label={impact} compact /></td>
+                    <td><Badge label={complexity} compact /></td>
+                    <td><span className="score-label">{score}</span></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className="ai-explanation-section">
+          <div>
+            <span className="eyebrow">הסבר למרצה</span>
+            <h2>איפה ה-AI בא לידי ביטוי?</h2>
+          </div>
+          <div className="ai-explanation-grid">
+            {aiExplanation.map((item) => (
+              <article className="ai-explanation-card" key={item}>
+                <BrainCircuit size={21} />
+                <p>{item}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        <p className="future-note">
+          בגרסה עתידית ניתן לחבר API של Perplexity או מודל AI אחר בצד שרת, כך שהמערכת תבצע חקר שוק אמיתי בזמן אמת ותייצר המלצות דינמיות.
+        </p>
+      </section>
+
+      <section className="classroom-section">
+        <SectionIntro
+          title="איך נציג את זה בכיתה?"
+          text="רצף הצגה קצר שמחבר את הבעיה העסקית, שימוש ב-AI, כלים מעשיים ולקחים מהעבודה."
+        />
+        <div className="classroom-step-grid">
+          {classroomSteps.map((step, index) => (
+            <article className="classroom-step-card" key={step}>
+              <span>{index + 1}</span>
+              <h3>{step}</h3>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <SectionIntro
         title="יכולות מרכזיות"
         text="המערכת מתמקדת בהבנת העבודה בפועל: איפה הזמן נאבד, אילו פעולות חוזרות על עצמן, ומה ניתן לשפר בלי להעמיס על העסק."
@@ -387,6 +688,30 @@ function HomePage({ goTo }) {
           </div>
         ))}
       </div>
+
+      <section className="classroom-section">
+        <SectionIntro
+          title="תוצר, כלים ולקחים"
+          text="סיכום מקצועי של מה נבנה, באילו כלים משתמשים כדי לממש את הרעיון, ומה למדנו על שימוש אפקטיבי ב-AI."
+        />
+        <div className="presentation-card-grid">
+          {toolsLessons.map(([title, text]) => (
+            <article className="presentation-card" key={title}>
+              <Badge label={title} compact />
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="core-idea-section">
+        <span className="eyebrow">סיכום ההדגמה</span>
+        <h2>הרעיון המרכזי</h2>
+        <p>
+          AutoBiz לא מציג רק אתר סטטי, אלא מדגים תהליך חשיבה של יועץ AI: חקר שוק, זיהוי בעיות, דירוג הזדמנויות אוטומציה והצגת תוכנית פעולה ברורה לבעל עסק.
+        </p>
+      </section>
 
       <section className="portfolio-section">
         <div>
