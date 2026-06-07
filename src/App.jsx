@@ -802,9 +802,9 @@ function AIDemoRecommendationModal({ businessField, businessSize, businessGoal, 
       <div className="recommendation-modal ai-result-modal">
         <button className="modal-close" type="button" onClick={onClose} aria-label="סגירת חלון"><X size={22} /></button>
         <span className="eyebrow">תוצאת דמו</span>
-        <h2>המלצת AI לעסק שלך</h2>
+        <h2>הניתוח הושלם בהצלחה</h2>
         <p className="modal-subtitle">
-          בהתבסס על התחום העסקי, גודל העסק והמטרה שבחרת, AutoBiz מציע נקודת התחלה לאוטומציה.
+          AutoBiz ניתח את התחום העסקי שהוזן והחזיר המלצת אוטומציה ראשונית.
         </p>
 
         <div className="business-summary-grid">
@@ -846,7 +846,7 @@ function AIDemoRecommendationModal({ businessField, businessSize, businessGoal, 
         </ol>
 
         <p className="auth-note">
-          הדמו מציג סימולציה של תהליך AI. בגרסה עתידית ניתן לחבר Perplexity API בצד שרת לצורך חקר שוק דינמי בזמן אמת.
+          זהו דמו Frontend שמציג כיצד המערכת יכולה להפוך חקר שוק ותובנות AI להמלצות אוטומציה מעשיות. בגרסה עתידית ניתן לחבר Perplexity API בצד שרת.
         </p>
 
         {copied && <p className="success-message">ההמלצה הועתקה</p>}
