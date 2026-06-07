@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowLeft,
   BarChart3,
@@ -353,6 +353,7 @@ function HomePage({ goTo }) {
 }
 
 function AIDemoPage() {
+  const automationTableRef = useRef(null);
   const [aiDemo, setAiDemo] = useState({
     businessField: '',
     businessSize: 'עסק קטן',
@@ -370,10 +371,21 @@ function AIDemoPage() {
     'דוחות ובקרה מתבצעים לעיתים בצורה ידנית ולא רציפה',
   ];
   const automationOpportunities = [
-    ['טיפול איטי בלידים', 'מעבר ידני על טפסים והודעות', 'שליחת WhatsApp/Email אוטומטית וסיווג ליד', 'Make / Zapier / CRM', 'גבוהה', 'בינונית'],
-    ['חוסר מעקב אחרי לקוחות', 'תזכורות ידניות ביומן או באקסל', 'תזכורות אוטומטיות לפי סטטוס לקוח', 'Google Sheets + Automation', 'גבוהה', 'נמוכה'],
-    ['דוחות לא מסודרים', 'איסוף נתונים ידני בסוף חודש', 'Dashboard אוטומטי עם מדדי פעילות', 'Looker Studio / Sheets / API', 'בינונית', 'בינונית'],
-    ['עומס בשירות לקוחות', 'מענה חוזר על שאלות דומות', 'FAQ Bot / Chatbot לשאלות נפוצות', 'AI Chatbot', 'גבוהה', 'בינונית'],
+    ['טיפול איטי בלידים', 'מעבר ידני על טפסים, הודעות WhatsApp ומיילים', 'סיווג ליד, שליחת הודעת המשך אוטומטית ועדכון CRM', ['Make', 'Zapier', 'HubSpot CRM', 'WhatsApp/Email Automation'], 'גבוהה', 'בינונית', 'חוסך זמן תגובה ומקטין אובדן לקוחות פוטנציאליים'],
+    ['חוסר מעקב אחרי לקוחות', 'תזכורות ידניות ביומן, Excel או WhatsApp', 'תזכורות אוטומטיות לפי סטטוס לקוח ושלב בתהליך', ['Google Sheets', 'Airtable', 'Make', 'Zapier'], 'גבוהה', 'נמוכה', 'קל להתחיל, מתאים לעסק קטן, ונותן ערך מהיר'],
+    ['דוחות ובקרה ידניים', 'איסוף נתונים ידני בסוף שבוע או חודש', 'Dashboard שמתעדכן אוטומטית ממקורות מידע שונים', ['Looker Studio', 'Google Sheets', 'Airtable', 'API Integration'], 'בינונית-גבוהה', 'בינונית', 'משפר קבלת החלטות ומציג תמונת מצב עסקית ברורה'],
+    ['עומס בשירות לקוחות', 'מענה חוזר על שאלות דומות', 'FAQ Bot / Chatbot לשאלות נפוצות והפניית פניות מורכבות', ['AI Chatbot', 'Intercom', 'Tidio', 'Zendesk'], 'גבוהה', 'בינונית', 'מוריד עומס ומקצר זמני מענה'],
+    ['תהליכי תפעול פנימיים', 'העברת משימות ידנית בין עובדים וכלים', 'Workflow אוטומטי בין טפסים, משימות, CRM ומיילים', ['n8n', 'Make', 'Zapier', 'Microsoft Power Automate'], 'גבוהה', 'בינונית-גבוהה', 'מתאים לעסק שרוצה לגדול ולחבר מערכות שונות'],
+    ['ניהול פגישות ותורים', 'תיאום ידני, ביטולים והודעות חוזרות', 'תיאום תורים, תזכורות לפני פגישה ועדכון סטטוס לקוח', ['Calendly', 'Google Calendar', 'Make', 'WhatsApp/Email Automation'], 'גבוהה', 'נמוכה-בינונית', 'רלוונטי לקליניקות, יועצים, נותני שירות ועסקים מבוססי פגישות'],
+    ['ניהול משימות וצוות', 'משימות מפוזרות בין WhatsApp, מיילים ושיחות', 'פתיחת משימה אוטומטית, שיוך אחראי ועדכון סטטוס', ['Monday.com', 'Trello', 'Asana', 'ClickUp', 'Make'], 'בינונית-גבוהה', 'בינונית', 'משפר סדר, אחריות ומעקב תפעולי'],
+    ['סיכום פגישות ושיחות', 'סיכום ידני או איבוד מידע אחרי פגישה', 'תמלול, סיכום אוטומטי ושליחת משימות המשך', ['Fireflies.ai', 'Otter.ai', 'Notion AI', 'Google Docs'], 'בינונית', 'נמוכה', 'חוסך זמן ניהולי ומשמר ידע עסקי'],
+  ];
+  const toolReasonCards = [
+    ['Make / Zapier', 'מתאימים לעסקים שרוצים לחבר מערכות במהירות ולבנות אוטומציות ללא קוד.'],
+    ['n8n', 'מתאים יותר למשתמשים טכניים שרוצים שליטה גבוהה, גמישות וחיבורי API מורכבים.'],
+    ['Microsoft Power Automate', 'מתאים לארגונים שכבר עובדים עם Microsoft 365 ורוצים אוטומציה עסקית ו-RPA.'],
+    ['HubSpot / CRM', 'מתאים לניהול לידים, לקוחות, סטטוסים ותהליכי מכירה.'],
+    ['Looker Studio / Sheets / Airtable', 'מתאים לדוחות, בקרה, מעקב נתונים ו-Dashboard עסקי.'],
   ];
   const automationScores = [
     ['הודעה אוטומטית לליד חדש', 'גבוהה', 'נמוכה', '92/100'],
@@ -393,6 +405,14 @@ function AIDemoPage() {
       setLoading(false);
       setModalOpen(true);
     }, 1000);
+  };
+  const showAutomationTable = () => {
+    setModalOpen(false);
+    window.setTimeout(() => {
+      automationTableRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      automationTableRef.current?.classList.add('table-highlight');
+      window.setTimeout(() => automationTableRef.current?.classList.remove('table-highlight'), 1800);
+    }, 120);
   };
 
   return (
@@ -482,32 +502,64 @@ function AIDemoPage() {
           ))}
         </div>
 
-        <div className="ai-table-wrap">
-          <table className="ai-opportunities-table">
-            <thead>
-              <tr>
-                <th>בעיה עסקית</th>
-                <th>תהליך ידני כיום</th>
-                <th>אוטומציה מוצעת</th>
-                <th>כלי / פתרון אפשרי</th>
-                <th>השפעה</th>
-                <th>מורכבות</th>
-              </tr>
-            </thead>
-            <tbody>
-              {automationOpportunities.map(([problem, manualProcess, automation, tool, impact, complexity]) => (
-                <tr key={problem}>
-                  <td>{problem}</td>
-                  <td>{manualProcess}</td>
-                  <td>{automation}</td>
-                  <td>{tool}</td>
-                  <td><Badge label={impact} compact /></td>
-                  <td><Badge label={complexity} compact /></td>
+        <section id="automation-table" ref={automationTableRef} className="automation-table-section">
+          <div className="ai-demo-heading">
+            <div>
+              <span className="eyebrow">תוצר אחרי חקר שוק</span>
+              <h2>טבלת אוטומציות מומלצות אחרי חקר שוק</h2>
+              <p>הטבלה מציגה תהליכים עסקיים נפוצים, הצעת אוטומציה, כלים מתאימים, רמת השפעה ומורכבות יישום.</p>
+            </div>
+            <span className="research-badge">Market research → AI recommendation → Automation tools</span>
+          </div>
+          <div className="ai-table-wrap">
+            <table className="ai-opportunities-table enhanced-opportunities-table">
+              <thead>
+                <tr>
+                  <th>תהליך / בעיה עסקית</th>
+                  <th>מה קורה היום</th>
+                  <th>אוטומציה מומלצת</th>
+                  <th>כלים מתאימים</th>
+                  <th>השפעה</th>
+                  <th>מורכבות</th>
+                  <th>למה זה מתאים</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {automationOpportunities.map(([problem, currentState, automation, rowTools, impact, complexity, reason]) => (
+                  <tr key={problem}>
+                    <td><strong>{problem}</strong></td>
+                    <td>{currentState}</td>
+                    <td>{automation}</td>
+                    <td>
+                      <div className="table-tool-list">
+                        {rowTools.map((tool) => <span className="tool-badge" key={tool}>{tool}</span>)}
+                      </div>
+                    </td>
+                    <td><Badge label={impact} compact /></td>
+                    <td><Badge label={complexity} compact /></td>
+                    <td>{reason}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section className="tool-rationale-section">
+          <SectionIntro
+            title="למה בחרנו בכלים האלה?"
+            text="חקר השוק הראה שרוב הערך העסקי מגיע מחיבור בין שלושה חלקים: איסוף מידע, קבלת החלטה אוטומטית, וביצוע פעולה בכלי עבודה קיים."
+          />
+          <div className="presentation-card-grid">
+            {toolReasonCards.map(([title, text]) => (
+              <article className="presentation-card" key={title}>
+                <Badge label={title} compact />
+                <h3>{title}</h3>
+                <p>{text}</p>
+              </article>
+            ))}
+          </div>
+        </section>
 
         <div className="score-section">
           <div>
@@ -551,6 +603,7 @@ function AIDemoPage() {
           copied={copied}
           setCopied={setCopied}
           onClose={() => setModalOpen(false)}
+          onShowTable={showAutomationTable}
         />
       )}
     </section>
@@ -717,7 +770,7 @@ function RecommendationModal({ recommendation, user, goTo, onClose }) {
   );
 }
 
-function AIDemoRecommendationModal({ businessField, businessSize, businessGoal, copied, setCopied, onClose }) {
+function AIDemoRecommendationModal({ businessField, businessSize, businessGoal, copied, setCopied, onClose, onShowTable }) {
   const recommendationMap = {
     'חיסכון בזמן': 'אוטומציה של מעקב אחרי לקוחות ותזכורות',
     'שיפור שירות לקוחות': 'מענה אוטומטי לשאלות נפוצות ותיעוד פניות',
@@ -800,7 +853,7 @@ function AIDemoRecommendationModal({ businessField, businessSize, businessGoal, 
         <div className="modal-actions">
           <button className="secondary-button" type="button" onClick={onClose}>סגור</button>
           <button className="primary-button" type="button" onClick={copyRecommendation}>העתק המלצה</button>
-          <a className="secondary-button" href="#ai-demo">ראה טבלת אוטומציות</a>
+          <button className="secondary-button" type="button" onClick={onShowTable}>ראה טבלת אוטומציות</button>
         </div>
       </div>
     </div>

@@ -321,6 +321,8 @@ p {
 .research-answer-card,
 .classroom-step-card,
 .core-idea-section,
+.automation-table-section,
+.tool-rationale-section,
 .step-card,
 .usecase-pill,
 .portfolio-section,
@@ -586,8 +588,29 @@ p {
   background: rgba(8, 17, 31, 0.68);
 }
 
+.automation-table-section {
+  display: grid;
+  gap: 18px;
+  scroll-margin-top: 96px;
+  padding: clamp(20px, 3vw, 28px);
+  border-color: rgba(216, 181, 109, 0.22);
+  background:
+    linear-gradient(145deg, rgba(216, 181, 109, 0.08), rgba(138, 161, 184, 0.035)),
+    rgba(8, 17, 31, 0.74);
+  transition: border-color 220ms ease, box-shadow 220ms ease;
+}
+
+.automation-table-section.table-highlight {
+  border-color: rgba(216, 181, 109, 0.85);
+  box-shadow: 0 0 0 3px rgba(216, 181, 109, 0.18), 0 24px 70px rgba(0, 0, 0, 0.36);
+}
+
 .ai-opportunities-table {
   min-width: 960px;
+}
+
+.enhanced-opportunities-table {
+  min-width: 1380px;
 }
 
 .ai-opportunities-table th {
@@ -597,6 +620,35 @@ p {
 
 .ai-opportunities-table td {
   color: #d8e2ee;
+}
+
+.table-tool-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  min-width: 230px;
+}
+
+.tool-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 5px 8px;
+  border: 1px solid rgba(58, 183, 149, 0.24);
+  border-radius: 8px;
+  color: #bff0df;
+  background: rgba(58, 183, 149, 0.08);
+  font-size: 12px;
+  font-weight: 850;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+.tool-rationale-section {
+  display: grid;
+  gap: 16px;
+  padding: clamp(20px, 3vw, 28px);
+  background: rgba(255, 255, 255, 0.035);
 }
 
 .ai-explanation-section {
