@@ -7,6 +7,11 @@ export const toolLinks = {
   'ChatGPT / OpenAI API': 'https://openai.com',
   'Google Workspace Automation': 'https://workspace.google.com',
   'Microsoft Power Automate': 'https://powerautomate.microsoft.com',
+  'Google Calendar': 'https://calendar.google.com',
+  'Google Sheets': 'https://sheets.google.com',
+  Shopify: 'https://www.shopify.com',
+  WooCommerce: 'https://woocommerce.com',
+  'WhatsApp Business': 'https://www.whatsapp.com/business/',
 };
 
 export const tools = [

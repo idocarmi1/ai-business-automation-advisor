@@ -36,6 +36,7 @@ import { getCurrentUser, isAdminUser, loginDemoUser, logoutDemoUser, signUpDemoU
 import { sendSignupNotification } from './utils/notifications.js';
 import { generateAutomationRoadmap } from './utils/roadmap.js';
 import { calculateAutomationROI } from './utils/roiCalculator.js';
+import { businessTypes, generateMarketResearchDemo } from './utils/marketResearchDemo.js';
 
 const assessmentStorageKey = 'autobiz_last_assessment';
 const roiStorageKey = 'autobiz_last_roi';
@@ -370,7 +371,7 @@ function HomePage({ goTo }) {
 function AIDemoPage() {
   const automationTableRef = useRef(null);
   const [aiDemo, setAiDemo] = useState({
-    businessField: '',
+    businessField: 'מסעדה',
     businessSize: 'עסק קטן',
     businessGoal: 'חיסכון בזמן',
     runs: 1,
@@ -379,12 +380,6 @@ function AIDemoPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const researchFlow = ['חקר שוק', 'זיהוי כאבים עסקיים', 'מיפוי תהליכים ידניים', 'איתור אוטומציות', 'בניית תוכנית פעולה'];
-  const marketInsights = [
-    'לקוחות מצפים למענה מהיר יותר',
-    'עסקים רבים עדיין מנהלים מעקבים ידניים',
-    'יש פער בין איסוף לידים לבין טיפול בפועל',
-    'דוחות ובקרה מתבצעים לעיתים בצורה ידנית ולא רציפה',
-  ];
   const automationOpportunities = [
     ['טיפול איטי בלידים', 'מעבר ידני על טפסים, הודעות WhatsApp ומיילים', 'סיווג ליד, שליחת הודעת המשך אוטומטית ועדכון CRM', ['Make', 'Zapier', 'HubSpot CRM', 'WhatsApp/Email Automation'], 'גבוהה', 'בינונית', 'חוסך זמן תגובה ומקטין אובדן לקוחות פוטנציאליים'],
     ['חוסר מעקב אחרי לקוחות', 'תזכורות ידניות ביומן, Excel או WhatsApp', 'תזכורות אוטומטיות לפי סטטוס לקוח ושלב בתהליך', ['Google Sheets', 'Airtable', 'Make', 'Zapier'], 'גבוהה', 'נמוכה', 'קל להתחיל, מתאים לעסק קטן, ונותן ערך מהיר'],
@@ -408,7 +403,7 @@ function AIDemoPage() {
     ['Dashboard חודשי', 'בינונית', 'בינונית', '74/100'],
     ['Chatbot שאלות נפוצות', 'גבוהה', 'בינונית', '81/100'],
   ];
-  const selectedBusinessField = aiDemo.businessField.trim() || 'התחום העסקי שנבחר';
+  const marketResearch = useMemo(() => generateMarketResearchDemo(aiDemo), [aiDemo]);
   const modalBusinessField = aiDemo.businessField.trim() || 'קליניקה';
 
   const runAiDemo = () => {
@@ -451,11 +446,12 @@ function AIDemoPage() {
           <div className="ai-input-panel">
             <label className="form-group compact-form-group">
               <span>תחום עסקי</span>
-              <input
+              <select
                 value={aiDemo.businessField}
                 onChange={(event) => setAiDemo({ ...aiDemo, businessField: event.target.value })}
-                placeholder="לדוגמה: מספרה, קליניקה, מסעדה, חנות אונליין"
-              />
+              >
+                {businessTypes.map((businessType) => <option key={businessType}>{businessType}</option>)}
+              </select>
             </label>
             <div className="form-grid">
               <label className="form-group compact-form-group">
@@ -486,13 +482,15 @@ function AIDemoPage() {
               <span>תוצר לדוגמה מה-AI</span>
               <Badge label={`ניתוח דמו ${aiDemo.runs}`} compact />
             </div>
-            <h3>{selectedBusinessField}: הזדמנויות אוטומציה לפי {aiDemo.businessGoal}</h3>
-            <p>
-              בהתבסס על חקר שוק ראשוני, עסקים בתחום זה יכולים להרוויח מאוטומציה של טיפול בלידים, מעקב אחרי לקוחות, הפקת דוחות ושיפור זמני תגובה.
-              ההמלצה היא להתחיל באוטומציה פשוטה בעלת השפעה גבוהה ומורכבות נמוכה.
-            </p>
+            <h3>{marketResearch.productTitle}</h3>
+            <p>{marketResearch.explanation}</p>
+            <div className="analysis-context-grid">
+              {marketResearch.analysisContext.map(([label, value]) => (
+                <span key={label}><strong>{label}</strong>{value}</span>
+              ))}
+            </div>
             <div className="ai-output-meta">
-              <span>{aiDemo.businessSize}</span>
+              <span>{marketResearch.businessType}</span>
               <span>{aiDemo.businessGoal}</span>
               <span>Frontend demo בלבד</span>
             </div>
@@ -509,13 +507,73 @@ function AIDemoPage() {
         </div>
 
         <div className="market-insight-grid">
-          {marketInsights.map((insight) => (
+          {marketResearch.painPoints.map((insight) => (
             <article className="market-insight-card" key={insight}>
               <Sparkles size={20} />
               <h3>{insight}</h3>
             </article>
           ))}
         </div>
+
+        <section className="dynamic-research-section">
+          <div className="ai-demo-heading">
+            <div>
+              <span className="eyebrow">פלט חקר שוק מותאם</span>
+              <h2>אוטומציות וכלים לפי {marketResearch.businessType}</h2>
+              <p>{marketResearch.marketInsight}</p>
+            </div>
+            <span className="research-badge">Rule-Based, deterministic</span>
+          </div>
+
+          <div className="market-insight-grid automation-recommendation-grid">
+            {marketResearch.recommendedAutomations.map((automation, index) => (
+              <article className="market-insight-card" key={automation}>
+                <span className="step-mini-number">{index + 1}</span>
+                <h3>{automation}</h3>
+              </article>
+            ))}
+          </div>
+
+          <div className="first-step-card">
+            <span className="eyebrow">צעד ראשון מומלץ</span>
+            <h3>{marketResearch.firstStep}</h3>
+          </div>
+
+          <div className="ai-table-wrap">
+            <table className="ai-opportunities-table business-tools-table">
+              <thead>
+                <tr>
+                  <th>כלי</th>
+                  <th>שימוש מומלץ</th>
+                  <th>למה מתאים לעסק הזה</th>
+                  <th>רמת מורכבות</th>
+                  <th>קישור רשמי</th>
+                </tr>
+              </thead>
+              <tbody>
+                {marketResearch.tools.map((tool) => (
+                  <tr key={tool.tool}>
+                    <td><strong>{tool.tool}</strong></td>
+                    <td>{tool.useCase}</td>
+                    <td>{tool.fit}</td>
+                    <td><Badge label={tool.complexity} compact /></td>
+                    <td>
+                      <div className="official-link-list">
+                        {tool.links.map((link) => (
+                          <a className="table-link" href={link.url} target="_blank" rel="noopener noreferrer" key={`${tool.tool}-${link.label}`}>
+                            {link.label}
+                          </a>
+                        ))}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <p className="future-note rule-based-note">{marketResearch.note}</p>
+        </section>
 
         <section id="automation-table" ref={automationTableRef} className="automation-table-section">
           <div className="ai-demo-heading">
