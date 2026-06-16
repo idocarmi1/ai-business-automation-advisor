@@ -15,6 +15,12 @@ export function createLead(payload) {
     readinessScore: payload.readinessScore || '',
     roadmapSummary: payload.roadmapSummary || '',
     quickWin: payload.quickWin || '',
+    roi: payload.roi || null,
+    monthlyHoursSaved: payload.monthlyHoursSaved || '',
+    monthlyMoneySaved: payload.monthlyMoneySaved || '',
+    yearlyMoneySaved: payload.yearlyMoneySaved || '',
+    roiLevel: payload.roiLevel || '',
+    recommendedFirstAutomation: payload.recommendedFirstAutomation || '',
     phone: payload.phone || '',
     message: payload.message || '',
   };
@@ -38,7 +44,7 @@ export function clearLeads() {
 
 export function exportLeadsToCsv() {
   const leads = getLeads();
-  const headers = ['eventType', 'fullName', 'email', 'businessName', 'selectedPlan', 'readinessScore', 'quickWin', 'roadmapSummary', 'createdAt'];
+  const headers = ['eventType', 'fullName', 'email', 'businessName', 'selectedPlan', 'readinessScore', 'quickWin', 'roadmapSummary', 'monthlyHoursSaved', 'monthlyMoneySaved', 'yearlyMoneySaved', 'roiLevel', 'recommendedFirstAutomation', 'createdAt'];
   const rows = leads.map((lead) => headers.map((field) => csvCell(lead[field])).join(','));
   return [headers.join(','), ...rows].join('\n');
 }

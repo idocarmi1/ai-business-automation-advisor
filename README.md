@@ -46,6 +46,7 @@ AutoBiz demonstrates how AI can turn market research and business context into:
 - Automation score
 - AI recommendation modal after clicking `הרץ ניתוח AI`
 - מחולל מפת אוטומציה לעסק
+- מחשבון חיסכון מאוטומציה
 - Suggested automation tools
 - Tools and lessons section for classroom presentation
 - Responsive design for desktop and mobile
@@ -74,6 +75,7 @@ The AI flow is represented through:
 - automation recommendation logic
 - automation scoring
 - rule-based automation roadmap generation
+- rule-based automation ROI calculation
 - tool suggestions
 - next-step planning
 
@@ -81,17 +83,18 @@ Future versions could connect to Perplexity API or another AI model through a se
 
 ## Architecture Note
 
-The automation roadmap generator is currently rule-based and runs in the frontend.
+The automation roadmap generator and automation ROI calculator are currently rule-based and run in the frontend.
 
-It uses:
+They use:
 
 - assessment answers
 - recommendation output
 - business pain points
 - current tools
 - budget and technical skill level
+- estimated manual hours, hourly cost, employees involved, and monthly leads
 
-No private customer data is sent to an external AI API. The roadmap is generated locally as part of the demo experience.
+No private customer data is sent to an external AI API. The roadmap and ROI estimate are generated locally as part of the demo experience.
 
 ## Classroom Presentation Focus
 

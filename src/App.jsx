@@ -35,13 +35,16 @@ import { clearLeads, createLead, exportLeadsToCsv, getLeads } from './utils/lead
 import { getCurrentUser, isAdminUser, loginDemoUser, logoutDemoUser, signUpDemoUser } from './utils/auth.js';
 import { sendSignupNotification } from './utils/notifications.js';
 import { generateAutomationRoadmap } from './utils/roadmap.js';
+import { calculateAutomationROI } from './utils/roiCalculator.js';
 
 const assessmentStorageKey = 'autobiz_last_assessment';
+const roiStorageKey = 'autobiz_last_roi';
 
 const hashPageMap = {
   '#home': 'home',
   '#ai-demo': 'aiDemo',
   '#assessment': 'assessment',
+  '#roi-calculator': 'roiCalculator',
   '#tools': 'toolsLessons',
   '#comparison': 'comparison',
   '#use-cases': 'library',
@@ -61,6 +64,7 @@ const pageHashMap = {
   home: 'home',
   aiDemo: 'ai-demo',
   assessment: 'assessment',
+  roiCalculator: 'roi-calculator',
   comparison: 'comparison',
   toolsLessons: 'tools',
   library: 'use-cases',
@@ -78,6 +82,7 @@ const pageHashMap = {
 const baseNavItems = [
   { id: 'home', label: 'בית', icon: LayoutDashboard },
   { id: 'aiDemo', label: 'הדגמת יכולות AI', icon: BrainCircuit },
+  { id: 'roiCalculator', label: 'מחשבון חיסכון', icon: WalletCards },
   { id: 'methodology', label: 'מתודולוגיה', icon: BrainCircuit },
   { id: 'toolsLessons', label: 'תוצר, כלים ולקחים', icon: BookOpenCheck },
   { id: 'aboutProject', label: 'על הפרויקט', icon: FileSearch },
@@ -143,6 +148,7 @@ const eventTypeLabels = {
   'Assessment Completed': 'שאלון הושלם',
   'Plan Interest': 'התעניינות במסלול',
   'Consultation Request': 'בקשת ייעוץ',
+  'ROI Calculated': 'חישוב ROI',
 };
 
 function App() {
@@ -200,6 +206,7 @@ function App() {
         {activePage === 'home' && <HomePage goTo={goTo} />}
         {activePage === 'aiDemo' && <AIDemoPage />}
         {activePage === 'assessment' && <AssessmentPage user={user} goTo={goTo} />}
+        {activePage === 'roiCalculator' && <ROICalculatorPage user={user} />}
         {activePage === 'comparison' && <ToolsComparisonPage />}
         {activePage === 'library' && <UseCaseLibraryPage />}
         {activePage === 'plans' && <PlansPage user={user} goTo={goTo} />}
@@ -1093,6 +1100,7 @@ function ForgotPasswordPage({ goTo }) {
 
 function DashboardPage({ user, goTo }) {
   const saved = readSavedAssessment();
+  const savedRoi = readSavedROI();
   const savedRoadmap = saved?.roadmap || (saved?.answers && saved?.recommendation ? generateAutomationRoadmap(saved.answers, saved.recommendation) : null);
   if (!user) {
     return (
@@ -1122,16 +1130,146 @@ function DashboardPage({ user, goTo }) {
           <article className="summary-item wide">
             <h3>הצעדים הבאים</h3>
             <p>{saved.recommendation.firstStep}</p>
-            <button className="primary-button" type="button" onClick={() => goTo('consultation')}>בקשת ייעוץ לאוטומציה</button>
+            <div className="form-actions">
+              <button className="primary-button" type="button" onClick={() => goTo('consultation')}>בקשת ייעוץ לאוטומציה</button>
+              <button className="secondary-button" type="button" onClick={() => goTo('roiCalculator')}>מעבר למחשבון חיסכון</button>
+            </div>
           </article>
           {savedRoadmap && <RoadmapPanel roadmap={savedRoadmap} compact />}
+          {savedRoi?.result && <ROIResultCard result={savedRoi.result} compact />}
         </div>
       ) : (
         <article className="summary-item">
           <p>עדיין לא שמרת המלצה. מלא את שאלון ההתאמה כדי לקבל המלצה מותאמת.</p>
-          <button className="primary-button" type="button" onClick={() => goTo('assessment')}>מעבר לשאלון</button>
+          <div className="form-actions">
+            <button className="primary-button" type="button" onClick={() => goTo('assessment')}>מעבר לשאלון</button>
+            <button className="secondary-button" type="button" onClick={() => goTo('roiCalculator')}>מחשבון חיסכון</button>
+          </div>
         </article>
       )}
+    </section>
+  );
+}
+
+function ROICalculatorPage({ user }) {
+  const saved = readSavedAssessment();
+  const savedRoadmap = saved?.roadmap || (saved?.answers && saved?.recommendation ? generateAutomationRoadmap(saved.answers, saved.recommendation) : null);
+  const savedRoi = readSavedROI();
+  const [inputs, setInputs] = useState(() => buildInitialRoiInputs(saved, savedRoadmap));
+  const [result, setResult] = useState(savedRoi?.result || null);
+
+  const calculate = () => {
+    const roi = calculateAutomationROI(inputs, saved?.recommendation, savedRoadmap);
+    const savedResult = {
+      inputs,
+      result: roi,
+      recommendation: saved?.recommendation || null,
+      roadmap: savedRoadmap || null,
+      createdAt: new Date().toISOString(),
+    };
+    localStorage.setItem(roiStorageKey, JSON.stringify(savedResult));
+    createLead({
+      eventType: 'ROI Calculated',
+      fullName: user?.fullName,
+      email: user?.email,
+      businessName: user?.businessName,
+      roi,
+      monthlyHoursSaved: roi.monthlyHoursSaved,
+      monthlyMoneySaved: roi.monthlyMoneySaved,
+      yearlyMoneySaved: roi.yearlyMoneySaved,
+      roiLevel: roi.roiLevel,
+      recommendedFirstAutomation: roi.recommendedFirstAutomation,
+    });
+    setResult(roi);
+  };
+
+  return (
+    <section className="page content-page">
+      <SectionIntro
+        title="מחשבון חיסכון מאוטומציה"
+        text="הזינו נתונים בסיסיים על תהליך ידני בעסק וקבלו הערכת חיסכון בשעות ובכסף. החישוב מבוסס כללים ונועד לתמוך בקבלת החלטה עסקית ראשונית."
+      />
+
+      <section className="roi-calculator-section">
+        <div className="roi-form-panel">
+          <div className="form-grid">
+            <FormGroup label="כמה שעות בשבוע מתבזבזות על משימות ידניות?">
+              <input type="number" min="0" value={inputs.weeklyManualHours} onChange={(event) => setInputs({ ...inputs, weeklyManualHours: event.target.value })} />
+            </FormGroup>
+            <FormGroup label="כמה עובדים מעורבים בתהליך?">
+              <input type="number" min="1" value={inputs.employeesInvolved} onChange={(event) => setInputs({ ...inputs, employeesInvolved: event.target.value })} />
+            </FormGroup>
+          </div>
+          <div className="form-grid">
+            <FormGroup label="מה העלות הממוצעת לשעת עבודה?">
+              <input type="number" min="0" value={inputs.hourlyCost} onChange={(event) => setInputs({ ...inputs, hourlyCost: event.target.value })} />
+            </FormGroup>
+            <FormGroup label="כמה פניות / לקוחות נכנסים בחודש?">
+              <input type="number" min="0" value={inputs.monthlyLeads} onChange={(event) => setInputs({ ...inputs, monthlyLeads: event.target.value })} />
+            </FormGroup>
+          </div>
+          <FormGroup label="מה התהליך הידני המרכזי?">
+            <input value={inputs.mainManualProcess} onChange={(event) => setInputs({ ...inputs, mainManualProcess: event.target.value })} placeholder="לדוגמה: מעקב לקוחות, ניהול לידים, דוחות חודשיים" />
+          </FormGroup>
+          <FormGroup label="מה תחום האוטומציה שהכי חשוב לעסק?">
+            <select value={inputs.automationPriority} onChange={(event) => setInputs({ ...inputs, automationPriority: event.target.value })}>
+              <option>נמוכה</option>
+              <option>בינונית</option>
+              <option>גבוהה</option>
+            </select>
+          </FormGroup>
+          <div className="form-actions">
+            <button className="primary-button" type="button" onClick={calculate}>חשב חיסכון משוער</button>
+          </div>
+        </div>
+
+        <div className="roi-preview-panel">
+          <span className="eyebrow">ערך עסקי משוער</span>
+          <h3>מה המחשבון מציג?</h3>
+          <p>המחשבון משלב שעות ידניות, עובדים, עלות שעה, כמות פניות ורמת עדיפות כדי להעריך איפה האוטומציה יכולה לייצר ערך מדיד.</p>
+          {saved?.recommendation && <Badge label={`מבוסס על ההמלצה האחרונה: ${saved.recommendation.category}`} />}
+          {savedRoadmap && <Badge label={`עדיפות מהמפה: ${savedRoadmap.priorityLevel}`} />}
+        </div>
+      </section>
+
+      {result && <ROIResultCard result={result} />}
+    </section>
+  );
+}
+
+function ROIResultCard({ result, compact = false }) {
+  return (
+    <section className={compact ? 'roi-result-card compact' : 'roi-result-card'}>
+      <div className="roi-result-header">
+        <div>
+          <span className="eyebrow">תוצאת מחשבון חיסכון</span>
+          <h3>חיסכון משוער מאוטומציה</h3>
+        </div>
+        <Badge label={`רמת כדאיות: ${result.roiLevel}`} />
+      </div>
+      <div className="roi-metric-grid">
+        <article className="roi-metric">
+          <span>חיסכון חודשי בשעות</span>
+          <strong>{result.monthlyHoursSaved}</strong>
+          <small>שעות בחודש</small>
+        </article>
+        <article className="roi-metric">
+          <span>חיסכון חודשי בכסף</span>
+          <strong>₪{result.monthlyMoneySaved.toLocaleString('he-IL')}</strong>
+          <small>הערכה חודשית</small>
+        </article>
+        <article className="roi-metric">
+          <span>חיסכון שנתי משוער</span>
+          <strong>₪{result.yearlyMoneySaved.toLocaleString('he-IL')}</strong>
+          <small>12 חודשים</small>
+        </article>
+      </div>
+      <div className="roi-result-details">
+        <InfoBlock label="החזר משוער" value={result.paybackEstimate} />
+        <InfoBlock label="תהליך ראשון מומלץ לאוטומציה" value={result.recommendedFirstAutomation} />
+        <InfoBlock label="הסבר" value={result.explanation} />
+      </div>
+      <p className="demo-note">החישוב הוא הערכה ראשונית לצורך קבלת החלטה ואינו מהווה ייעוץ פיננסי.</p>
     </section>
   );
 }
@@ -1252,6 +1390,11 @@ function AdminLeadsPage() {
             {lead.readinessScore && <p>ציון מוכנות לאוטומציה: {lead.readinessScore}/100</p>}
             {lead.quickWin && <p>Quick win: {lead.quickWin}</p>}
             {lead.roadmapSummary && <p>סיכום מפת אוטומציה: {lead.roadmapSummary}</p>}
+            {lead.monthlyHoursSaved && <p>חיסכון חודשי בשעות: {lead.monthlyHoursSaved}</p>}
+            {lead.monthlyMoneySaved && <p>חיסכון חודשי בכסף: ₪{Number(lead.monthlyMoneySaved).toLocaleString('he-IL')}</p>}
+            {lead.yearlyMoneySaved && <p>חיסכון שנתי משוער: ₪{Number(lead.yearlyMoneySaved).toLocaleString('he-IL')}</p>}
+            {lead.roiLevel && <p>רמת כדאיות: {lead.roiLevel}</p>}
+            {lead.recommendedFirstAutomation && <p>אוטומציה ראשונה מומלצת: {lead.recommendedFirstAutomation}</p>}
             <p>תאריך יצירה: {new Date(lead.createdAt).toLocaleString('he-IL')}</p>
           </article>
         ))}
@@ -1266,8 +1409,9 @@ function MethodologyPage() {
     ['שלב 2: חקר שוק בעזרת Perplexity', 'Perplexity שימש כהשראה וככלי חקר שוק: ניסוח שאלות מחקר, בדיקת בעיות נפוצות בתחומים עסקיים, הבנת צרכים של בעלי עסקים והשוואת כיווני פתרון אפשריים.'],
     ['שלב 3: תרגום התובנות לאוטומציות', 'הפכנו את התובנות העסקיות לטבלת המלצות: בעיה עסקית, תהליך ידני כיום, אוטומציה מוצעת, כלי אפשרי, השפעה ומורכבות.'],
     ['שלב 4: מחולל מפת אוטומציה לעסק', 'הוספנו מנגנון Rule-based שמתרגם תשובות מהשאלון והמלצה עסקית לשלושה שלבי יישום, ציון מוכנות, quick win ושדרוג עתידי. זה הופך את הדמו למערכת תומכת החלטה ולא רק למסך המלצה.'],
-    ['שלב 5: בניית הדמו בעזרת Codex', 'Codex שימש לבניית האתר, שיפור הקומפוננטות, עיצוב UI/UX, תיקון שגיאות, בדיקת Build ושיפור מבנה הפרויקט.'],
-    ['שלב 6: בדיקה ושיפור', 'בדקנו שהאתר מציג בעיה, פתרון, הדגמת יכולת, כלים ולקחים בצורה ברורה כדי שהמרצה והמשתמש יבינו את הערך של המערכת.'],
+    ['שלב 5: מחשבון חיסכון מאוטומציה', 'הוספנו חישוב Rule-based שמעריך חיסכון חודשי ושנתי בשעות ובכסף. כך בעל העסק רואה לא רק איזו אוטומציה לבצע, אלא גם מה הערך העסקי המשוער שלה.'],
+    ['שלב 6: בניית הדמו בעזרת Codex', 'Codex שימש לבניית האתר, שיפור הקומפוננטות, עיצוב UI/UX, תיקון שגיאות, בדיקת Build ושיפור מבנה הפרויקט.'],
+    ['שלב 7: בדיקה ושיפור', 'בדקנו שהאתר מציג בעיה, פתרון, הדגמת יכולת, כלים ולקחים בצורה ברורה כדי שהמרצה והמשתמש יבינו את הערך של המערכת.'],
   ];
   const perplexityBullets = [
     'חקר שוק ראשוני לפי תחום עסקי.',
@@ -1319,6 +1463,9 @@ function MethodologyPage() {
         </p>
         <p>
           בגרסה עתידית ניתן לשדרג את המנגנון בעזרת מודל AI אמיתי או בסיס נתונים של תהליכים עסקיים, כך שהמפה תתעדכן לפי נתוני שימוש, ביצועים ומשוב לקוחות.
+        </p>
+        <p>
+          מחשבון החיסכון מוסיף שכבת ערך עסקי נוספת: הוא מעריך כמה שעות וכסף ניתן לחסוך, ולכן עוזר לתעדף אוטומציות לפי השפעה כלכלית ולא רק לפי נוחות טכנית.
         </p>
       </section>
     </section>
@@ -1417,6 +1564,7 @@ function AcademicSummaryPage() {
     ['מה היה טוב בתהליך?', 'הדרישות המפורטות עזרו להפוך רעיון מופשט למוצר שניתן להציג בכיתה.'],
     ['מה ניתן היה לשפר?', 'בגרסה הבאה כדאי לשלב נתוני שוק אמיתיים, שרת, אימיילים, ושמירת משתמשים מאובטחת.'],
     ['מחולל מפת אוטומציה לעסק', 'הפיצ׳ר החדש מדגים מערכת תומכת החלטה: הוא לוקח תשובות מהשאלון, מחשב ציון מוכנות לאוטומציה, ומציג תוכנית בשלושה שלבים עם כלים, תועלת, קושי וזמן משוער.'],
+    ['מחשבון חיסכון מאוטומציה', 'המחשבון מדגים כיצד ניתן לתרגם תהליכים ידניים לערך עסקי מדיד: שעות שנחסכות, חיסכון כספי חודשי ושנתי, רמת כדאיות ותהליך ראשון מומלץ לאוטומציה.'],
     ['לקחים אישיים וקבוצתיים', 'AI מקצר תהליכים אך אינו מחליף חשיבה ביקורתית, בדיקות איכות והבנת הערך העסקי.'],
     ['שימוש בכלי AI בכתיבת המסמך', 'ניתן להשתמש בתוכן העמודים כבסיס למסמך DOCX, אך יש לערוך, לאמת ולהוסיף רפלקציה אישית.'],
   ];
@@ -1472,6 +1620,47 @@ function readSavedAssessment() {
   } catch {
     return null;
   }
+}
+
+function readSavedROI() {
+  try {
+    return JSON.parse(localStorage.getItem(roiStorageKey));
+  } catch {
+    return null;
+  }
+}
+
+function buildInitialRoiInputs(savedAssessment, roadmap) {
+  const answers = savedAssessment?.answers;
+  const recommendation = savedAssessment?.recommendation;
+  return {
+    weeklyManualHours: answers ? Math.max(4, (answers.painPoints?.length || 1) * 3) : 8,
+    employeesInvolved: estimateEmployeesInvolved(answers?.employees),
+    hourlyCost: 85,
+    monthlyLeads: estimateMonthlyLeads(answers),
+    mainManualProcess: recommendation?.category || firstSelectedLabel(painPointOptions, answers?.painPoints?.[0]) || 'מעקב לקוחות',
+    automationPriority: roadmap?.priorityLevel || 'בינונית',
+  };
+}
+
+function estimateEmployeesInvolved(employees) {
+  if (employees === '1') return 1;
+  if (employees === '2-10') return 2;
+  if (employees === '11-30') return 5;
+  if (employees === '31-plus') return 8;
+  return 2;
+}
+
+function estimateMonthlyLeads(answers) {
+  if (!answers) return 40;
+  if (answers.businessType === 'ecommerce') return 180;
+  if (answers.businessType === 'clinic') return 80;
+  if (answers.goal === 'improve-sales') return 100;
+  return 55;
+}
+
+function firstSelectedLabel(options, value) {
+  return options.find(([optionValue]) => optionValue === value)?.[1] || '';
 }
 
 function getPageFromHash() {
