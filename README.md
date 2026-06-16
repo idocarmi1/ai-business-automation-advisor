@@ -4,6 +4,8 @@ AutoBiz AI Advisor is a Hebrew RTL demo website for an AI-powered business autom
 
 The project demonstrates how AI-assisted market research, inspired by tools like Perplexity, can help identify business pain points and turn them into practical automation recommendations.
 
+The current version also includes decision-support features that produce business outputs, including an automation roadmap generator and an automation savings calculator.
+
 Live Demo: https://ai-business-automation-advisor.vercel.app/
 
 ## Main Idea
@@ -11,6 +13,8 @@ Live Demo: https://ai-business-automation-advisor.vercel.app/
 - The user enters a business field, business size, and main goal.
 - The system simulates an AI analysis flow.
 - The result includes a recommended automation, automation score, suggested tools, and next steps.
+- The roadmap generator turns assessment answers into a staged automation plan.
+- The ROI calculator estimates time and cost savings from automating manual processes.
 - The project is designed for a classroom presentation showing product, tools, and lessons learned.
 
 ## Problem

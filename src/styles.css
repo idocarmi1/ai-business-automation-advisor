@@ -1593,9 +1593,9 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
 .roi-calculator-section {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.75fr);
-  gap: 18px;
+  gap: 22px;
   margin: 26px 0;
-  padding: clamp(18px, 3vw, 26px);
+  padding: clamp(22px, 3vw, 30px);
   border-color: rgba(216, 181, 109, 0.24);
   background:
     radial-gradient(circle at 12% 0%, rgba(216, 181, 109, 0.12), transparent 34%),
@@ -1607,8 +1607,8 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
 .roi-preview-panel {
   display: grid;
   align-content: start;
-  gap: 14px;
-  padding: 20px;
+  gap: 18px;
+  padding: clamp(20px, 3vw, 26px);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent 52%),
     rgba(13, 25, 42, 0.78);
@@ -1623,6 +1623,77 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
 
 .roi-preview-panel p {
   margin-bottom: 0;
+  font-size: 17px;
+  line-height: 1.75;
+}
+
+.roi-form-panel .form-grid {
+  gap: 18px;
+}
+
+.roi-form-panel .form-group {
+  gap: 11px;
+  padding: 20px;
+}
+
+.roi-form-panel .form-group > span {
+  color: #f0f5fb;
+  font-size: 17px;
+  line-height: 1.45;
+}
+
+.roi-form-panel input,
+.roi-form-panel select {
+  min-height: 52px;
+  padding: 13px 14px;
+  font-size: 17px;
+  line-height: 1.45;
+}
+
+.roi-calculate-button,
+.roadmap-generate-button {
+  min-height: 54px;
+  padding-inline: 24px;
+  font-size: 16px;
+}
+
+.roi-calculate-button:hover,
+.roadmap-generate-button:hover {
+  transform: translateY(-3px);
+}
+
+.roi-benefit-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.roi-benefit-list li {
+  position: relative;
+  padding: 11px 40px 11px 12px;
+  border: 1px solid rgba(216, 181, 109, 0.18);
+  border-radius: 8px;
+  color: #e4edf7;
+  background: rgba(255, 255, 255, 0.04);
+  font-weight: 850;
+}
+
+.roi-benefit-list li::before {
+  content: "";
+  position: absolute;
+  top: 16px;
+  right: 15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--gold);
+  box-shadow: 0 0 0 5px rgba(216, 181, 109, 0.1);
+}
+
+.roi-result-anchor {
+  scroll-margin-top: 98px;
 }
 
 .roi-result-card {
@@ -1723,6 +1794,39 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
 
 .roadmap-action-strip p {
   margin: 0;
+}
+
+.roadmap-page-intro,
+.roadmap-empty-state {
+  display: grid;
+  gap: 16px;
+  margin: 22px 0;
+  padding: clamp(20px, 3vw, 28px);
+  border: 1px solid rgba(216, 181, 109, 0.24);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(216, 181, 109, 0.12), transparent 34%),
+    rgba(10, 21, 36, 0.84);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
+}
+
+.roadmap-page-intro {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.roadmap-page-intro p,
+.roadmap-empty-state p {
+  margin-bottom: 0;
+  font-size: 17px;
+}
+
+.roadmap-empty-state {
+  justify-items: start;
+}
+
+.roadmap-empty-state svg {
+  color: var(--gold);
 }
 
 .roadmap-panel {
@@ -2050,6 +2154,7 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
   .roadmap-meta-grid,
   .roadmap-step-grid,
   .roadmap-action-strip,
+  .roadmap-page-intro,
   .roi-calculator-section,
   .roi-metric-grid,
   .roi-result-details {
@@ -2148,6 +2253,8 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
   .roadmap-panel,
   .roadmap-action-strip,
   .roadmap-step-card,
+  .roadmap-page-intro,
+  .roadmap-empty-state,
   .roi-calculator-section,
   .roi-form-panel,
   .roi-preview-panel,

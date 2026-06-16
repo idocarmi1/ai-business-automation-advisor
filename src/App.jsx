@@ -45,6 +45,7 @@ const hashPageMap = {
   '#ai-demo': 'aiDemo',
   '#assessment': 'assessment',
   '#roi-calculator': 'roiCalculator',
+  '#roadmap': 'roadmap',
   '#tools': 'toolsLessons',
   '#comparison': 'comparison',
   '#use-cases': 'library',
@@ -65,6 +66,7 @@ const pageHashMap = {
   aiDemo: 'ai-demo',
   assessment: 'assessment',
   roiCalculator: 'roi-calculator',
+  roadmap: 'roadmap',
   comparison: 'comparison',
   toolsLessons: 'tools',
   library: 'use-cases',
@@ -83,6 +85,7 @@ const baseNavItems = [
   { id: 'home', label: 'בית', icon: LayoutDashboard },
   { id: 'aiDemo', label: 'הדגמת יכולות AI', icon: BrainCircuit },
   { id: 'roiCalculator', label: 'מחשבון חיסכון', icon: WalletCards },
+  { id: 'roadmap', label: 'מפת אוטומציה', icon: Route },
   { id: 'methodology', label: 'מתודולוגיה', icon: BrainCircuit },
   { id: 'toolsLessons', label: 'תוצר, כלים ולקחים', icon: BookOpenCheck },
   { id: 'aboutProject', label: 'על הפרויקט', icon: FileSearch },
@@ -207,6 +210,7 @@ function App() {
         {activePage === 'aiDemo' && <AIDemoPage />}
         {activePage === 'assessment' && <AssessmentPage user={user} goTo={goTo} />}
         {activePage === 'roiCalculator' && <ROICalculatorPage user={user} />}
+        {activePage === 'roadmap' && <RoadmapPage goTo={goTo} />}
         {activePage === 'comparison' && <ToolsComparisonPage />}
         {activePage === 'library' && <UseCaseLibraryPage />}
         {activePage === 'plans' && <PlansPage user={user} goTo={goTo} />}
@@ -778,7 +782,10 @@ function RecommendationModal({ recommendation, roadmap, user, goTo, onClose }) {
             <strong>מחולל מפת אוטומציה לעסק</strong>
             <p>המערכת מתרגמת את ההמלצה לתוכנית פעולה הדרגתית עם ציון מוכנות, quick win ושלבי יישום.</p>
           </div>
-          <button className="primary-button" type="button" onClick={() => setShowRoadmap(true)}>יצירת מפת אוטומציה לעסק</button>
+          <button className="primary-button roadmap-generate-button" type="button" onClick={() => setShowRoadmap(true)}>
+            <Route size={19} />
+            יצירת מפת אוטומציה לעסק
+          </button>
         </div>
         {showRoadmap && (
           <>
@@ -1132,6 +1139,7 @@ function DashboardPage({ user, goTo }) {
             <p>{saved.recommendation.firstStep}</p>
             <div className="form-actions">
               <button className="primary-button" type="button" onClick={() => goTo('consultation')}>בקשת ייעוץ לאוטומציה</button>
+              <button className="secondary-button" type="button" onClick={() => goTo('roadmap')}>פתיחת מפת האוטומציה</button>
               <button className="secondary-button" type="button" onClick={() => goTo('roiCalculator')}>מעבר למחשבון חיסכון</button>
             </div>
           </article>
@@ -1152,6 +1160,7 @@ function DashboardPage({ user, goTo }) {
 }
 
 function ROICalculatorPage({ user }) {
+  const resultRef = useRef(null);
   const saved = readSavedAssessment();
   const savedRoadmap = saved?.roadmap || (saved?.answers && saved?.recommendation ? generateAutomationRoadmap(saved.answers, saved.recommendation) : null);
   const savedRoi = readSavedROI();
@@ -1181,13 +1190,16 @@ function ROICalculatorPage({ user }) {
       recommendedFirstAutomation: roi.recommendedFirstAutomation,
     });
     setResult(roi);
+    window.setTimeout(() => {
+      resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 80);
   };
 
   return (
     <section className="page content-page">
       <SectionIntro
         title="מחשבון חיסכון מאוטומציה"
-        text="הזינו נתונים בסיסיים על תהליך ידני בעסק וקבלו הערכת חיסכון בשעות ובכסף. החישוב מבוסס כללים ונועד לתמוך בקבלת החלטה עסקית ראשונית."
+        text="מחשבון זה מעריך כמה זמן וכסף העסק יכול לחסוך באמצעות אוטומציה של תהליכים ידניים. החישוב מבוסס על נתוני העסק שהוזנו ומהווה הערכה ראשונית לקבלת החלטה."
       />
 
       <section className="roi-calculator-section">
@@ -1219,20 +1231,30 @@ function ROICalculatorPage({ user }) {
             </select>
           </FormGroup>
           <div className="form-actions">
-            <button className="primary-button" type="button" onClick={calculate}>חשב חיסכון משוער</button>
+            <button className="primary-button roi-calculate-button" type="button" onClick={calculate}>
+              <BarChart3 size={19} />
+              חשב חיסכון משוער
+            </button>
           </div>
         </div>
 
         <div className="roi-preview-panel">
           <span className="eyebrow">ערך עסקי משוער</span>
-          <h3>מה המחשבון מציג?</h3>
-          <p>המחשבון משלב שעות ידניות, עובדים, עלות שעה, כמות פניות ורמת עדיפות כדי להעריך איפה האוטומציה יכולה לייצר ערך מדיד.</p>
+          <h3>מה תקבלו מהחישוב?</h3>
+          <p>המחשבון מציג הערכה עסקית פשוטה וברורה כדי להבין אם כדאי להתחיל באוטומציה כבר עכשיו.</p>
+          <ul className="roi-benefit-list">
+            <li>חיסכון חודשי בשעות</li>
+            <li>חיסכון כספי חודשי</li>
+            <li>חיסכון שנתי משוער</li>
+            <li>רמת כדאיות</li>
+            <li>תהליך ראשון מומלץ לאוטומציה</li>
+          </ul>
           {saved?.recommendation && <Badge label={`מבוסס על ההמלצה האחרונה: ${saved.recommendation.category}`} />}
           {savedRoadmap && <Badge label={`עדיפות מהמפה: ${savedRoadmap.priorityLevel}`} />}
         </div>
       </section>
 
-      {result && <ROIResultCard result={result} />}
+      {result && <div ref={resultRef} className="roi-result-anchor"><ROIResultCard result={result} /></div>}
     </section>
   );
 }
@@ -1243,7 +1265,7 @@ function ROIResultCard({ result, compact = false }) {
       <div className="roi-result-header">
         <div>
           <span className="eyebrow">תוצאת מחשבון חיסכון</span>
-          <h3>חיסכון משוער מאוטומציה</h3>
+          <h3>תוצאות החיסכון המשוערות</h3>
         </div>
         <Badge label={`רמת כדאיות: ${result.roiLevel}`} />
       </div>
@@ -1269,7 +1291,44 @@ function ROIResultCard({ result, compact = false }) {
         <InfoBlock label="תהליך ראשון מומלץ לאוטומציה" value={result.recommendedFirstAutomation} />
         <InfoBlock label="הסבר" value={result.explanation} />
       </div>
-      <p className="demo-note">החישוב הוא הערכה ראשונית לצורך קבלת החלטה ואינו מהווה ייעוץ פיננסי.</p>
+      <p className="demo-note">החישוב הוא הערכה ראשונית ואינו מהווה ייעוץ פיננסי.</p>
+    </section>
+  );
+}
+
+function RoadmapPage({ goTo }) {
+  const saved = readSavedAssessment();
+  const roadmap = saved?.roadmap || (saved?.answers && saved?.recommendation ? generateAutomationRoadmap(saved.answers, saved.recommendation) : null);
+
+  return (
+    <section className="page content-page">
+      <SectionIntro
+        title="מפת אוטומציה"
+        text="מחולל מפת האוטומציה מתרגם את תשובות העסק לתוכנית פעולה בשלושה שלבים: התחלה מהירה, חיבור מערכות, ושיפור מתקדם בעזרת AI ודוחות."
+      />
+
+      {roadmap ? (
+        <>
+          <section className="roadmap-page-intro">
+            <div>
+              <span className="eyebrow">מערכת תומכת החלטה</span>
+              <h3>מפת פעולה מוכנה לפי השאלון האחרון</h3>
+              <p>
+                המפה מציגה ציון מוכנות, רמת עדיפות, Quick Win ושלושה שלבי יישום כדי לעזור לבעל העסק להבין איפה להתחיל ומה לחבר בהמשך.
+              </p>
+            </div>
+            <button className="secondary-button" type="button" onClick={() => goTo('assessment')}>עדכון שאלון התאמה</button>
+          </section>
+          <RoadmapPanel roadmap={roadmap} />
+        </>
+      ) : (
+        <section className="roadmap-empty-state">
+          <Route size={34} />
+          <h3>עדיין אין מפת אוטומציה לעסק</h3>
+          <p>כדי ליצור מפת אוטומציה, מלאו קודם את שאלון ההתאמה.</p>
+          <button className="primary-button" type="button" onClick={() => goTo('assessment')}>מעבר לשאלון התאמה</button>
+        </section>
+      )}
     </section>
   );
 }
@@ -1467,6 +1526,9 @@ function MethodologyPage() {
         <p>
           מחשבון החיסכון מוסיף שכבת ערך עסקי נוספת: הוא מעריך כמה שעות וכסף ניתן לחסוך, ולכן עוזר לתעדף אוטומציות לפי השפעה כלכלית ולא רק לפי נוחות טכנית.
         </p>
+        <p>
+          יחד, מחולל מפת האוטומציה ומחשבון החיסכון הופכים את האתר ממסך דמו סטטי למערכת תומכת החלטה שמייצרת תוצרים עסקיים: תוכנית פעולה, ציון מוכנות, הערכת חיסכון ותעדוף יישום.
+        </p>
       </section>
     </section>
   );
@@ -1565,6 +1627,7 @@ function AcademicSummaryPage() {
     ['מה ניתן היה לשפר?', 'בגרסה הבאה כדאי לשלב נתוני שוק אמיתיים, שרת, אימיילים, ושמירת משתמשים מאובטחת.'],
     ['מחולל מפת אוטומציה לעסק', 'הפיצ׳ר החדש מדגים מערכת תומכת החלטה: הוא לוקח תשובות מהשאלון, מחשב ציון מוכנות לאוטומציה, ומציג תוכנית בשלושה שלבים עם כלים, תועלת, קושי וזמן משוער.'],
     ['מחשבון חיסכון מאוטומציה', 'המחשבון מדגים כיצד ניתן לתרגם תהליכים ידניים לערך עסקי מדיד: שעות שנחסכות, חיסכון כספי חודשי ושנתי, רמת כדאיות ותהליך ראשון מומלץ לאוטומציה.'],
+    ['מערכת תומכת החלטה', 'שילוב ההמלצה, מפת האוטומציה ומחשבון החיסכון הופך את הפרויקט מממשק תצוגה בלבד לכלי שמפיק תוצרים עסקיים שימושיים לבעל עסק קטן.'],
     ['לקחים אישיים וקבוצתיים', 'AI מקצר תהליכים אך אינו מחליף חשיבה ביקורתית, בדיקות איכות והבנת הערך העסקי.'],
     ['שימוש בכלי AI בכתיבת המסמך', 'ניתן להשתמש בתוכן העמודים כבסיס למסמך DOCX, אך יש לערוך, לאמת ולהוסיף רפלקציה אישית.'],
   ];
