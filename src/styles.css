@@ -1,6 +1,6 @@
 :root {
   color-scheme: dark;
-  font-family: "Segoe UI", Arial, sans-serif;
+  font-family: "Noto Sans Hebrew", "Assistant", "Rubik", "Segoe UI", Arial, sans-serif;
   color: #f4f7fb;
   background: #07111f;
   --ink: #f4f7fb;
@@ -32,6 +32,13 @@ body {
   direction: rtl;
   text-align: right;
   background: var(--navy);
+  font-family: "Noto Sans Hebrew", "Assistant", "Rubik", "Segoe UI", Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.55;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 ::selection {
@@ -122,14 +129,18 @@ textarea:focus-visible {
 
 .brand strong {
   display: block;
-  font-size: 15px;
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.35;
   letter-spacing: 0;
 }
 
 .brand small {
   display: block;
   color: var(--blue-gray);
-  font-size: 12px;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.35;
 }
 
 .nav {
@@ -149,6 +160,9 @@ textarea:focus-visible {
   border-radius: 8px;
   color: #c7d2df;
   background: transparent;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
   transition: transform 160ms ease, color 160ms ease, border-color 160ms ease, background 160ms ease;
 }
 
@@ -188,7 +202,8 @@ textarea:focus-visible {
   border-radius: 8px;
   color: #ffd2c8;
   background: rgba(239, 132, 111, 0.12);
-  font-weight: 900;
+  font-weight: 650;
+  line-height: 1.5;
 }
 
 .content-page { max-width: 1040px; }
@@ -219,9 +234,10 @@ textarea:focus-visible {
   display: inline-flex;
   width: fit-content;
   margin-bottom: 13px;
-  color: var(--gold);
-  font-size: 13px;
-  font-weight: 900;
+  color: #e8d19a;
+  font-size: clamp(0.95rem, 1vw, 1.1rem);
+  font-weight: 700;
+  line-height: 1.4;
   letter-spacing: 0;
 }
 
@@ -233,6 +249,7 @@ h1 {
   color: var(--ink);
   font-size: clamp(44px, 6.5vw, 74px);
   line-height: 1.02;
+  font-weight: 700;
   letter-spacing: 0;
   text-wrap: balance;
 }
@@ -242,6 +259,7 @@ h2 {
   color: var(--ink);
   font-size: clamp(30px, 4vw, 42px);
   line-height: 1.12;
+  font-weight: 700;
   letter-spacing: 0;
   text-wrap: balance;
 }
@@ -249,27 +267,32 @@ h2 {
 h3 {
   margin-bottom: 10px;
   color: #edf3fb;
-  font-size: 20px;
-  line-height: 1.25;
+  font-size: clamp(1.25rem, 1.5vw, 1.55rem);
+  line-height: 1.35;
+  font-weight: 650;
   letter-spacing: 0;
 }
 
 h4 {
   margin: 0 0 12px;
   color: #f5f8fc;
-  font-size: 19px;
-  line-height: 1.35;
+  font-size: clamp(1.15rem, 1.2vw, 1.35rem);
+  line-height: 1.42;
+  font-weight: 650;
 }
 
 p {
   color: var(--muted);
-  line-height: 1.72;
+  line-height: 1.65;
+  font-size: 1rem;
+  font-weight: 400;
 }
 
 .hero-copy p {
   max-width: 730px;
   color: #c9d4e1;
-  font-size: 20px;
+  font-size: clamp(1.08rem, 1.55vw, 1.25rem);
+  line-height: 1.65;
 }
 
 .hero-actions,
@@ -307,7 +330,10 @@ p {
   min-height: 48px;
   padding: 12px 18px;
   border-radius: 8px;
-  font-weight: 900;
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: 0;
   transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease, border-color 160ms ease;
 }
 
@@ -331,6 +357,7 @@ p {
   min-height: 36px;
   padding: 7px 10px;
   white-space: nowrap;
+  font-size: 14px;
 }
 
 .primary-button:hover,
@@ -495,7 +522,8 @@ p {
   gap: 12px;
   margin-bottom: 18px;
   color: var(--blue-gray);
-  font-weight: 800;
+  font-weight: 600;
+  line-height: 1.45;
 }
 
 .workflow-card > strong {
@@ -521,7 +549,8 @@ p {
   border-radius: 8px;
   color: #ecf4fc;
   background: rgba(255, 255, 255, 0.055);
-  font-weight: 850;
+  font-weight: 600;
+  line-height: 1.45;
 }
 
 .insight-stack {
@@ -537,7 +566,8 @@ p {
   padding: 16px;
   color: #edf3fb;
   background: rgba(255, 255, 255, 0.06);
-  font-weight: 850;
+  font-weight: 600;
+  line-height: 1.45;
 }
 
 .mini-metric svg,
@@ -615,8 +645,9 @@ p {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent),
     rgba(216, 181, 109, 0.08);
-  font-size: 13px;
-  font-weight: 900;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.4;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
@@ -678,8 +709,9 @@ p {
   border-radius: 8px;
   color: #dce7f4;
   background: rgba(255, 255, 255, 0.05);
-  font-size: 13px;
-  font-weight: 850;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
 }
 
 .ai-output-meta span:first-child {
@@ -724,13 +756,15 @@ p {
 
 .research-step span {
   color: var(--gold);
-  font-size: 13px;
-  font-weight: 950;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.4;
 }
 
 .research-step strong {
   color: #f0f5fb;
-  line-height: 1.35;
+  line-height: 1.42;
+  font-weight: 600;
 }
 
 .market-insight-grid,
@@ -839,14 +873,15 @@ p {
 .tool-badge {
   display: inline-flex;
   align-items: center;
-  min-height: 28px;
-  padding: 5px 8px;
+  min-height: 30px;
+  padding: 5px 9px;
   border: 1px solid rgba(58, 183, 149, 0.24);
   border-radius: 8px;
   color: #bff0df;
   background: rgba(58, 183, 149, 0.08);
-  font-size: 12px;
-  font-weight: 850;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
   direction: ltr;
   unicode-bidi: isolate;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
@@ -873,7 +908,7 @@ p {
 .ai-explanation-card p {
   margin-bottom: 0;
   color: #d6e0eb;
-  font-weight: 800;
+  font-weight: 500;
 }
 
 .future-note {
@@ -883,7 +918,8 @@ p {
   border-radius: 8px;
   color: #f3dfb0;
   background: rgba(216, 181, 109, 0.08);
-  font-weight: 800;
+  font-weight: 600;
+  line-height: 1.6;
 }
 
 .classroom-section {
@@ -937,7 +973,7 @@ p {
 .before-after-table td,
 .automation-score-table td {
   color: #d8e2ee;
-  font-weight: 750;
+  font-weight: 500;
 }
 
 .before-after-table td:nth-child(2) {
@@ -961,7 +997,7 @@ p {
   color: #ecf3fb;
   background: rgba(5, 11, 20, 0.62);
   font-size: 18px;
-  font-weight: 850;
+  font-weight: 600;
   line-height: 1.55;
 }
 
@@ -1009,7 +1045,8 @@ p {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent),
     rgba(58, 183, 149, 0.12);
-  font-weight: 950;
+  font-weight: 650;
+  line-height: 1.4;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
 }
 
@@ -1029,8 +1066,9 @@ p {
   display: inline-flex;
   margin-bottom: 14px;
   color: var(--gold);
-  font-size: 13px;
-  font-weight: 950;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.4;
 }
 
 .classroom-step-card h3 {
@@ -1117,8 +1155,9 @@ p {
   display: inline-flex;
   margin-bottom: 16px;
   color: var(--gold);
-  font-size: 13px;
-  font-weight: 950;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.4;
 }
 
 .usecase-strip {
@@ -1135,7 +1174,8 @@ p {
   min-height: 64px;
   padding: 16px;
   color: #edf3fb;
-  font-weight: 850;
+  font-weight: 600;
+  line-height: 1.45;
   background: rgba(255, 255, 255, 0.045);
 }
 
@@ -1171,7 +1211,8 @@ p {
   border-radius: 8px;
   color: #f4ead1;
   background: rgba(216, 181, 109, 0.08);
-  font-weight: 850;
+  font-weight: 600;
+  line-height: 1.4;
 }
 
 .assessment-form,
@@ -1188,7 +1229,7 @@ p {
 
 .form-group {
   display: grid;
-  gap: 8px;
+  gap: 10px;
   padding: 18px;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -1197,7 +1238,9 @@ p {
 
 .form-group > span {
   color: #e8eef6;
-  font-weight: 850;
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.45;
 }
 
 input,
@@ -1212,6 +1255,9 @@ textarea {
   background: rgba(5, 11, 20, 0.72);
   outline: none;
   text-align: right;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.45;
 }
 
 textarea {
@@ -1244,6 +1290,9 @@ textarea:focus {
   border-radius: 8px;
   color: #d7e0eb;
   background: rgba(255, 255, 255, 0.045);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
   transition: 140ms ease;
 }
 
@@ -1256,13 +1305,15 @@ textarea:focus {
 .form-error {
   margin: 0;
   color: #ffd0c7;
-  font-weight: 850;
+  font-weight: 650;
+  line-height: 1.5;
 }
 
 .success-message {
   margin: 0;
   color: #bcf5df;
-  font-weight: 850;
+  font-weight: 650;
+  line-height: 1.5;
 }
 
 .badge-row,
@@ -1276,16 +1327,17 @@ textarea:focus {
 .badge {
   display: inline-flex;
   align-items: center;
-  min-height: 28px;
-  padding: 5px 10px;
+  min-height: 32px;
+  padding: 6px 11px;
   border: 1px solid rgba(216, 181, 109, 0.3);
   border-radius: 8px;
   color: #f3dfb0;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent),
     rgba(216, 181, 109, 0.1);
-  font-size: 13px;
-  font-weight: 850;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.35;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
@@ -1313,8 +1365,9 @@ textarea:focus {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent),
     rgba(58, 183, 149, 0.08);
-  font-size: 13px;
-  font-weight: 850;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
@@ -1322,7 +1375,8 @@ textarea:focus {
   margin: 0 0 18px;
   padding-right: 18px;
   color: var(--muted);
-  line-height: 1.7;
+  line-height: 1.65;
+  font-size: 16px;
 }
 
 .filter-bar {
@@ -1366,6 +1420,8 @@ td {
   border-bottom: 1px solid var(--line);
   text-align: right;
   vertical-align: top;
+  font-size: 15.5px;
+  line-height: 1.55;
 }
 
 th {
@@ -1373,7 +1429,8 @@ th {
   background:
     linear-gradient(180deg, rgba(216, 181, 109, 0.15), rgba(216, 181, 109, 0.075)),
     rgba(8, 17, 31, 0.96);
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 700;
   letter-spacing: 0;
   white-space: nowrap;
   box-shadow: inset 0 -1px 0 rgba(216, 181, 109, 0.18);
@@ -1381,7 +1438,7 @@ th {
 
 tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.018); }
 tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
-.table-link { color: #cde2ff; font-weight: 900; }
+.table-link { color: #cde2ff; font-weight: 650; line-height: 1.4; }
 
 .usecase-card,
 .method-card,
@@ -1395,11 +1452,16 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
 .info-block { margin-bottom: 14px; }
 .info-block strong {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
   color: #f0f5fb;
-  font-size: 14px;
+  font-size: 15.5px;
+  font-weight: 650;
+  line-height: 1.4;
 }
-.info-block p { margin-bottom: 0; }
+.info-block p {
+  margin-bottom: 0;
+  line-height: 1.6;
+}
 
 .insight-band {
   display: grid;
@@ -1479,7 +1541,8 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
   margin: 6px 0 0;
   color: var(--ink);
   font-size: 24px;
-  font-weight: 900;
+  font-weight: 700;
+  line-height: 1.35;
 }
 
 .modal-subtitle {
@@ -1543,12 +1606,14 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
   display: block;
   margin-bottom: 5px;
   color: var(--blue-gray);
-  font-weight: 850;
+  font-weight: 600;
+  line-height: 1.4;
 }
 
 .ai-score-card strong {
   color: #f3dfb0;
   font-size: clamp(42px, 5vw, 58px);
+  font-weight: 700;
   line-height: 1;
   letter-spacing: 0;
   text-shadow: 0 12px 32px rgba(216, 181, 109, 0.16);
@@ -1562,7 +1627,7 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
   list-style: none;
   color: #d8e2ee;
   line-height: 1.6;
-  font-weight: 800;
+  font-weight: 500;
 }
 
 .next-step-list li {
@@ -1586,8 +1651,8 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
   border-radius: 999px;
   color: #f3dfb0;
   background: rgba(216, 181, 109, 0.08);
-  font-size: 12px;
-  font-weight: 950;
+  font-size: 12.5px;
+  font-weight: 650;
 }
 
 .roi-calculator-section {
@@ -1624,7 +1689,7 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
 .roi-preview-panel p {
   margin-bottom: 0;
   font-size: 17px;
-  line-height: 1.75;
+  line-height: 1.65;
 }
 
 .roi-form-panel .form-grid {
@@ -1638,7 +1703,8 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
 
 .roi-form-panel .form-group > span {
   color: #f0f5fb;
-  font-size: 17px;
+  font-size: clamp(1rem, 1.1vw, 1.12rem);
+  font-weight: 650;
   line-height: 1.45;
 }
 
@@ -1647,13 +1713,14 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
   min-height: 52px;
   padding: 13px 14px;
   font-size: 17px;
+  font-weight: 400;
   line-height: 1.45;
 }
 
 .roi-calculate-button {
   min-height: 54px;
   padding-inline: 24px;
-  font-size: 16px;
+  font-size: 16.5px;
 }
 
 .roi-calculate-button:hover {
@@ -1675,7 +1742,9 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
   border-radius: 8px;
   color: #e4edf7;
   background: rgba(255, 255, 255, 0.04);
-  font-weight: 850;
+  font-size: 15.5px;
+  font-weight: 600;
+  line-height: 1.5;
 }
 
 .roi-benefit-list li::before {
@@ -1721,7 +1790,7 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
 
 .roi-result-header h3 {
   margin-bottom: 0;
-  font-size: clamp(24px, 3vw, 32px);
+  font-size: clamp(1.55rem, 3vw, 2rem);
 }
 
 .roi-metric-grid {
@@ -1744,7 +1813,9 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
 .roi-metric small {
   display: block;
   color: var(--blue-gray);
-  font-weight: 850;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.45;
 }
 
 .roi-metric strong {
@@ -1752,6 +1823,7 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
   margin: 10px 0 6px;
   color: #f3dfb0;
   font-size: clamp(32px, 4vw, 46px);
+  font-weight: 700;
   line-height: 1;
 }
 
@@ -1785,9 +1857,11 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
 
 .roadmap-action-strip strong {
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   color: #f5f0df;
-  font-size: 18px;
+  font-size: clamp(1.12rem, 1.3vw, 1.35rem);
+  font-weight: 650;
+  line-height: 1.4;
 }
 
 .roadmap-action-strip p {
@@ -1829,6 +1903,7 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
 .roadmap-empty-state p {
   margin-bottom: 0;
   font-size: 17px;
+  line-height: 1.65;
 }
 
 .roadmap-empty-state {
@@ -1844,6 +1919,7 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
 .starter-recipe-section p {
   margin-bottom: 0;
   font-size: 17px;
+  line-height: 1.65;
 }
 
 .dashboard-next-step-card {
@@ -1904,7 +1980,7 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
 
 .roadmap-header h3 {
   margin-bottom: 8px;
-  font-size: clamp(24px, 3vw, 32px);
+  font-size: clamp(1.55rem, 3vw, 2rem);
 }
 
 .roadmap-header p {
@@ -1929,15 +2005,16 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
 .roadmap-score-ring strong {
   color: #f3dfb0;
   font-size: 44px;
+  font-weight: 700;
   line-height: 1;
 }
 
 .roadmap-score-ring span {
-  max-width: 96px;
+  max-width: 108px;
   color: #c9d4e1;
-  font-size: 12px;
-  font-weight: 900;
-  line-height: 1.25;
+  font-size: 13.5px;
+  font-weight: 650;
+  line-height: 1.35;
 }
 
 .roadmap-meta-grid {
@@ -1989,8 +2066,9 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
   border-radius: 8px;
   color: #f3dfb0;
   background: rgba(216, 181, 109, 0.08);
-  font-size: 13px;
-  font-weight: 950;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.35;
 }
 
 .roadmap-step-card .info-block {
@@ -2029,9 +2107,11 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
 .roadmap-guide-block strong,
 .recipe-actions-card strong {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   color: #f3dfb0;
-  font-size: 15px;
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.4;
 }
 
 .roadmap-guide-block ul,
@@ -2042,8 +2122,9 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
   margin: 0;
   padding-right: 20px;
   color: #d8e2ee;
+  font-size: 15.5px;
   line-height: 1.65;
-  font-weight: 750;
+  font-weight: 500;
 }
 
 .seven-day-grid {
@@ -2065,9 +2146,9 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
 .seven-day-card p {
   margin: 10px 0 0;
   color: #d9e4ef;
-  font-size: 14px;
-  line-height: 1.55;
-  font-weight: 780;
+  font-size: 15.5px;
+  line-height: 1.6;
+  font-weight: 500;
 }
 
 .starter-recipe-grid {
@@ -2106,7 +2187,8 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
   align-items: center;
   gap: 6px;
   color: #f0dba7;
-  font-weight: 900;
+  font-weight: 650;
+  line-height: 1.4;
 }
 
 .auth-note,
@@ -2116,7 +2198,8 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
   border-radius: 8px;
   background: rgba(216, 181, 109, 0.08);
   color: #f3dfb0;
-  font-weight: 850;
+  font-weight: 600;
+  line-height: 1.6;
 }
 
 .auth-page {
@@ -2135,7 +2218,8 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
   border: 0;
   color: #f0dba7;
   background: transparent;
-  font-weight: 900;
+  font-weight: 650;
+  line-height: 1.4;
 }
 
 .plans-grid {
@@ -2214,7 +2298,51 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
   gap: 7px;
   min-width: max-content;
   color: #f0dba7;
-  font-weight: 900;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.section-intro h2,
+.classroom-section h2,
+.process-section h2,
+.core-idea-section h2,
+.automation-table-section h2,
+.roadmap-start-section h3,
+.roadmap-action-plan-section h3,
+.starter-recipe-section h3 {
+  line-height: 1.25;
+}
+
+.presentation-card h3,
+.market-insight-card h3,
+.research-answer-card h3,
+.classroom-step-card h3,
+.method-card h3,
+.summary-item h3,
+.lead-card h3,
+.plan-card h3,
+.modal-tool-card strong {
+  font-size: clamp(1.16rem, 1.35vw, 1.35rem);
+  line-height: 1.42;
+  font-weight: 650;
+}
+
+.auth-note,
+.demo-note,
+.future-note,
+.modal-status-message {
+  font-size: 15.5px;
+  line-height: 1.6;
+  font-weight: 600;
+}
+
+.lead-card p,
+.summary-item p,
+.method-card p,
+.presentation-card p,
+.market-insight-card p,
+.ai-explanation-card p {
+  line-height: 1.62;
 }
 
 @keyframes fadeIn {
@@ -2301,6 +2429,10 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
 }
 
 @media (max-width: 680px) {
+  body {
+    font-size: 15.8px;
+  }
+
   .page {
     width: min(100% - 22px, 1180px);
     padding: 38px 0 58px;
@@ -2324,6 +2456,7 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
 
   .brand strong {
     font-size: 13px;
+    line-height: 1.35;
   }
 
   .nav,
@@ -2341,8 +2474,23 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
     grid-template-columns: 1fr;
   }
 
-  h1 { font-size: 42px; }
-  h2 { font-size: 30px; }
+  h1 {
+    font-size: clamp(2.35rem, 11vw, 2.75rem);
+    line-height: 1.08;
+  }
+  h2 {
+    font-size: clamp(1.85rem, 8vw, 2.08rem);
+    line-height: 1.18;
+  }
+  h3 {
+    font-size: 1.25rem;
+    line-height: 1.38;
+  }
+
+  .eyebrow {
+    font-size: 0.98rem;
+    line-height: 1.45;
+  }
 
   .hero {
     gap: 18px;
@@ -2363,6 +2511,27 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
   .secondary-button,
   .ai-input-panel .primary-button {
     width: 100%;
+  }
+
+  .primary-button,
+  .secondary-button,
+  .small-link-button {
+    font-size: 15.5px;
+    line-height: 1.38;
+  }
+
+  .form-group > span,
+  .roi-form-panel .form-group > span {
+    font-size: 16px;
+    line-height: 1.45;
+  }
+
+  input,
+  select,
+  textarea,
+  .roi-form-panel input,
+  .roi-form-panel select {
+    font-size: 16px;
   }
 
   .research-badge {
@@ -2410,6 +2579,13 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
 
   .roadmap-score-ring strong {
     font-size: 38px;
+  }
+
+  .badge,
+  .tool-pill-list span,
+  .tool-pill-link {
+    font-size: 13.5px;
+    line-height: 1.4;
   }
 
   .seven-day-grid {
