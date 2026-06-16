@@ -6,6 +6,8 @@ The project demonstrates how AI-assisted market research, inspired by tools like
 
 The current version also includes decision-support features that produce business outputs, including an automation roadmap generator and an automation savings calculator.
 
+The roadmap generator produces not only a strategic roadmap, but also an operational guide that helps a small business understand how to start implementing automation step by step.
+
 Live Demo: https://ai-business-automation-advisor.vercel.app/
 
 ## Main Idea
@@ -50,6 +52,9 @@ AutoBiz demonstrates how AI can turn market research and business context into:
 - Automation score
 - AI recommendation modal after clicking `הרץ ניתוח AI`
 - מחולל מפת אוטומציה לעסק
+- מדריך תפעול ראשוני למפת האוטומציה
+- תוכנית פעולה ל-7 ימים
+- מתכון אוטומציה ראשוני לפי סוג ההמלצה
 - מחשבון חיסכון מאוטומציה
 - Suggested automation tools
 - Tools and lessons section for classroom presentation

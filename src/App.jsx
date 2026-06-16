@@ -806,6 +806,7 @@ function RecommendationModal({ recommendation, roadmap, user, goTo, onClose }) {
 }
 
 function RoadmapPanel({ roadmap, compact = false }) {
+  const [openStepIndex, setOpenStepIndex] = useState(null);
   if (!roadmap) return null;
 
   return (
@@ -845,10 +846,45 @@ function RoadmapPanel({ roadmap, compact = false }) {
             <div className="tool-pill-list">
               {step.recommendedTools.map((tool) => <span className="ltr-text" key={tool}>{tool}</span>)}
             </div>
+            <button
+              className="secondary-button roadmap-guide-toggle"
+              type="button"
+              onClick={() => setOpenStepIndex(openStepIndex === index ? null : index)}
+            >
+              {openStepIndex === index ? 'סגירת מדריך ביצוע' : 'פתיחת מדריך ביצוע'}
+            </button>
+            {openStepIndex === index && <RoadmapImplementationGuide step={step} />}
           </article>
         ))}
       </div>
     </section>
+  );
+}
+
+function RoadmapImplementationGuide({ step }) {
+  return (
+    <div className="roadmap-implementation-guide">
+      <RoadmapGuideList title="Checklist התחלה" items={step.setupChecklist} />
+      <RoadmapGuideList title="מה עושים בפועל" items={step.implementationSteps} ordered />
+      <RoadmapGuideList title="מה צריך להכין" items={step.requiredData} />
+      <RoadmapGuideList title="אילו מערכות מחברים" items={step.systemConnections} />
+      <RoadmapGuideList title="פעולות שבעל העסק צריך לבצע" items={step.ownerActionItems} />
+      <RoadmapGuideList title="מדד הצלחה" items={step.successMetric} />
+      <RoadmapGuideList title="טעויות נפוצות" items={step.commonMistakes} />
+      <InfoBlock label="למה הכלים האלו מתאימים לשלב הזה" value={step.suggestedToolsExplanation} />
+    </div>
+  );
+}
+
+function RoadmapGuideList({ title, items, ordered = false }) {
+  const ListTag = ordered ? 'ol' : 'ul';
+  return (
+    <div className="roadmap-guide-block">
+      <strong>{title}</strong>
+      <ListTag>
+        {items.map((item) => <li key={item}>{item}</li>)}
+      </ListTag>
+    </div>
   );
 }
 
@@ -1143,6 +1179,14 @@ function DashboardPage({ user, goTo }) {
               <button className="secondary-button" type="button" onClick={() => goTo('roiCalculator')}>מעבר למחשבון חיסכון</button>
             </div>
           </article>
+          {savedRoadmap && (
+            <article className="summary-item wide dashboard-next-step-card">
+              <span className="eyebrow">הצעד הבא שלך</span>
+              <h3>להתחיל ממיפוי תהליך ידני אחד</h3>
+              <p>{savedRoadmap.steps?.[0]?.implementationSteps?.[0] || savedRoadmap.quickWin}</p>
+              <button className="primary-button" type="button" onClick={() => goTo('roadmap')}>פתיחת מדריך הביצוע</button>
+            </article>
+          )}
           {savedRoadmap && <RoadmapPanel roadmap={savedRoadmap} compact />}
           {savedRoi?.result && <ROIResultCard result={savedRoi.result} compact />}
         </div>
@@ -1309,6 +1353,13 @@ function RoadmapPage({ goTo }) {
 
       {roadmap ? (
         <>
+          <section className="roadmap-start-section">
+            <span className="eyebrow">איך מתחילים ליישם?</span>
+            <h3>מתקדמים בשלבים ולא מחברים הכול בבת אחת</h3>
+            <p>
+              מפת האוטומציה בנויה כך שהעסק לא יתחיל מכל הכלים בבת אחת, אלא יתקדם בשלבים: קודם פעולה פשוטה ומהירה, אחר כך חיבור בין מערכות, ובסוף שימוש מתקדם יותר ב-AI ודוחות. כך ניתן לבדוק ערך עסקי לפני השקעה גדולה.
+            </p>
+          </section>
           <section className="roadmap-page-intro">
             <div>
               <span className="eyebrow">מערכת תומכת החלטה</span>
@@ -1320,6 +1371,8 @@ function RoadmapPage({ goTo }) {
             <button className="secondary-button" type="button" onClick={() => goTo('assessment')}>עדכון שאלון התאמה</button>
           </section>
           <RoadmapPanel roadmap={roadmap} />
+          <RoadmapSevenDayPlan plan={roadmap.firstSevenDaysPlan} />
+          <RoadmapStarterRecipe recipe={roadmap.starterRecipe} />
         </>
       ) : (
         <section className="roadmap-empty-state">
@@ -1329,6 +1382,44 @@ function RoadmapPage({ goTo }) {
           <button className="primary-button" type="button" onClick={() => goTo('assessment')}>מעבר לשאלון התאמה</button>
         </section>
       )}
+    </section>
+  );
+}
+
+function RoadmapSevenDayPlan({ plan }) {
+  if (!plan?.length) return null;
+  return (
+    <section className="roadmap-action-plan-section">
+      <span className="eyebrow">תוכנית פעולה ל-7 ימים ראשונים</span>
+      <h3>מה עושים בשבוע הראשון?</h3>
+      <div className="seven-day-grid">
+        {plan.map((item) => (
+          <article className="seven-day-card" key={item.day}>
+            <Badge label={item.day} compact />
+            <p>{item.text}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function RoadmapStarterRecipe({ recipe }) {
+  if (!recipe) return null;
+  return (
+    <section className="starter-recipe-section">
+      <span className="eyebrow">מתכון אוטומציה ראשוני</span>
+      <h3>{recipe.title}</h3>
+      <div className="starter-recipe-grid">
+        <InfoBlock label="Trigger" value={recipe.trigger} />
+        <div className="recipe-actions-card">
+          <strong>פעולות</strong>
+          <ol>
+            {recipe.actions.map((action) => <li key={action}>{action}</li>)}
+          </ol>
+        </div>
+        <InfoBlock label="Result" value={recipe.result} />
+      </div>
     </section>
   );
 }
@@ -1529,6 +1620,9 @@ function MethodologyPage() {
         <p>
           יחד, מחולל מפת האוטומציה ומחשבון החיסכון הופכים את האתר ממסך דמו סטטי למערכת תומכת החלטה שמייצרת תוצרים עסקיים: תוכנית פעולה, ציון מוכנות, הערכת חיסכון ותעדוף יישום.
         </p>
+        <p>
+          הוספנו למפת האוטומציה מדריך תפעול ראשוני שמראה לבעל העסק מה לבצע בפועל: אילו נתונים להכין, אילו מערכות לחבר, באיזה סדר לפעול, ואיך למדוד הצלחה. כך המערכת מייצרת תוצר יישומי ולא רק המלצה כללית.
+        </p>
       </section>
     </section>
   );
@@ -1626,6 +1720,7 @@ function AcademicSummaryPage() {
     ['מה היה טוב בתהליך?', 'הדרישות המפורטות עזרו להפוך רעיון מופשט למוצר שניתן להציג בכיתה.'],
     ['מה ניתן היה לשפר?', 'בגרסה הבאה כדאי לשלב נתוני שוק אמיתיים, שרת, אימיילים, ושמירת משתמשים מאובטחת.'],
     ['מחולל מפת אוטומציה לעסק', 'הפיצ׳ר החדש מדגים מערכת תומכת החלטה: הוא לוקח תשובות מהשאלון, מחשב ציון מוכנות לאוטומציה, ומציג תוכנית בשלושה שלבים עם כלים, תועלת, קושי וזמן משוער.'],
+    ['מדריך תפעול למפת האוטומציה', 'המפה אינה רק המלצה אסטרטגית. היא כוללת מדריך ביצוע: מה לעשות בפועל, אילו נתונים להכין, אילו מערכות לחבר, טעויות נפוצות ומדדי הצלחה.'],
     ['מחשבון חיסכון מאוטומציה', 'המחשבון מדגים כיצד ניתן לתרגם תהליכים ידניים לערך עסקי מדיד: שעות שנחסכות, חיסכון כספי חודשי ושנתי, רמת כדאיות ותהליך ראשון מומלץ לאוטומציה.'],
     ['מערכת תומכת החלטה', 'שילוב ההמלצה, מפת האוטומציה ומחשבון החיסכון הופך את הפרויקט מממשק תצוגה בלבד לכלי שמפיק תוצרים עסקיים שימושיים לבעל עסק קטן.'],
     ['לקחים אישיים וקבוצתיים', 'AI מקצר תהליכים אך אינו מחליף חשיבה ביקורתית, בדיקות איכות והבנת הערך העסקי.'],
