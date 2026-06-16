@@ -219,6 +219,45 @@ const marketConfigs = {
   },
 };
 
+const focusedRecommendationRows = {
+  מסעדה: [
+    ['ניהול הזמנות ותזכורות', 'הזמנות ופניות מטופלות ידנית בין טלפון, WhatsApp וגיליונות', 'אישור הזמנה, עדכון גיליון ותזכורת אוטומטית ללקוח', ['WhatsApp Automation', 'Google Sheets', 'Make'], 'גבוהה', 'נמוכה-בינונית'],
+    ['לקוחות חוזרים והודעות', 'אין מעקב מסודר אחרי לקוחות חוזרים או אירועים', 'רשימת לקוחות חוזרים ושליחת הודעות לפי תאריך או אירוע', ['Google Sheets', 'WhatsApp Automation'], 'בינונית-גבוהה', 'נמוכה'],
+    ['דוחות הזמנות', 'סיכום הזמנות ומכירות מתבצע ידנית בסוף יום', 'דוח יומי אוטומטי שמרכז הזמנות, ביטולים ותפוסה', ['Google Sheets', 'Make'], 'בינונית', 'נמוכה'],
+    ['תיאום משמרות / תפעול', 'תיאום משמרות ועדכונים מתפזרים בהודעות', 'יומן תפעולי עם תזכורות ועדכונים לצוות', ['Google Calendar', 'Make'], 'בינונית', 'בינונית'],
+  ],
+  קליניקה: [
+    ['תיאום פגישות ותזכורות', 'תורים, ביטולים ותזכורות מנוהלים ידנית', 'תזכורת אוטומטית לפני תור ועדכון יומן', ['Google Calendar', 'WhatsApp reminders', 'Make'], 'גבוהה', 'נמוכה-בינונית'],
+    ['ניהול מטופלים / לקוחות', 'קשה לראות סטטוס, היסטוריית קשר והמשך טיפול', 'CRM בסיסי למעקב אחרי מטופלים ופעולות המשך', ['CRM', 'Make'], 'גבוהה', 'בינונית'],
+    ['סיכום פניות', 'פניות חדשות מגיעות ממקורות שונים ולא תמיד מתועדות', 'ריכוז פניות, שיוך סטטוס ושליחת הודעת המשך', ['CRM', 'WhatsApp reminders'], 'בינונית-גבוהה', 'בינונית'],
+    ['דוחות פעילות', 'אין תמונת מצב רציפה על תורים, ביטולים ופניות', 'דוח שבועי על תורים, ביטולים ופניות חדשות', ['Google Sheets', 'Make'], 'בינונית', 'נמוכה'],
+  ],
+  'חנות אונליין': [
+    ['מעקב הזמנות', 'הזמנות, פניות ועדכוני לקוח לא תמיד מחוברים', 'סנכרון הזמנה ל-CRM ושליחת הודעת סטטוס', ['Shopify', 'WooCommerce', 'Zapier', 'HubSpot'], 'גבוהה', 'בינונית'],
+    ['שירות לקוחות', 'שאלות חוזרות על משלוחים, החזרות ומוצרים מטופלות ידנית', 'מענה AI ראשוני וסיכום פניות שירות', ['ChatGPT/OpenAI', 'HubSpot'], 'גבוהה', 'בינונית'],
+    ['נטישת עגלה / שימור לקוחות', 'לקוחות נוטשים או לא מקבלים המשך קשר בזמן', 'הודעת המשך אוטומטית לנטישת עגלה ולקוחות חוזרים', ['Zapier', 'HubSpot'], 'גבוהה', 'נמוכה-בינונית'],
+    ['דוחות מכירות', 'דוחות מכירה ושירות נבדקים בנפרד', 'דוח שבועי שמרכז הזמנות, פניות ולקוחות חוזרים', ['Shopify', 'WooCommerce', 'Google Sheets'], 'בינונית-גבוהה', 'בינונית'],
+  ],
+  'נותן שירותים': [
+    ['ניהול לידים', 'פניות חדשות מגיעות ממייל, טפסים ו-WhatsApp בלי תיעוד אחיד', 'רישום ליד חדש, שיוך מקור ושליחת הודעת המשך', ['CRM', 'Email/WhatsApp automation'], 'גבוהה', 'נמוכה-בינונית'],
+    ['הצעות מחיר', 'מעקב אחרי הצעות פתוחות מתבצע ידנית', 'תזכורת אוטומטית להצעת מחיר שלא נסגרה', ['CRM', 'Monday.com'], 'בינונית-גבוהה', 'נמוכה-בינונית'],
+    ['מעקב לקוחות', 'אין סטטוס ברור לכל לקוח בתהליך', 'Pipeline לקוחות עם משימות המשך ועדכון סטטוס', ['CRM', 'Google Sheets'], 'גבוהה', 'בינונית'],
+    ['תזכורות ותיאום', 'פגישות ומשימות המשך נשכחות או נדחות', 'תזכורות אוטומטיות לפי סטטוס לקוח ותאריך יעד', ['Monday.com', 'Email/WhatsApp automation'], 'בינונית-גבוהה', 'נמוכה'],
+  ],
+  'משרד קטן': [
+    ['ניהול משימות', 'משימות מתפזרות בין מיילים, הודעות ושיחות', 'פתיחת משימה אוטומטית לפי פנייה נכנסת ושיוך אחראי', ['Monday.com', 'Google Workspace'], 'בינונית-גבוהה', 'בינונית'],
+    ['מסמכים ואישורים', 'אישורים ומסמכים עוברים ידנית בין עובדים', 'מסלול אישור אוטומטי למסמכים ובקשות', ['Microsoft Power Automate', 'Google Workspace'], 'בינונית-גבוהה', 'בינונית-גבוהה'],
+    ['דוחות פנימיים', 'נתונים נאספים ידנית בסוף שבוע או חודש', 'דוח פנימי שמתעדכן מגיליונות ומשימות', ['Google Sheets', 'Monday.com'], 'בינונית', 'נמוכה-בינונית'],
+    ['חיבור צוותים וכלים', 'צוותים עובדים בכלים שונים בלי תמונת מצב אחת', 'חיבור בין משימות, מסמכים ודוחות ניהוליים', ['Monday.com', 'Microsoft Power Automate'], 'בינונית', 'בינונית-גבוהה'],
+  ],
+  'יועץ/פרילנסר': [
+    ['ניהול לידים', 'פניות חדשות לא תמיד מקבלות המשך בזמן', 'רישום ליד ב-CRM ושליחת הודעת המשך אוטומטית', ['HubSpot', 'Zapier'], 'גבוהה', 'נמוכה-בינונית'],
+    ['תיאום פגישות', 'תיאום פגישות דורש הודעות חוזרות', 'קביעת פגישה אוטומטית ועדכון יומן', ['Google Calendar', 'Zapier'], 'גבוהה', 'נמוכה'],
+    ['סיכום פגישות', 'סיכום ידני ומשימות המשך עלולים להישכח', 'סיכום AI לפגישה ויצירת משימות המשך', ['ChatGPT/OpenAI', 'HubSpot'], 'בינונית-גבוהה', 'בינונית'],
+    ['מעקב הצעות מחיר', 'הצעות פתוחות נשארות ללא תזכורת', 'תזכורת אוטומטית להצעת מחיר שלא נסגרה', ['HubSpot', 'Zapier'], 'בינונית-גבוהה', 'נמוכה-בינונית'],
+  ],
+};
+
 function stableIndex(parts, length) {
   const key = parts.filter(Boolean).join('|');
   let hash = 0;
@@ -258,6 +297,31 @@ function withToolLinks(toolRows) {
   });
 }
 
+function linksForTools(rowTools) {
+  return rowTools.flatMap((tool) => {
+    if (tool === 'Shopify / WooCommerce') {
+      return [
+        { label: 'Shopify', url: externalToolLinks.Shopify },
+        { label: 'WooCommerce', url: externalToolLinks.WooCommerce },
+      ];
+    }
+
+    return [{ label: tool, url: externalToolLinks[tool] || externalToolLinks.CRM }];
+  });
+}
+
+function withFocusedLinks(rows) {
+  return rows.map(([process, currentState, automation, rowTools, impact, complexity]) => ({
+    process,
+    currentState,
+    automation,
+    tools: rowTools,
+    impact,
+    complexity,
+    links: linksForTools(rowTools),
+  }));
+}
+
 function adaptToGoal(goal, businessType) {
   const goalMap = {
     'חיסכון בזמן': `הדגש הוא להתחיל מאוטומציה שמורידה עבודה ידנית חוזרת ב${businessType === 'חנות אונליין' ? 'ניהול הזמנות ופניות' : 'מעקב ותזכורות'}.`,
@@ -269,11 +333,81 @@ function adaptToGoal(goal, businessType) {
   return goalMap[goal] || 'הדגש הוא לבחור פעולה ראשונה עם ערך עסקי ברור ומורכבות יישום נמוכה.';
 }
 
+function complexityValue(complexity = '') {
+  if (complexity.includes('גבוהה') && complexity.includes('בינונית')) return 2.7;
+  if (complexity.includes('גבוהה')) return 3;
+  if (complexity.includes('בינונית') && complexity.includes('נמוכה')) return 1.5;
+  if (complexity.includes('בינונית')) return 2;
+  return 1;
+}
+
+function impactValue(impact = '') {
+  if (impact.includes('גבוהה') && impact.includes('בינונית')) return 2.5;
+  if (impact.includes('גבוהה')) return 3;
+  if (impact.includes('בינונית')) return 2;
+  return 1;
+}
+
+function scoreLabel(score) {
+  if (score >= 80) return 'כדאיות גבוהה';
+  if (score >= 65) return 'כדאיות בינונית';
+  return 'כדאיות נמוכה';
+}
+
+function calculateFeasibilityScore({ businessType, businessSize, businessGoal, focusedRows, toolCount }) {
+  const repetitiveProcessBonus = ['מסעדה', 'קליניקה', 'חנות אונליין', 'משרד קטן'].includes(businessType) ? 8 : 6;
+  const goalValueBonus = {
+    'חיסכון בזמן': 8,
+    'שיפור שירות לקוחות': 8,
+    'הגדלת מכירות': 9,
+    'שיפור תפעול': 6,
+  }[businessGoal] || 0;
+  const sizeBonus = {
+    'עסק קטן': 4,
+    'עסק בינוני': 8,
+    סטארטאפ: 10,
+  }[businessSize] || 0;
+  const averageComplexity = focusedRows.reduce((sum, row) => sum + complexityValue(row.complexity), 0) / focusedRows.length;
+  const averageImpact = focusedRows.reduce((sum, row) => sum + impactValue(row.impact), 0) / focusedRows.length;
+  const simplicityBonus = averageComplexity <= 1.55 ? 6 : averageComplexity <= 2.1 ? 4 : 2;
+  const impactBonus = averageImpact >= 2.6 ? 5 : averageImpact >= 2.1 ? 4 : 2;
+  const toolsBonus = toolCount >= 4 ? 4 : 2;
+  const highComplexityPenalty = focusedRows.filter((row) => complexityValue(row.complexity) >= 2.7).length * 5;
+  const verySmallAdvancedPenalty = businessSize === 'עסק קטן' && averageComplexity > 2.2 ? 5 : 0;
+  const broadGoalPenalty = businessGoal ? 0 : 5;
+  const businessAdjustment = businessType === 'משרד קטן' ? 4 : businessType === 'נותן שירותים' ? -2 : 0;
+  const deterministicVariation = stableIndex([businessType, businessSize, businessGoal, 'score'], 5) - 2;
+
+  const rawScore = 55
+    + repetitiveProcessBonus
+    + goalValueBonus
+    + sizeBonus
+    + simplicityBonus
+    + impactBonus
+    + toolsBonus
+    + businessAdjustment
+    - highComplexityPenalty
+    - verySmallAdvancedPenalty
+    - broadGoalPenalty
+    + deterministicVariation;
+
+  return Math.max(45, Math.min(95, rawScore));
+}
+
 export function generateMarketResearchDemo({ businessField, businessSize, businessGoal }) {
   const businessType = normalizeBusinessType(businessField);
   const config = marketConfigs[businessType] || defaultConfig;
+  const focusedRows = withFocusedLinks(focusedRecommendationRows[businessType] || focusedRecommendationRows['נותן שירותים']);
   const variant = stableIndex([businessType, businessSize, businessGoal], config.titleOptions.length);
   const insightVariant = stableIndex([businessGoal, businessSize, businessType], config.insightOptions.length);
+  const feasibilityScore = calculateFeasibilityScore({
+    businessType,
+    businessSize,
+    businessGoal,
+    focusedRows,
+    toolCount: config.tools.length,
+  });
+  const feasibilityLabel = scoreLabel(feasibilityScore);
   const sizeContext = businessSize === 'סטארטאפ'
     ? 'בשלב צמיחה, חשוב לבנות תהליך מדיד שניתן להרחיב בהמשך.'
     : businessSize === 'עסק בינוני'
@@ -287,8 +421,18 @@ export function generateMarketResearchDemo({ businessField, businessSize, busine
     marketInsight: config.insightOptions[insightVariant],
     painPoints: config.painPoints,
     recommendedAutomations: config.automations,
+    mainRecommendation: config.automations[0],
+    summaryInsights: [
+      config.painPoints[0],
+      config.painPoints[1],
+      config.automations[0],
+    ],
     tools: withToolLinks(config.tools),
+    focusedRecommendations: focusedRows,
     firstStep: config.firstStep,
+    feasibilityScore,
+    feasibilityLabel,
+    scoreExplanation: `הציון משקלל התאמה עסקית, מורכבות יישום, השפעה צפויה ורלוונטיות הכלים שנבחרו. במקרה של ${businessType}, ההמלצה נבחנה מול ${businessGoal} ו${businessSize}.`,
     analysisContext: [
       ['תחום עסקי', businessType],
       ['גודל העסק', businessSize],

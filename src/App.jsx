@@ -370,6 +370,7 @@ function HomePage({ goTo }) {
 
 function AIDemoPage() {
   const automationTableRef = useRef(null);
+  const resultSummaryRef = useRef(null);
   const [aiDemo, setAiDemo] = useState({
     businessField: 'מסעדה',
     businessSize: 'עסק קטן',
@@ -379,29 +380,14 @@ function AIDemoPage() {
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [analysisReady, setAnalysisReady] = useState(false);
   const researchFlow = ['חקר שוק', 'זיהוי כאבים עסקיים', 'מיפוי תהליכים ידניים', 'איתור אוטומציות', 'בניית תוכנית פעולה'];
-  const automationOpportunities = [
-    ['טיפול איטי בלידים', 'מעבר ידני על טפסים, הודעות WhatsApp ומיילים', 'סיווג ליד, שליחת הודעת המשך אוטומטית ועדכון CRM', ['Make', 'Zapier', 'HubSpot CRM', 'WhatsApp/Email Automation'], 'גבוהה', 'בינונית', 'חוסך זמן תגובה ומקטין אובדן לקוחות פוטנציאליים'],
-    ['חוסר מעקב אחרי לקוחות', 'תזכורות ידניות ביומן, Excel או WhatsApp', 'תזכורות אוטומטיות לפי סטטוס לקוח ושלב בתהליך', ['Google Sheets', 'Airtable', 'Make', 'Zapier'], 'גבוהה', 'נמוכה', 'קל להתחיל, מתאים לעסק קטן, ונותן ערך מהיר'],
-    ['דוחות ובקרה ידניים', 'איסוף נתונים ידני בסוף שבוע או חודש', 'Dashboard שמתעדכן אוטומטית ממקורות מידע שונים', ['Looker Studio', 'Google Sheets', 'Airtable', 'API Integration'], 'בינונית-גבוהה', 'בינונית', 'משפר קבלת החלטות ומציג תמונת מצב עסקית ברורה'],
-    ['עומס בשירות לקוחות', 'מענה חוזר על שאלות דומות', 'FAQ Bot / Chatbot לשאלות נפוצות והפניית פניות מורכבות', ['AI Chatbot', 'Intercom', 'Tidio', 'Zendesk'], 'גבוהה', 'בינונית', 'מוריד עומס ומקצר זמני מענה'],
-    ['תהליכי תפעול פנימיים', 'העברת משימות ידנית בין עובדים וכלים', 'Workflow אוטומטי בין טפסים, משימות, CRM ומיילים', ['n8n', 'Make', 'Zapier', 'Microsoft Power Automate'], 'גבוהה', 'בינונית-גבוהה', 'מתאים לעסק שרוצה לגדול ולחבר מערכות שונות'],
-    ['ניהול פגישות ותורים', 'תיאום ידני, ביטולים והודעות חוזרות', 'תיאום תורים, תזכורות לפני פגישה ועדכון סטטוס לקוח', ['Calendly', 'Google Calendar', 'Make', 'WhatsApp/Email Automation'], 'גבוהה', 'נמוכה-בינונית', 'רלוונטי לקליניקות, יועצים, נותני שירות ועסקים מבוססי פגישות'],
-    ['ניהול משימות וצוות', 'משימות מפוזרות בין WhatsApp, מיילים ושיחות', 'פתיחת משימה אוטומטית, שיוך אחראי ועדכון סטטוס', ['Monday.com', 'Trello', 'Asana', 'ClickUp', 'Make'], 'בינונית-גבוהה', 'בינונית', 'משפר סדר, אחריות ומעקב תפעולי'],
-    ['סיכום פגישות ושיחות', 'סיכום ידני או איבוד מידע אחרי פגישה', 'תמלול, סיכום אוטומטי ושליחת משימות המשך', ['Fireflies.ai', 'Otter.ai', 'Notion AI', 'Google Docs'], 'בינונית', 'נמוכה', 'חוסך זמן ניהולי ומשמר ידע עסקי'],
-  ];
   const toolReasonCards = [
     ['Make / Zapier', 'מתאימים לעסקים שרוצים לחבר מערכות במהירות ולבנות אוטומציות ללא קוד.'],
     ['n8n', 'מתאים יותר למשתמשים טכניים שרוצים שליטה גבוהה, גמישות וחיבורי API מורכבים.'],
     ['Microsoft Power Automate', 'מתאים לארגונים שכבר עובדים עם Microsoft 365 ורוצים אוטומציה עסקית ו-RPA.'],
     ['HubSpot / CRM', 'מתאים לניהול לידים, לקוחות, סטטוסים ותהליכי מכירה.'],
     ['Looker Studio / Sheets / Airtable', 'מתאים לדוחות, בקרה, מעקב נתונים ו-Dashboard עסקי.'],
-  ];
-  const automationScores = [
-    ['הודעה אוטומטית לליד חדש', 'גבוהה', 'נמוכה', '92/100'],
-    ['תזכורות ללקוחות', 'גבוהה', 'נמוכה', '88/100'],
-    ['Dashboard חודשי', 'בינונית', 'בינונית', '74/100'],
-    ['Chatbot שאלות נפוצות', 'גבוהה', 'בינונית', '81/100'],
   ];
   const marketResearch = useMemo(() => generateMarketResearchDemo(aiDemo), [aiDemo]);
   const modalBusinessField = aiDemo.businessField.trim() || 'קליניקה';
@@ -413,7 +399,12 @@ function AIDemoPage() {
     window.setTimeout(() => {
       setAiDemo((current) => ({ ...current, runs: current.runs + 1 }));
       setLoading(false);
-      setModalOpen(true);
+      setAnalysisReady(true);
+      window.setTimeout(() => {
+        resultSummaryRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        resultSummaryRef.current?.classList.add('table-highlight');
+        window.setTimeout(() => resultSummaryRef.current?.classList.remove('table-highlight'), 1800);
+      }, 80);
     }, 1000);
   };
   const showAutomationTable = () => {
@@ -515,21 +506,40 @@ function AIDemoPage() {
           ))}
         </div>
 
-        <section className="dynamic-research-section">
+        <section ref={resultSummaryRef} className={`dynamic-research-section result-summary-section ${analysisReady ? 'analysis-ready' : ''}`}>
           <div className="ai-demo-heading">
             <div>
-              <span className="eyebrow">פלט חקר שוק מותאם</span>
-              <h2>אוטומציות וכלים לפי {marketResearch.businessType}</h2>
-              <p>{marketResearch.marketInsight}</p>
+              <span className="eyebrow">סיכום תוצאת הניתוח</span>
+              <h2>סיכום תוצאת הניתוח</h2>
+              <p>{analysisReady ? marketResearch.marketInsight : 'בחרו תחום עסקי, גודל עסק ומטרה מרכזית, ואז הריצו ניתוח כדי לקבל סיכום ממוקד וטבלת כלים רלוונטית.'}</p>
             </div>
             <span className="research-badge">Rule-Based, deterministic</span>
           </div>
 
+          <div className="analysis-summary-grid">
+            <article className="feasibility-card">
+              <span className="eyebrow">ציון כדאיות</span>
+              <strong>{marketResearch.feasibilityScore}/100</strong>
+              <Badge label={marketResearch.feasibilityLabel} compact />
+              <p>{marketResearch.scoreExplanation}</p>
+            </article>
+
+            <article className="summary-detail-card">
+              <span className="eyebrow">המלצת האוטומציה המרכזית</span>
+              <h3>{marketResearch.mainRecommendation}</h3>
+              <div className="analysis-context-grid">
+                <span><strong>תחום העסק</strong>{marketResearch.businessType}</span>
+                <span><strong>מטרה מרכזית</strong>{aiDemo.businessGoal}</span>
+                <span><strong>גודל העסק</strong>{aiDemo.businessSize}</span>
+              </div>
+            </article>
+          </div>
+
           <div className="market-insight-grid automation-recommendation-grid">
-            {marketResearch.recommendedAutomations.map((automation, index) => (
-              <article className="market-insight-card" key={automation}>
+            {marketResearch.summaryInsights.map((insight, index) => (
+              <article className="market-insight-card" key={insight}>
                 <span className="step-mini-number">{index + 1}</span>
-                <h3>{automation}</h3>
+                <h3>{insight}</h3>
               </article>
             ))}
           </div>
@@ -539,38 +549,9 @@ function AIDemoPage() {
             <h3>{marketResearch.firstStep}</h3>
           </div>
 
-          <div className="ai-table-wrap">
-            <table className="ai-opportunities-table business-tools-table">
-              <thead>
-                <tr>
-                  <th>כלי</th>
-                  <th>שימוש מומלץ</th>
-                  <th>למה מתאים לעסק הזה</th>
-                  <th>רמת מורכבות</th>
-                  <th>קישור רשמי</th>
-                </tr>
-              </thead>
-              <tbody>
-                {marketResearch.tools.map((tool) => (
-                  <tr key={tool.tool}>
-                    <td><strong>{tool.tool}</strong></td>
-                    <td>{tool.useCase}</td>
-                    <td>{tool.fit}</td>
-                    <td><Badge label={tool.complexity} compact /></td>
-                    <td>
-                      <div className="official-link-list">
-                        {tool.links.map((link) => (
-                          <a className="table-link" href={link.url} target="_blank" rel="noopener noreferrer" key={`${tool.tool}-${link.label}`}>
-                            {link.label}
-                          </a>
-                        ))}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <button className="primary-button summary-table-button" type="button" onClick={showAutomationTable}>
+            צפייה בטבלת הכלים המומלצים
+          </button>
 
           <p className="future-note rule-based-note">{marketResearch.note}</p>
         </section>
@@ -578,14 +559,14 @@ function AIDemoPage() {
         <section id="automation-table" ref={automationTableRef} className="automation-table-section">
           <div className="ai-demo-heading">
             <div>
-              <span className="eyebrow">תוצר אחרי חקר שוק</span>
-              <h2>טבלת אוטומציות מומלצות אחרי חקר שוק</h2>
-              <p>הטבלה מציגה תהליכים עסקיים נפוצים, הצעת אוטומציה, כלים מתאימים, רמת השפעה ומורכבות יישום.</p>
+              <span className="eyebrow">טבלת כלים ממוקדת</span>
+              <h2>טבלת כלים מומלצים לפי תחום העסק</h2>
+              <p>הטבלה מציגה רק המלצות רלוונטיות ל{marketResearch.businessType}, כדי לשמור על פוקוס ולהתחיל מהתהליכים בעלי הערך הגבוה ביותר.</p>
             </div>
-            <span className="research-badge">Market research → AI recommendation → Automation tools</span>
+            <span className="research-badge">{marketResearch.focusedRecommendations.length} המלצות ממוקדות</span>
           </div>
           <div className="ai-table-wrap">
-            <table className="ai-opportunities-table enhanced-opportunities-table">
+            <table className="ai-opportunities-table focused-tools-table">
               <thead>
                 <tr>
                   <th>תהליך / בעיה עסקית</th>
@@ -593,24 +574,35 @@ function AIDemoPage() {
                   <th>אוטומציה מומלצת</th>
                   <th>כלים מתאימים</th>
                   <th>השפעה</th>
-                  <th>מורכבות</th>
-                  <th>למה זה מתאים</th>
+                  <th>קישור רשמי</th>
                 </tr>
               </thead>
               <tbody>
-                {automationOpportunities.map(([problem, currentState, automation, rowTools, impact, complexity, reason]) => (
-                  <tr key={problem}>
-                    <td><strong>{problem}</strong></td>
-                    <td>{currentState}</td>
-                    <td>{automation}</td>
+                {marketResearch.focusedRecommendations.map((row) => (
+                  <tr key={row.process}>
+                    <td><strong>{row.process}</strong></td>
+                    <td>{row.currentState}</td>
+                    <td>{row.automation}</td>
                     <td>
                       <div className="table-tool-list">
-                        {rowTools.map((tool) => <span className="tool-badge" key={tool}>{tool}</span>)}
+                        {row.tools.map((tool) => <span className="tool-badge" key={tool}>{tool}</span>)}
                       </div>
                     </td>
-                    <td><Badge label={impact} compact /></td>
-                    <td><Badge label={complexity} compact /></td>
-                    <td>{reason}</td>
+                    <td>
+                      <div className="table-tool-list compact-impact-list">
+                        <Badge label={row.impact} compact />
+                        <Badge label={`מורכבות ${row.complexity}`} compact />
+                      </div>
+                    </td>
+                    <td>
+                      <div className="official-link-list">
+                        {row.links.map((link) => (
+                          <a className="table-link" href={link.url} target="_blank" rel="noopener noreferrer" key={`${row.process}-${link.label}`}>
+                            {link.label}
+                          </a>
+                        ))}
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -633,36 +625,6 @@ function AIDemoPage() {
             ))}
           </div>
         </section>
-
-        <div className="score-section">
-          <div>
-            <span className="eyebrow">תיעדוף יישום</span>
-            <h2>ציון כדאיות לאוטומציה</h2>
-            <p>הציון עוזר להבין באיזו אוטומציה כדאי להתחיל לפי שילוב של ערך עסקי, השפעה ומורכבות יישום.</p>
-          </div>
-          <div className="ai-table-wrap">
-            <table className="automation-score-table">
-              <thead>
-                <tr>
-                  <th>אוטומציה</th>
-                  <th>השפעה</th>
-                  <th>מורכבות</th>
-                  <th>ציון</th>
-                </tr>
-              </thead>
-              <tbody>
-                {automationScores.map(([automation, impact, complexity, score]) => (
-                  <tr key={automation}>
-                    <td>{automation}</td>
-                    <td><Badge label={impact} compact /></td>
-                    <td><Badge label={complexity} compact /></td>
-                    <td><span className="score-label">{score}</span></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
 
         <p className="future-note">
           בדמו הנוכחי מדובר בסימולציה שמציגה את לוגיקת המוצר. בגרסה עתידית ניתן לחבר API של Perplexity או מודל AI אחר בצד שרת, כדי לייצר חקר שוק והמלצות בזמן אמת.
