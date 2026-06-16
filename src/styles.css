@@ -1650,15 +1650,13 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
   line-height: 1.45;
 }
 
-.roi-calculate-button,
-.roadmap-generate-button {
+.roi-calculate-button {
   min-height: 54px;
   padding-inline: 24px;
   font-size: 16px;
 }
 
-.roi-calculate-button:hover,
-.roadmap-generate-button:hover {
+.roi-calculate-button:hover {
   transform: translateY(-3px);
 }
 
@@ -1802,17 +1800,6 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
   border: 1px solid rgba(58, 183, 149, 0.28);
   border-radius: 8px;
   background: rgba(58, 183, 149, 0.1);
-}
-
-.roadmap-modal-cta {
-  display: flex;
-  justify-content: flex-start;
-  margin: 14px 0;
-}
-
-.roadmap-modal-cta .primary-button {
-  min-height: 54px;
-  padding-inline: 24px;
 }
 
 .roadmap-page-intro,

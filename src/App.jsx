@@ -742,7 +742,8 @@ function RecommendationModal({ answers, recommendation, roadmap, user, goTo, onC
   const [showRoadmap, setShowRoadmap] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
   const [roadmapMessage, setRoadmapMessage] = useState('');
-  const [roadmapGenerated, setRoadmapGenerated] = useState(false);
+  const [recommendationSaved, setRecommendationSaved] = useState(false);
+  const [roadmapGenerated, setRoadmapGenerated] = useState(() => Boolean(readSavedAssessment(user)?.roadmap));
 
   const saveRecommendation = () => {
     const existing = readSavedAssessment(user);
@@ -766,10 +767,11 @@ function RecommendationModal({ answers, recommendation, roadmap, user, goTo, onC
       quickWin: saved.roadmap?.quickWin,
       roadmapSummary: saved.roadmap ? `${saved.roadmap.roadmapTitle}: ${saved.roadmap.steps.map((step) => step.title).join(' | ')}` : '',
     });
-    setSaveMessage('ההמלצה נשמרה באזור האישי.');
+    setSaveMessage('ההמלצה נשמרה בהצלחה.');
+    setRecommendationSaved(true);
   };
 
-  const generateRoadmap = () => {
+  const generateRoadmap = ({ navigate = false } = {}) => {
     const saved = {
       answers,
       recommendation,
@@ -794,11 +796,24 @@ function RecommendationModal({ answers, recommendation, roadmap, user, goTo, onC
     setShowRoadmap(true);
     setRoadmapGenerated(true);
     setRoadmapMessage('מפת האוטומציה נוצרה בהצלחה.');
+    if (navigate) {
+      onClose();
+      goTo('roadmap');
+    }
   };
 
   const openRoadmapPage = () => {
+    if (!roadmapGenerated) {
+      generateRoadmap({ navigate: true });
+      return;
+    }
     onClose();
     goTo('roadmap');
+  };
+
+  const goToSavedArea = () => {
+    onClose();
+    goTo(user ? 'dashboard' : 'signup');
   };
 
   return (
@@ -834,31 +849,28 @@ function RecommendationModal({ answers, recommendation, roadmap, user, goTo, onC
         <div className="roadmap-action-strip">
           <div>
             <strong>מחולל מפת אוטומציה לעסק</strong>
-            <p>המערכת מתרגמת את ההמלצה לתוכנית פעולה הדרגתית עם ציון מוכנות, quick win ושלבי יישום.</p>
+            <p>המערכת מתרגמת את ההמלצה לתוכנית פעולה הדרגתית עם ציון מוכנות, quick win ושלבי יישום. ניתן לעבור למפה המלאה מהכפתור הראשי בתחתית החלון.</p>
           </div>
-          <button className="primary-button roadmap-generate-button" type="button" onClick={generateRoadmap}>
-            <Route size={19} />
-            יצירת מפת אוטומציה לעסק
-          </button>
         </div>
         {saveMessage && <p className="success-message modal-status-message">{saveMessage}</p>}
         {roadmapMessage && <p className="success-message modal-status-message">{roadmapMessage}</p>}
         {showRoadmap && (
           <>
             <RoadmapPanel roadmap={roadmap} />
-            <div className="roadmap-modal-cta">
-              <button className="primary-button" type="button" onClick={openRoadmapPage}>מעבר למפת האוטומציה</button>
-            </div>
             {!user && <p className="auth-note">כדי לשמור את מפת האוטומציה להמשך, ניתן ליצור חשבון חינמי.</p>}
           </>
         )}
         {!user && <p className="auth-note">כדי לשמור את ההמלצה באופן קבוע, ניתן ליצור חשבון חינמי.</p>}
         <div className="modal-actions">
+          <button className="primary-button" type="button" onClick={openRoadmapPage}>מעבר למפת האוטומציה</button>
           <button className="secondary-button" type="button" onClick={saveRecommendation}>שמירת ההמלצה באזור האישי</button>
-          {roadmapGenerated && <button className="primary-button" type="button" onClick={openRoadmapPage}>מעבר למפת האוטומציה</button>}
-          <button className="primary-button" type="button" onClick={() => { onClose(); goTo('consultation'); }}>בקשת ייעוץ</button>
+          {recommendationSaved && (
+            <button className="secondary-button" type="button" onClick={goToSavedArea}>
+              {user ? 'מעבר לאזור האישי' : 'יצירת חשבון לשמירת ההמלצה'}
+            </button>
+          )}
+          <button className="secondary-button" type="button" onClick={() => { onClose(); goTo('consultation'); }}>בקשת ייעוץ</button>
           <a className="secondary-button" href={toolLinks[recommendation.tools[0]]} target="_blank" rel="noopener noreferrer">פתיחת כלי מומלץ</a>
-          {!user && <button className="secondary-button" type="button" onClick={() => { onClose(); goTo('signup'); }}>יצירת חשבון חינמי</button>}
         </div>
       </div>
     </div>
