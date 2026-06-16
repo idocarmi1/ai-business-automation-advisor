@@ -17,6 +17,7 @@ Live Demo: https://ai-business-automation-advisor.vercel.app/
 - The result includes a recommended automation, automation score, suggested tools, and next steps.
 - The roadmap generator turns assessment answers into a staged automation plan.
 - The ROI calculator estimates time and cost savings from automating manual processes.
+- Users can save recommendations and generated roadmaps to the local Dashboard.
 - The project is designed for a classroom presentation showing product, tools, and lessons learned.
 
 ## Problem
@@ -56,6 +57,7 @@ AutoBiz demonstrates how AI can turn market research and business context into:
 - תוכנית פעולה ל-7 ימים
 - מתכון אוטומציה ראשוני לפי סוג ההמלצה
 - מחשבון חיסכון מאוטומציה
+- שמירת המלצות ומפות אוטומציה באזור האישי
 - Suggested automation tools
 - Tools and lessons section for classroom presentation
 - Responsive design for desktop and mobile

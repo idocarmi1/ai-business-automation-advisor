@@ -1796,6 +1796,25 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
   margin: 0;
 }
 
+.modal-status-message {
+  margin: 10px 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(58, 183, 149, 0.28);
+  border-radius: 8px;
+  background: rgba(58, 183, 149, 0.1);
+}
+
+.roadmap-modal-cta {
+  display: flex;
+  justify-content: flex-start;
+  margin: 14px 0;
+}
+
+.roadmap-modal-cta .primary-button {
+  min-height: 54px;
+  padding-inline: 24px;
+}
+
 .roadmap-page-intro,
 .roadmap-empty-state,
 .roadmap-start-section,
@@ -1843,6 +1862,34 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
 .dashboard-next-step-card {
   margin: 0;
   border-color: rgba(216, 181, 109, 0.28);
+}
+
+.saved-recommendation-card,
+.saved-roadmap-card {
+  border-color: rgba(216, 181, 109, 0.26);
+  background:
+    radial-gradient(circle at 12% 0%, rgba(216, 181, 109, 0.1), transparent 34%),
+    rgba(13, 25, 42, 0.84);
+}
+
+.dashboard-roadmap-summary {
+  display: grid;
+  grid-template-columns: 0.65fr 0.65fr 1.4fr;
+  gap: 12px;
+  margin: 14px 0;
+}
+
+.dashboard-roadmap-summary .info-block,
+.dashboard-empty-roadmap {
+  margin: 0;
+  padding: 14px;
+  border: 1px solid rgba(180, 195, 214, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.dashboard-empty-roadmap p {
+  margin-bottom: 14px;
 }
 
 .roadmap-panel {
@@ -2254,6 +2301,7 @@ tbody tr:hover { background: rgba(216, 181, 109, 0.045); }
   .roadmap-step-grid,
   .roadmap-action-strip,
   .roadmap-page-intro,
+  .dashboard-roadmap-summary,
   .starter-recipe-grid,
   .roi-calculator-section,
   .roi-metric-grid,

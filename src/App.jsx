@@ -39,6 +39,7 @@ import { calculateAutomationROI } from './utils/roiCalculator.js';
 
 const assessmentStorageKey = 'autobiz_last_assessment';
 const roiStorageKey = 'autobiz_last_roi';
+const guestAssessmentStorageKey = 'autobiz_guest_assessment';
 
 const hashPageMap = {
   '#home': 'home',
@@ -152,6 +153,8 @@ const eventTypeLabels = {
   'Plan Interest': 'התעניינות במסלול',
   'Consultation Request': 'בקשת ייעוץ',
   'ROI Calculated': 'חישוב ROI',
+  'Recommendation Saved': 'שמירת המלצה',
+  'Roadmap Generated': 'יצירת מפת אוטומציה',
 };
 
 function App() {
@@ -210,7 +213,7 @@ function App() {
         {activePage === 'aiDemo' && <AIDemoPage />}
         {activePage === 'assessment' && <AssessmentPage user={user} goTo={goTo} />}
         {activePage === 'roiCalculator' && <ROICalculatorPage user={user} />}
-        {activePage === 'roadmap' && <RoadmapPage goTo={goTo} />}
+        {activePage === 'roadmap' && <RoadmapPage user={user} goTo={goTo} />}
         {activePage === 'comparison' && <ToolsComparisonPage />}
         {activePage === 'library' && <UseCaseLibraryPage />}
         {activePage === 'plans' && <PlansPage user={user} goTo={goTo} />}
@@ -643,8 +646,8 @@ function AssessmentPage({ user, goTo }) {
       setError('יש להשלים את השדות המרכזיים לפני קבלת ההמלצה.');
       return;
     }
-    const saved = { answers, recommendation, roadmap, createdAt: new Date().toISOString() };
-    localStorage.setItem(assessmentStorageKey, JSON.stringify(saved));
+    const saved = { answers, recommendation, createdAt: new Date().toISOString(), savedAt: new Date().toISOString() };
+    saveAssessmentResult(saved, user);
     createLead({
       eventType: 'Assessment Completed',
       fullName: user?.fullName,
@@ -652,10 +655,6 @@ function AssessmentPage({ user, goTo }) {
       businessName: user?.businessName,
       assessment: answers,
       recommendation,
-      roadmap,
-      readinessScore: roadmap.readinessScore,
-      roadmapSummary: `${roadmap.roadmapTitle}: ${roadmap.steps.map((step) => step.title).join(' | ')}`,
-      quickWin: roadmap.quickWin,
     });
     setError('');
     setModalOpen(true);
@@ -734,17 +733,72 @@ function AssessmentPage({ user, goTo }) {
           <button className="primary-button" type="button" onClick={submitAssessment}>קבלו את ההמלצה</button>
         </div>
       </form>
-      {modalOpen && <RecommendationModal recommendation={recommendation} roadmap={roadmap} user={user} goTo={goTo} onClose={() => setModalOpen(false)} />}
+      {modalOpen && <RecommendationModal answers={answers} recommendation={recommendation} roadmap={roadmap} user={user} goTo={goTo} onClose={() => setModalOpen(false)} />}
     </section>
   );
 }
 
-function RecommendationModal({ recommendation, roadmap, user, goTo, onClose }) {
+function RecommendationModal({ answers, recommendation, roadmap, user, goTo, onClose }) {
   const [showRoadmap, setShowRoadmap] = useState(false);
+  const [saveMessage, setSaveMessage] = useState('');
+  const [roadmapMessage, setRoadmapMessage] = useState('');
+  const [roadmapGenerated, setRoadmapGenerated] = useState(false);
 
-  const saveAndGoDashboard = () => {
+  const saveRecommendation = () => {
+    const existing = readSavedAssessment(user);
+    const saved = {
+      answers,
+      recommendation,
+      roadmap: roadmapGenerated ? roadmap : existing?.roadmap || null,
+      createdAt: new Date().toISOString(),
+      savedAt: new Date().toISOString(),
+    };
+    saveAssessmentResult(saved, user);
+    createLead({
+      eventType: 'Recommendation Saved',
+      fullName: user?.fullName,
+      email: user?.email,
+      businessName: user?.businessName,
+      assessment: answers,
+      recommendation,
+      roadmap: saved.roadmap,
+      readinessScore: saved.roadmap?.readinessScore,
+      quickWin: saved.roadmap?.quickWin,
+      roadmapSummary: saved.roadmap ? `${saved.roadmap.roadmapTitle}: ${saved.roadmap.steps.map((step) => step.title).join(' | ')}` : '',
+    });
+    setSaveMessage('ההמלצה נשמרה באזור האישי.');
+  };
+
+  const generateRoadmap = () => {
+    const saved = {
+      answers,
+      recommendation,
+      roadmap,
+      createdAt: new Date().toISOString(),
+      savedAt: new Date().toISOString(),
+      roadmapGeneratedAt: new Date().toISOString(),
+    };
+    saveAssessmentResult(saved, user);
+    createLead({
+      eventType: 'Roadmap Generated',
+      fullName: user?.fullName,
+      email: user?.email,
+      businessName: user?.businessName,
+      assessment: answers,
+      recommendation,
+      roadmap,
+      readinessScore: roadmap.readinessScore,
+      quickWin: roadmap.quickWin,
+      roadmapSummary: `${roadmap.roadmapTitle}: ${roadmap.steps.map((step) => step.title).join(' | ')}`,
+    });
+    setShowRoadmap(true);
+    setRoadmapGenerated(true);
+    setRoadmapMessage('מפת האוטומציה נוצרה בהצלחה.');
+  };
+
+  const openRoadmapPage = () => {
     onClose();
-    goTo(user ? 'dashboard' : 'signup');
+    goTo('roadmap');
   };
 
   return (
@@ -782,20 +836,26 @@ function RecommendationModal({ recommendation, roadmap, user, goTo, onClose }) {
             <strong>מחולל מפת אוטומציה לעסק</strong>
             <p>המערכת מתרגמת את ההמלצה לתוכנית פעולה הדרגתית עם ציון מוכנות, quick win ושלבי יישום.</p>
           </div>
-          <button className="primary-button roadmap-generate-button" type="button" onClick={() => setShowRoadmap(true)}>
+          <button className="primary-button roadmap-generate-button" type="button" onClick={generateRoadmap}>
             <Route size={19} />
             יצירת מפת אוטומציה לעסק
           </button>
         </div>
+        {saveMessage && <p className="success-message modal-status-message">{saveMessage}</p>}
+        {roadmapMessage && <p className="success-message modal-status-message">{roadmapMessage}</p>}
         {showRoadmap && (
           <>
             <RoadmapPanel roadmap={roadmap} />
+            <div className="roadmap-modal-cta">
+              <button className="primary-button" type="button" onClick={openRoadmapPage}>מעבר למפת האוטומציה</button>
+            </div>
             {!user && <p className="auth-note">כדי לשמור את מפת האוטומציה להמשך, ניתן ליצור חשבון חינמי.</p>}
           </>
         )}
-        {!user && !showRoadmap && <p className="auth-note">כדי לשמור את ההמלצה להמשך, ניתן ליצור חשבון חינמי.</p>}
+        {!user && <p className="auth-note">כדי לשמור את ההמלצה באופן קבוע, ניתן ליצור חשבון חינמי.</p>}
         <div className="modal-actions">
-          <button className="secondary-button" type="button" onClick={saveAndGoDashboard}>שמירת ההמלצה באזור האישי</button>
+          <button className="secondary-button" type="button" onClick={saveRecommendation}>שמירת ההמלצה באזור האישי</button>
+          {roadmapGenerated && <button className="primary-button" type="button" onClick={openRoadmapPage}>מעבר למפת האוטומציה</button>}
           <button className="primary-button" type="button" onClick={() => { onClose(); goTo('consultation'); }}>בקשת ייעוץ</button>
           <a className="secondary-button" href={toolLinks[recommendation.tools[0]]} target="_blank" rel="noopener noreferrer">פתיחת כלי מומלץ</a>
           {!user && <button className="secondary-button" type="button" onClick={() => { onClose(); goTo('signup'); }}>יצירת חשבון חינמי</button>}
@@ -1142,9 +1202,9 @@ function ForgotPasswordPage({ goTo }) {
 }
 
 function DashboardPage({ user, goTo }) {
-  const saved = readSavedAssessment();
+  const saved = readSavedAssessment(user);
   const savedRoi = readSavedROI();
-  const savedRoadmap = saved?.roadmap || (saved?.answers && saved?.recommendation ? generateAutomationRoadmap(saved.answers, saved.recommendation) : null);
+  const savedRoadmap = saved?.roadmap || null;
   if (!user) {
     return (
       <section className="page auth-page">
@@ -1161,32 +1221,55 @@ function DashboardPage({ user, goTo }) {
       <SectionIntro title={`ברוך הבא, ${user.fullName}`} text={`שם העסק: ${user.businessName}`} />
       {saved ? (
         <div className="dashboard-grid">
-          <article className="summary-item">
-            <h3>תוצאת השאלון האחרונה</h3>
+          <article className="summary-item wide saved-recommendation-card">
+            <span className="eyebrow">ההמלצה השמורה שלך</span>
+            <h3>קטגוריית האוטומציה המומלצת</h3>
             <p>{saved.recommendation.category}</p>
-            <div className="badge-row"><Badge label={`מורכבות: ${saved.recommendation.complexity}`} /><Badge label={`השפעה: ${saved.recommendation.impact}`} /></div>
+            <div className="badge-row">
+              <Badge label={`רמת מורכבות: ${saved.recommendation.complexity}`} />
+              <Badge label={`השפעה עסקית צפויה: ${saved.recommendation.impact}`} />
+              {saved.createdAt && <Badge label={`תאריך יצירה: ${new Date(saved.createdAt).toLocaleDateString('he-IL')}`} />}
+            </div>
+            <InfoBlock label="צעד ראשון מומלץ" value={saved.recommendation.firstStep} />
+            <div className="form-actions">
+              <button className="secondary-button" type="button" onClick={() => goTo('roadmap')}>פתיחת מפת האוטומציה</button>
+              <button className="primary-button" type="button" onClick={() => goTo('consultation')}>בקשת ייעוץ</button>
+              <button className="secondary-button" type="button" onClick={() => goTo('assessment')}>עדכון המלצה דרך שאלון חדש</button>
+            </div>
           </article>
           <article className="summary-item">
             <h3>כלים מומלצים</h3>
             <div className="tool-pill-list">{saved.recommendation.tools.map((tool) => <span className="ltr-text" key={tool}>{tool}</span>)}</div>
           </article>
-          <article className="summary-item wide">
-            <h3>הצעדים הבאים</h3>
-            <p>{saved.recommendation.firstStep}</p>
-            <div className="form-actions">
-              <button className="primary-button" type="button" onClick={() => goTo('consultation')}>בקשת ייעוץ לאוטומציה</button>
-              <button className="secondary-button" type="button" onClick={() => goTo('roadmap')}>פתיחת מפת האוטומציה</button>
-              <button className="secondary-button" type="button" onClick={() => goTo('roiCalculator')}>מעבר למחשבון חיסכון</button>
-            </div>
+          <article className="summary-item">
+            <h3>כלי החלטה נוספים</h3>
+            <p>ניתן לפתוח את מפת האוטומציה או להעריך חיסכון כספי בעזרת מחשבון החיסכון.</p>
+            <button className="secondary-button" type="button" onClick={() => goTo('roiCalculator')}>מעבר למחשבון חיסכון</button>
           </article>
-          {savedRoadmap && (
-            <article className="summary-item wide dashboard-next-step-card">
-              <span className="eyebrow">הצעד הבא שלך</span>
-              <h3>להתחיל ממיפוי תהליך ידני אחד</h3>
-              <p>{savedRoadmap.steps?.[0]?.implementationSteps?.[0] || savedRoadmap.quickWin}</p>
-              <button className="primary-button" type="button" onClick={() => goTo('roadmap')}>פתיחת מדריך הביצוע</button>
-            </article>
-          )}
+          <section className="summary-item wide saved-roadmap-card">
+            <span className="eyebrow">מפת האוטומציה שלך</span>
+            {savedRoadmap ? (
+              <>
+                <div className="dashboard-roadmap-summary">
+                  <InfoBlock label="ציון מוכנות לאוטומציה" value={`${savedRoadmap.readinessScore}/100`} />
+                  <InfoBlock label="רמת עדיפות" value={savedRoadmap.priorityLevel} />
+                  <InfoBlock label="Quick Win" value={savedRoadmap.quickWin} />
+                </div>
+                <div className="dashboard-next-step-card">
+                  <span className="eyebrow">הצעד הבא שלך</span>
+                  <h3>להתחיל ממיפוי תהליך ידני אחד</h3>
+                  <p>{savedRoadmap.steps?.[0]?.implementationSteps?.[0] || savedRoadmap.quickWin}</p>
+                  <button className="primary-button" type="button" onClick={() => goTo('roadmap')}>פתיחת מדריך הביצוע</button>
+                </div>
+              </>
+            ) : (
+              <div className="dashboard-empty-roadmap">
+                <h3>עדיין לא נוצרה מפת אוטומציה.</h3>
+                <p>מלאו את שאלון ההתאמה ולחצו על יצירת מפת אוטומציה לעסק.</p>
+                <button className="primary-button" type="button" onClick={() => goTo('assessment')}>מעבר לשאלון התאמה</button>
+              </div>
+            )}
+          </section>
           {savedRoadmap && <RoadmapPanel roadmap={savedRoadmap} compact />}
           {savedRoi?.result && <ROIResultCard result={savedRoi.result} compact />}
         </div>
@@ -1205,8 +1288,8 @@ function DashboardPage({ user, goTo }) {
 
 function ROICalculatorPage({ user }) {
   const resultRef = useRef(null);
-  const saved = readSavedAssessment();
-  const savedRoadmap = saved?.roadmap || (saved?.answers && saved?.recommendation ? generateAutomationRoadmap(saved.answers, saved.recommendation) : null);
+  const saved = readSavedAssessment(user);
+  const savedRoadmap = saved?.roadmap || null;
   const savedRoi = readSavedROI();
   const [inputs, setInputs] = useState(() => buildInitialRoiInputs(saved, savedRoadmap));
   const [result, setResult] = useState(savedRoi?.result || null);
@@ -1340,9 +1423,9 @@ function ROIResultCard({ result, compact = false }) {
   );
 }
 
-function RoadmapPage({ goTo }) {
-  const saved = readSavedAssessment();
-  const roadmap = saved?.roadmap || (saved?.answers && saved?.recommendation ? generateAutomationRoadmap(saved.answers, saved.recommendation) : null);
+function RoadmapPage({ user, goTo }) {
+  const saved = readSavedAssessment(user);
+  const roadmap = saved?.roadmap || null;
 
   return (
     <section className="page content-page">
@@ -1378,7 +1461,7 @@ function RoadmapPage({ goTo }) {
         <section className="roadmap-empty-state">
           <Route size={34} />
           <h3>עדיין אין מפת אוטומציה לעסק</h3>
-          <p>כדי ליצור מפת אוטומציה, מלאו קודם את שאלון ההתאמה.</p>
+          <p>כדי ליצור מפת אוטומציה, מלאו קודם את שאלון ההתאמה וקבלו המלצה.</p>
           <button className="primary-button" type="button" onClick={() => goTo('assessment')}>מעבר לשאלון התאמה</button>
         </section>
       )}
@@ -1537,6 +1620,8 @@ function AdminLeadsPage() {
             <p className="ltr-text">{lead.email || 'ללא אימייל'}</p>
             <p>שם העסק: {lead.businessName || 'לא צוין'}</p>
             <p>מסלול נבחר: {lead.selectedPlan || 'לא צוין'}</p>
+            {lead.recommendation?.category && <p>קטגוריית המלצה: {lead.recommendation.category}</p>}
+            {lead.recommendation?.tools?.length > 0 && <p>כלים מומלצים: {lead.recommendation.tools.join(', ')}</p>}
             {lead.readinessScore && <p>ציון מוכנות לאוטומציה: {lead.readinessScore}/100</p>}
             {lead.quickWin && <p>Quick win: {lead.quickWin}</p>}
             {lead.roadmapSummary && <p>סיכום מפת אוטומציה: {lead.roadmapSummary}</p>}
@@ -1622,6 +1707,9 @@ function MethodologyPage() {
         </p>
         <p>
           הוספנו למפת האוטומציה מדריך תפעול ראשוני שמראה לבעל העסק מה לבצע בפועל: אילו נתונים להכין, אילו מערכות לחבר, באיזה סדר לפעול, ואיך למדוד הצלחה. כך המערכת מייצרת תוצר יישומי ולא רק המלצה כללית.
+        </p>
+        <p>
+          בנוסף, ההמלצה ומפת האוטומציה נשמרות באזור האישי בעזרת localStorage, כך שהמשתמש יכול לחזור אליהן בהמשך דרך Dashboard. זה מדגים תוצר תומך החלטה מתמשך ולא רק חלון תוצאה זמני.
         </p>
       </section>
     </section>
@@ -1723,6 +1811,7 @@ function AcademicSummaryPage() {
     ['מדריך תפעול למפת האוטומציה', 'המפה אינה רק המלצה אסטרטגית. היא כוללת מדריך ביצוע: מה לעשות בפועל, אילו נתונים להכין, אילו מערכות לחבר, טעויות נפוצות ומדדי הצלחה.'],
     ['מחשבון חיסכון מאוטומציה', 'המחשבון מדגים כיצד ניתן לתרגם תהליכים ידניים לערך עסקי מדיד: שעות שנחסכות, חיסכון כספי חודשי ושנתי, רמת כדאיות ותהליך ראשון מומלץ לאוטומציה.'],
     ['מערכת תומכת החלטה', 'שילוב ההמלצה, מפת האוטומציה ומחשבון החיסכון הופך את הפרויקט מממשק תצוגה בלבד לכלי שמפיק תוצרים עסקיים שימושיים לבעל עסק קטן.'],
+    ['שמירת תוצרים באזור האישי', 'המשתמש יכול לשמור את ההמלצה ואת מפת האוטומציה ולחזור אליהן דרך Dashboard. כך התוצאה אינה זמנית בלבד אלא נשמרת כתוצר החלטה להמשך עבודה.'],
     ['לקחים אישיים וקבוצתיים', 'AI מקצר תהליכים אך אינו מחליף חשיבה ביקורתית, בדיקות איכות והבנת הערך העסקי.'],
     ['שימוש בכלי AI בכתיבת המסמך', 'ניתן להשתמש בתוכן העמודים כבסיס למסמך DOCX, אך יש לערוך, לאמת ולהוסיף רפלקציה אישית.'],
   ];
@@ -1772,12 +1861,32 @@ function MethodCard({ title, items }) {
   return <article className="method-card"><h3>{title}</h3><ul className="clean-list">{items.map((item) => <li key={item}>{item}</li>)}</ul></article>;
 }
 
-function readSavedAssessment() {
+function saveAssessmentResult(record, user) {
+  const normalized = {
+    ...record,
+    createdAt: record.createdAt || new Date().toISOString(),
+    savedAt: record.savedAt || new Date().toISOString(),
+  };
+  localStorage.setItem(assessmentStorageKey, JSON.stringify(normalized));
+  localStorage.setItem(userAssessmentStorageKey(user), JSON.stringify(normalized));
+  if (!user) localStorage.setItem(guestAssessmentStorageKey, JSON.stringify(normalized));
+  return normalized;
+}
+
+function readSavedAssessment(user) {
   try {
-    return JSON.parse(localStorage.getItem(assessmentStorageKey));
+    const userRecord = user ? JSON.parse(localStorage.getItem(userAssessmentStorageKey(user))) : null;
+    if (userRecord) return userRecord;
+    const latestRecord = JSON.parse(localStorage.getItem(assessmentStorageKey));
+    if (latestRecord) return latestRecord;
+    return JSON.parse(localStorage.getItem(guestAssessmentStorageKey));
   } catch {
     return null;
   }
+}
+
+function userAssessmentStorageKey(user) {
+  return user?.email ? `autobiz_assessment_${user.email.toLowerCase()}` : guestAssessmentStorageKey;
 }
 
 function readSavedROI() {
