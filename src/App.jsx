@@ -34,6 +34,7 @@ import { generateRecommendation } from './utils/recommendation.js';
 import { clearLeads, createLead, exportLeadsToCsv, getLeads } from './utils/leads.js';
 import { getCurrentUser, isAdminUser, loginDemoUser, logoutDemoUser, signUpDemoUser } from './utils/auth.js';
 import { sendSignupNotification } from './utils/notifications.js';
+import { generateAutomationRoadmap } from './utils/roadmap.js';
 
 const assessmentStorageKey = 'autobiz_last_assessment';
 
@@ -615,6 +616,7 @@ function AssessmentPage({ user, goTo }) {
   const [error, setError] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const recommendation = useMemo(() => generateRecommendation(answers), [answers]);
+  const roadmap = useMemo(() => generateAutomationRoadmap(answers, recommendation), [answers, recommendation]);
 
   const toggleArrayValue = (field, value) => {
     setAnswers((current) => {
@@ -630,7 +632,7 @@ function AssessmentPage({ user, goTo }) {
       setError('יש להשלים את השדות המרכזיים לפני קבלת ההמלצה.');
       return;
     }
-    const saved = { answers, recommendation, createdAt: new Date().toISOString() };
+    const saved = { answers, recommendation, roadmap, createdAt: new Date().toISOString() };
     localStorage.setItem(assessmentStorageKey, JSON.stringify(saved));
     createLead({
       eventType: 'Assessment Completed',
@@ -639,6 +641,10 @@ function AssessmentPage({ user, goTo }) {
       businessName: user?.businessName,
       assessment: answers,
       recommendation,
+      roadmap,
+      readinessScore: roadmap.readinessScore,
+      roadmapSummary: `${roadmap.roadmapTitle}: ${roadmap.steps.map((step) => step.title).join(' | ')}`,
+      quickWin: roadmap.quickWin,
     });
     setError('');
     setModalOpen(true);
@@ -717,12 +723,14 @@ function AssessmentPage({ user, goTo }) {
           <button className="primary-button" type="button" onClick={submitAssessment}>קבלו את ההמלצה</button>
         </div>
       </form>
-      {modalOpen && <RecommendationModal recommendation={recommendation} user={user} goTo={goTo} onClose={() => setModalOpen(false)} />}
+      {modalOpen && <RecommendationModal recommendation={recommendation} roadmap={roadmap} user={user} goTo={goTo} onClose={() => setModalOpen(false)} />}
     </section>
   );
 }
 
-function RecommendationModal({ recommendation, user, goTo, onClose }) {
+function RecommendationModal({ recommendation, roadmap, user, goTo, onClose }) {
+  const [showRoadmap, setShowRoadmap] = useState(false);
+
   const saveAndGoDashboard = () => {
     onClose();
     goTo(user ? 'dashboard' : 'signup');
@@ -758,7 +766,20 @@ function RecommendationModal({ recommendation, user, goTo, onClose }) {
           {recommendation.why.map((reason) => <li key={reason}>{reason}</li>)}
         </ul>
         <InfoBlock label="צעד ראשון מומלץ" value={recommendation.firstStep} />
-        {!user && <p className="auth-note">כדי לשמור את ההמלצה להמשך, ניתן ליצור חשבון חינמי.</p>}
+        <div className="roadmap-action-strip">
+          <div>
+            <strong>מחולל מפת אוטומציה לעסק</strong>
+            <p>המערכת מתרגמת את ההמלצה לתוכנית פעולה הדרגתית עם ציון מוכנות, quick win ושלבי יישום.</p>
+          </div>
+          <button className="primary-button" type="button" onClick={() => setShowRoadmap(true)}>יצירת מפת אוטומציה לעסק</button>
+        </div>
+        {showRoadmap && (
+          <>
+            <RoadmapPanel roadmap={roadmap} />
+            {!user && <p className="auth-note">כדי לשמור את מפת האוטומציה להמשך, ניתן ליצור חשבון חינמי.</p>}
+          </>
+        )}
+        {!user && !showRoadmap && <p className="auth-note">כדי לשמור את ההמלצה להמשך, ניתן ליצור חשבון חינמי.</p>}
         <div className="modal-actions">
           <button className="secondary-button" type="button" onClick={saveAndGoDashboard}>שמירת ההמלצה באזור האישי</button>
           <button className="primary-button" type="button" onClick={() => { onClose(); goTo('consultation'); }}>בקשת ייעוץ</button>
@@ -767,6 +788,53 @@ function RecommendationModal({ recommendation, user, goTo, onClose }) {
         </div>
       </div>
     </div>
+  );
+}
+
+function RoadmapPanel({ roadmap, compact = false }) {
+  if (!roadmap) return null;
+
+  return (
+    <section className={compact ? 'roadmap-panel compact' : 'roadmap-panel'}>
+      <div className="roadmap-header">
+        <div>
+          <span className="eyebrow">מחולל מפת אוטומציה לעסק</span>
+          <h3>{roadmap.roadmapTitle}</h3>
+          <p>{roadmap.businessSummary}</p>
+        </div>
+        <div className="roadmap-score-ring" style={{ '--score': `${roadmap.readinessScore}%` }}>
+          <strong>{roadmap.readinessScore}</strong>
+          <span>ציון מוכנות לאוטומציה</span>
+        </div>
+      </div>
+
+      <div className="roadmap-meta-grid">
+        <InfoBlock label="רמת עדיפות" value={roadmap.priorityLevel} />
+        <InfoBlock label="Quick win" value={roadmap.quickWin} />
+        <InfoBlock label="שדרוג עתידי" value={roadmap.futureUpgrade} />
+      </div>
+
+      <div className="roadmap-step-grid">
+        {roadmap.steps.map((step, index) => (
+          <article className="roadmap-step-card" key={step.title}>
+            <div className="roadmap-step-topline">
+              <span>שלב {index + 1}</span>
+              <div className="badge-row">
+                <Badge label={`קושי: ${step.difficulty}`} compact />
+                <Badge label={step.estimatedTime} compact />
+              </div>
+            </div>
+            <h4>{step.title}</h4>
+            <InfoBlock label="מטרה" value={step.goal} />
+            <InfoBlock label="הסבר" value={step.explanation} />
+            <InfoBlock label="תועלת צפויה" value={step.expectedBenefit} />
+            <div className="tool-pill-list">
+              {step.recommendedTools.map((tool) => <span className="ltr-text" key={tool}>{tool}</span>)}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -1025,6 +1093,7 @@ function ForgotPasswordPage({ goTo }) {
 
 function DashboardPage({ user, goTo }) {
   const saved = readSavedAssessment();
+  const savedRoadmap = saved?.roadmap || (saved?.answers && saved?.recommendation ? generateAutomationRoadmap(saved.answers, saved.recommendation) : null);
   if (!user) {
     return (
       <section className="page auth-page">
@@ -1055,6 +1124,7 @@ function DashboardPage({ user, goTo }) {
             <p>{saved.recommendation.firstStep}</p>
             <button className="primary-button" type="button" onClick={() => goTo('consultation')}>בקשת ייעוץ לאוטומציה</button>
           </article>
+          {savedRoadmap && <RoadmapPanel roadmap={savedRoadmap} compact />}
         </div>
       ) : (
         <article className="summary-item">
@@ -1179,6 +1249,9 @@ function AdminLeadsPage() {
             <p className="ltr-text">{lead.email || 'ללא אימייל'}</p>
             <p>שם העסק: {lead.businessName || 'לא צוין'}</p>
             <p>מסלול נבחר: {lead.selectedPlan || 'לא צוין'}</p>
+            {lead.readinessScore && <p>ציון מוכנות לאוטומציה: {lead.readinessScore}/100</p>}
+            {lead.quickWin && <p>Quick win: {lead.quickWin}</p>}
+            {lead.roadmapSummary && <p>סיכום מפת אוטומציה: {lead.roadmapSummary}</p>}
             <p>תאריך יצירה: {new Date(lead.createdAt).toLocaleString('he-IL')}</p>
           </article>
         ))}
@@ -1192,8 +1265,9 @@ function MethodologyPage() {
     ['שלב 1: הגדרת הבעיה העסקית', 'הגדרנו בעיה של עסקים קטנים ובינוניים: עומס תפעולי, משימות ידניות, חוסר מעקב אחרי לקוחות וקושי להבין איפה כדאי להתחיל אוטומציה.'],
     ['שלב 2: חקר שוק בעזרת Perplexity', 'Perplexity שימש כהשראה וככלי חקר שוק: ניסוח שאלות מחקר, בדיקת בעיות נפוצות בתחומים עסקיים, הבנת צרכים של בעלי עסקים והשוואת כיווני פתרון אפשריים.'],
     ['שלב 3: תרגום התובנות לאוטומציות', 'הפכנו את התובנות העסקיות לטבלת המלצות: בעיה עסקית, תהליך ידני כיום, אוטומציה מוצעת, כלי אפשרי, השפעה ומורכבות.'],
-    ['שלב 4: בניית הדמו בעזרת Codex', 'Codex שימש לבניית האתר, שיפור הקומפוננטות, עיצוב UI/UX, תיקון שגיאות, בדיקת Build ושיפור מבנה הפרויקט.'],
-    ['שלב 5: בדיקה ושיפור', 'בדקנו שהאתר מציג בעיה, פתרון, הדגמת יכולת, כלים ולקחים בצורה ברורה כדי שהמרצה והמשתמש יבינו את הערך של המערכת.'],
+    ['שלב 4: מחולל מפת אוטומציה לעסק', 'הוספנו מנגנון Rule-based שמתרגם תשובות מהשאלון והמלצה עסקית לשלושה שלבי יישום, ציון מוכנות, quick win ושדרוג עתידי. זה הופך את הדמו למערכת תומכת החלטה ולא רק למסך המלצה.'],
+    ['שלב 5: בניית הדמו בעזרת Codex', 'Codex שימש לבניית האתר, שיפור הקומפוננטות, עיצוב UI/UX, תיקון שגיאות, בדיקת Build ושיפור מבנה הפרויקט.'],
+    ['שלב 6: בדיקה ושיפור', 'בדקנו שהאתר מציג בעיה, פתרון, הדגמת יכולת, כלים ולקחים בצורה ברורה כדי שהמרצה והמשתמש יבינו את הערך של המערכת.'],
   ];
   const perplexityBullets = [
     'חקר שוק ראשוני לפי תחום עסקי.',
@@ -1236,6 +1310,16 @@ function MethodologyPage() {
             </article>
           ))}
         </div>
+      </section>
+      <section className="classroom-section">
+        <span className="eyebrow">תמיכה בקבלת החלטות</span>
+        <h2>למה מחולל מפת האוטומציה מוסיף ערך?</h2>
+        <p>
+          מחולל מפת האוטומציה משתמש בלוגיקה מבוססת כללים כדי לתרגם כאבים עסקיים, רמת ידע, תקציב, כלים קיימים ומטרת העסק לתוכנית פעולה הדרגתית. עבור עסקים קטנים זה חשוב כי במקום לקבל רק המלצה כללית, בעל העסק רואה איפה להתחיל, מה לחבר בהמשך, ואיך להשתמש ב-AI ודוחות לקבלת החלטות טובה יותר.
+        </p>
+        <p>
+          בגרסה עתידית ניתן לשדרג את המנגנון בעזרת מודל AI אמיתי או בסיס נתונים של תהליכים עסקיים, כך שהמפה תתעדכן לפי נתוני שימוש, ביצועים ומשוב לקוחות.
+        </p>
       </section>
     </section>
   );
@@ -1332,6 +1416,7 @@ function AcademicSummaryPage() {
     ['שיפורים בעקבות פידבק', 'ניתן להוסיף ענפים עסקיים, משקולות ניקוד, מחירים עדכניים, דוח PDF ושפה נוספת.'],
     ['מה היה טוב בתהליך?', 'הדרישות המפורטות עזרו להפוך רעיון מופשט למוצר שניתן להציג בכיתה.'],
     ['מה ניתן היה לשפר?', 'בגרסה הבאה כדאי לשלב נתוני שוק אמיתיים, שרת, אימיילים, ושמירת משתמשים מאובטחת.'],
+    ['מחולל מפת אוטומציה לעסק', 'הפיצ׳ר החדש מדגים מערכת תומכת החלטה: הוא לוקח תשובות מהשאלון, מחשב ציון מוכנות לאוטומציה, ומציג תוכנית בשלושה שלבים עם כלים, תועלת, קושי וזמן משוער.'],
     ['לקחים אישיים וקבוצתיים', 'AI מקצר תהליכים אך אינו מחליף חשיבה ביקורתית, בדיקות איכות והבנת הערך העסקי.'],
     ['שימוש בכלי AI בכתיבת המסמך', 'ניתן להשתמש בתוכן העמודים כבסיס למסמך DOCX, אך יש לערוך, לאמת ולהוסיף רפלקציה אישית.'],
   ];

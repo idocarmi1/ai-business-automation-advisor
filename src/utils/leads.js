@@ -11,6 +11,10 @@ export function createLead(payload) {
     selectedPlan: payload.selectedPlan || '',
     assessment: payload.assessment || null,
     recommendation: payload.recommendation || null,
+    roadmap: payload.roadmap || null,
+    readinessScore: payload.readinessScore || '',
+    roadmapSummary: payload.roadmapSummary || '',
+    quickWin: payload.quickWin || '',
     phone: payload.phone || '',
     message: payload.message || '',
   };
@@ -34,7 +38,7 @@ export function clearLeads() {
 
 export function exportLeadsToCsv() {
   const leads = getLeads();
-  const headers = ['eventType', 'fullName', 'email', 'businessName', 'selectedPlan', 'createdAt'];
+  const headers = ['eventType', 'fullName', 'email', 'businessName', 'selectedPlan', 'readinessScore', 'quickWin', 'roadmapSummary', 'createdAt'];
   const rows = leads.map((lead) => headers.map((field) => csvCell(lead[field])).join(','));
   return [headers.join(','), ...rows].join('\n');
 }
